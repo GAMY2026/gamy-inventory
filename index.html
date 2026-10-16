@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -8,679 +7,316 @@
 
 <style>
 :root{
-    --green:#153e35;
-    --green-light:#205648;
-    --gold:#c5a35b;
-    --bg:#f5f7f6;
-    --white:#fff;
-    --text:#24332c;
-    --muted:#84918b;
-    --border:#e4eae6;
-    --red:#b83232;
-    --success:#19734b;
-    --shadow:0 5px 20px rgba(25,50,40,.04);
+ --green:#153e35;--green2:#205648;--gold:#c5a35b;
+ --bg:#f5f7f6;--white:#fff;--text:#24332c;
+ --muted:#84918b;--border:#e4eae6;--red:#b83232
 }
 *{box-sizing:border-box;margin:0;padding:0}
 [hidden]{display:none!important}
-body{
-    font-family:"Segoe UI",Tahoma,Arial,sans-serif;
-    background:var(--bg);
-    color:var(--text);
-    font-size:14px;
-    line-height:1.7;
-}
+body{font-family:"Segoe UI",Tahoma,Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.7}
 button,input,select{font:inherit}
 button{cursor:pointer}
-button:disabled{opacity:.5;cursor:not-allowed}
-.topbar{
-    background:var(--green);
-    color:#fff;
-    border-bottom:3px solid var(--gold);
-}
-.topbar-inner{
-    width:92%;
-    max-width:1500px;
-    min-height:88px;
-    margin:auto;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:18px;
-    flex-wrap:wrap;
-    padding:18px 0;
-}
+button:disabled{opacity:.6;cursor:not-allowed}
+
+.topbar{background:var(--green);color:white;border-bottom:3px solid var(--gold)}
+.topbar-inner{width:92%;max-width:1500px;min-height:85px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;padding:16px 0}
 .brand{font-size:25px;font-weight:800;letter-spacing:1px}
 .brand span{color:#dfc27f}
-.brand-subtitle{font-size:12px;color:#cfddd6;margin-top:4px}
-.header-label{
-    border:1px solid #527166;
-    border-radius:7px;
-    padding:8px 14px;
-    font-size:12px;
-    color:#edf4ef;
-}
-.app-layout{
-    width:92%;
-    max-width:1500px;
-    margin:26px auto 36px;
-    display:grid;
-    grid-template-columns:235px minmax(0,1fr);
-    gap:22px;
-    align-items:start;
-}
-.sidebar{
-    background:#fff;
-    border:1px solid var(--border);
-    border-radius:12px;
-    padding:16px 12px;
-    position:sticky;
-    top:16px;
-    box-shadow:var(--shadow);
-}
-.sidebar-heading{
-    color:#99a49e;
-    font-size:11px;
-    font-weight:750;
-    padding:5px 11px 13px;
-    border-bottom:1px solid #edf1ee;
-    margin-bottom:10px;
-}
+.brand-subtitle{color:#cfddd6;font-size:12px;margin-top:4px}
+.header-label{border:1px solid #527166;padding:7px 13px;border-radius:7px;font-size:12px}
+
+.app-layout{width:92%;max-width:1500px;margin:25px auto 35px;display:grid;grid-template-columns:225px minmax(0,1fr);gap:20px;align-items:start}
+.sidebar{background:white;border:1px solid var(--border);border-radius:12px;padding:15px 11px;position:sticky;top:15px;box-shadow:0 4px 15px #19322808}
+.sidebar-heading{color:#99a49e;font-size:11px;font-weight:750;padding:5px 10px 12px;border-bottom:1px solid #edf1ee;margin-bottom:9px}
 .sidebar-nav{display:flex;flex-direction:column;gap:5px}
-.nav-item{
-    width:100%;
-    text-align:right;
-    padding:12px;
-    border:1px solid transparent;
-    border-radius:8px;
-    background:transparent;
-    color:#5d6c63;
-    font-size:13px;
-    font-weight:650;
-    transition:.2s;
-}
+.nav-item{width:100%;text-align:right;padding:11px;border:1px solid transparent;border-radius:8px;background:transparent;color:#5d6c63;font-size:13px;font-weight:650}
 .nav-item:hover{background:#f5f8f6;color:var(--green)}
-.nav-item.active{
-    background:#eaf2ed;
-    border-color:#dce9e0;
-    color:var(--green);
-    font-weight:750;
-}
-.app-content.container{width:100%;max-width:none;min-width:0;margin:0}
+.nav-item.active{background:#eaf2ed;border-color:#dce9e0;color:var(--green);font-weight:750}
+
+.app-content{min-width:0}
 .page{display:none}
-.page.active{display:block;animation:appear .15s ease}
-@keyframes appear{from{opacity:.75}to{opacity:1}}
-.welcome{margin-bottom:28px}
-.welcome h1,.page-topline h1{
-    color:var(--green);
-    font-size:27px;
-    line-height:1.4;
-    margin-bottom:6px;
-}
+.page.active{display:block}
+.welcome{margin-bottom:25px}
+.welcome h1,.page-topline h1{color:var(--green);font-size:27px;line-height:1.4;margin-bottom:6px}
 .welcome p,.description,.page-topline p{color:var(--muted);font-size:13px}
-.page-topline{margin-bottom:23px}
-.section-title{color:var(--green);font-size:18px;font-weight:750;margin-bottom:18px}
-.stats{
-    display:grid;
-    grid-template-columns:repeat(3,minmax(0,1fr));
-    gap:15px;
-    margin-bottom:26px;
-}
-.stat-card,.panel{
-    background:var(--white);
-    border:1px solid var(--border);
-    border-radius:11px;
-    box-shadow:var(--shadow);
-}
-.stat-card{padding:20px;min-width:0}
-.stat-label{color:#6e7c74;font-size:12px;font-weight:650;margin-bottom:9px}
-.stat-value{
-    color:var(--green);
-    font-size:25px;
-    font-weight:750;
-    overflow-wrap:anywhere;
-    line-height:1.45;
-}
-.stat-caption{color:#98a39d;font-size:11px;margin-top:7px}
-.panel{padding:25px;margin-bottom:23px;min-width:0}
-.panel-heading{padding-bottom:17px;margin-bottom:21px;border-bottom:1px solid var(--border)}
-.panel-heading .section-title{margin-bottom:5px}
-.form-grid{
-    display:grid;
-    grid-template-columns:repeat(3,minmax(0,1fr));
-    gap:18px;
-}
+.page-topline{margin-bottom:22px}
+.section-title{color:var(--green);font-size:18px;font-weight:750;margin-bottom:16px}
+
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:25px}
+.stat-card,.panel{background:white;border:1px solid var(--border);border-radius:11px;box-shadow:0 4px 16px #19322808}
+.stat-card{padding:18px;min-width:0}
+.stat-label{color:#6e7c74;font-size:12px;font-weight:650;margin-bottom:8px}
+.stat-value{color:var(--green);font-size:24px;font-weight:750;overflow-wrap:anywhere;line-height:1.45}
+.stat-caption{color:#98a39d;font-size:11px;margin-top:6px}
+.panel{padding:23px;margin-bottom:22px;min-width:0}
+.panel-heading{padding-bottom:16px;margin-bottom:19px;border-bottom:1px solid var(--border)}
+.panel-heading .section-title{margin-bottom:4px}
+
+.form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px}
 .field{display:flex;flex-direction:column;gap:7px;min-width:0}
 .field label{color:#425248;font-size:12px;font-weight:700}
-.field input,.field select,.search-input{
-    width:100%;
-    height:44px;
-    padding:0 12px;
-    border:1px solid #dfe6e2;
-    border-radius:7px;
-    color:var(--text);
-    background:#fff;
-    outline:none;
-    font-size:13px;
-}
-.field input:focus,.field select:focus,.search-input:focus{
-    border-color:var(--green-light);
-    box-shadow:0 0 0 3px rgba(32,86,72,.08);
-}
-.field input::placeholder,.search-input::placeholder{color:#a5b0a9}
-.actions{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-top:22px}
-.primary-btn,.secondary-btn{
-    padding:10px 19px;
-    border-radius:7px;
-    font-size:13px;
-    font-weight:700;
-    min-height:42px;
-    transition:background .2s;
-}
-.primary-btn{background:var(--green);color:#fff;border:1px solid var(--green)}
-.primary-btn:hover{background:var(--green-light)}
-.secondary-btn{background:#fff;color:#4c5e53;border:1px solid #dfe6e2}
+.field input,.field select,.search-input{width:100%;height:43px;padding:0 11px;border:1px solid #dfe6e2;border-radius:7px;color:var(--text);background:white;outline:none;font-size:13px}
+.field input:focus,.field select:focus,.search-input:focus{border-color:var(--green2);box-shadow:0 0 0 3px #20564814}
+.field input[readonly]{background:#f5f7f6}
+.actions{display:flex;align-items:center;flex-wrap:wrap;gap:9px;margin-top:20px}
+.primary-btn,.secondary-btn,.danger-btn{padding:10px 16px;border-radius:7px;font-size:13px;font-weight:700;min-height:41px}
+.primary-btn{background:var(--green);color:white;border:1px solid var(--green)}
+.primary-btn:hover{background:var(--green2)}
+.secondary-btn{background:white;color:#4c5e53;border:1px solid #dfe6e2}
 .secondary-btn:hover{background:#f3f7f4}
-.message{
-    display:none;
-    margin-top:15px;
-    padding:11px 13px;
-    border-radius:7px;
-    font-size:12px;
-    overflow-wrap:anywhere;
-}
+.danger-btn{background:white;color:var(--red);border:1px solid #eed6d6}
+
+.message{display:none;margin-top:14px;padding:11px 13px;border-radius:7px;font-size:12px;overflow-wrap:anywhere}
 .message.success{display:block;background:#edf8f1;color:#17613b;border:1px solid #d4eddd}
 .message.error{display:block;background:#fff1f1;color:#a42626;border:1px solid #f1d3d3}
 .message.info{display:block;background:#f0f5f9;color:#36546b;border:1px solid #dae7ef}
-.shortcut-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
-.shortcut-button{
-    display:flex;
-    flex-direction:column;
-    align-items:flex-start;
-    gap:6px;
-    min-height:105px;
-    padding:17px;
-    text-align:right;
-    border:1px solid var(--border);
-    border-radius:9px;
-    background:#fbfcfb;
-    color:var(--green);
-}
+
+.shortcut-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.shortcut-button{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-height:95px;padding:16px;text-align:right;border:1px solid var(--border);border-radius:9px;background:#fbfcfb;color:var(--green)}
 .shortcut-button:hover{background:#f1f6f2;border-color:#ccdbd0}
 .shortcut-button strong{font-size:13px}
 .shortcut-button span{color:var(--muted);font-size:11px;line-height:1.8}
-.table-toolbar{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    flex-wrap:wrap;
-    gap:14px;
-    margin-bottom:18px;
-}
+
+.table-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:17px}
 .table-toolbar .section-title{margin-bottom:0}
 .search-input{width:300px;max-width:100%}
 .table-wrapper{width:100%;overflow-x:auto;border:1px solid var(--border);border-radius:8px}
-table{width:100%;min-width:900px;border-collapse:collapse;text-align:right}
+table{width:100%;min-width:850px;border-collapse:collapse;text-align:right}
 thead{background:#f1f6f2}
-th{
-    padding:14px 12px;
-    color:#506558;
-    font-size:11px;
-    font-weight:750;
-    white-space:nowrap;
-    border-bottom:1px solid var(--border);
-}
-td{
-    padding:13px 12px;
-    border-bottom:1px solid #edf1ee;
-    color:#44534a;
-    font-size:12px;
-    white-space:nowrap;
-}
+th{padding:13px 11px;color:#506558;font-size:11px;font-weight:750;white-space:nowrap;border-bottom:1px solid var(--border)}
+td{padding:12px 11px;border-bottom:1px solid #edf1ee;color:#44534a;font-size:12px;white-space:nowrap}
 tbody tr:last-child td{border-bottom:none}
 tbody tr:hover{background:#fafcfb}
 .product-name{color:var(--green);font-weight:750}
 .code-text{direction:ltr;text-align:left;display:inline-block;color:#748178}
+.empty-state{text-align:center;padding:30px 12px;color:#98a39d;white-space:normal}
+.table-footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:9px;margin-top:12px;color:var(--muted);font-size:11px}
+
 .action-cell{position:relative}
 .action-menu-wrap{position:relative}
-.dots-button{
-    width:36px;
-    height:34px;
-    border:1px solid #e2e8e4;
-    border-radius:7px;
-    background:#fff;
-    color:var(--green);
-    font-size:25px;
-    line-height:1;
-}
-.dots-button:hover,.dots-button[aria-expanded="true"]{background:#edf4ef;border-color:#cbd9d0}
-.actions-dropdown{
-    position:absolute;
-    z-index:25;
-    top:40px;
-    left:0;
-    width:165px;
-    padding:5px;
-    border:1px solid #e1e7e3;
-    border-radius:8px;
-    background:#fff;
-    box-shadow:0 10px 28px rgba(18,40,30,.13);
-}
-.actions-dropdown button{
-    display:block;
-    width:100%;
-    padding:9px 11px;
-    text-align:right;
-    border:none;
-    border-radius:5px;
-    background:#fff;
-    color:#35473c;
-    font-size:12px;
-}
+.dots-button{width:36px;height:34px;border:1px solid #e2e8e4;border-radius:7px;background:white;color:var(--green);font-size:24px;line-height:1}
+.actions-dropdown{position:absolute;z-index:25;top:39px;left:0;width:165px;padding:5px;border:1px solid #e1e7e3;border-radius:8px;background:white;box-shadow:0 10px 28px #12281e20}
+.actions-dropdown button{display:block;width:100%;padding:9px 10px;text-align:right;border:0;border-radius:5px;background:white;color:#35473c;font-size:12px}
 .actions-dropdown button:hover{background:#f0f5f1}
 .actions-dropdown .menu-delete{color:var(--red)}
-.actions-dropdown .menu-delete:hover{background:#fff1f1}
-.empty-state{text-align:center;padding:32px 12px;color:#98a39d;white-space:normal}
-.table-footer{
-    display:flex;
-    justify-content:space-between;
-    flex-wrap:wrap;
-    gap:10px;
-    margin-top:13px;
-    color:var(--muted);
-    font-size:11px;
-}
-.sale-summary{
-    display:grid;
-    grid-template-columns:repeat(3,minmax(0,1fr));
-    gap:14px;
-    margin-bottom:22px;
-}
-.sale-stat{border:1px solid var(--border);background:#f8faf8;border-radius:8px;padding:15px;min-width:0}
+
+.sale-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:20px}
+.sale-stat{border:1px solid var(--border);background:#f8faf8;border-radius:8px;padding:14px;min-width:0}
 .sale-stat-label{font-size:11px;color:var(--muted);margin-bottom:5px}
-.sale-stat-value{font-size:20px;font-weight:750;color:var(--green);overflow-wrap:anywhere}
-.sale-preview{
-    margin-top:18px;
-    padding:14px 16px;
-    background:#f5f8f6;
-    border:1px solid #e1e9e3;
-    border-radius:8px;
-    color:#52645a;
-    font-size:12px;
-    line-height:2;
-}
-.sale-history-table{min-width:850px}
-.modal-overlay{
-    position:fixed;
-    inset:0;
-    z-index:100;
-    background:rgba(12,30,23,.48);
-    display:grid;
-    place-items:center;
-    padding:18px;
-}
-.modal{
-    width:100%;
-    max-width:440px;
-    background:#fff;
-    border:1px solid var(--border);
-    border-radius:13px;
-    padding:24px;
-    box-shadow:0 20px 70px rgba(0,0,0,.18);
-}
+.sale-stat-value{font-size:19px;font-weight:750;color:var(--green);overflow-wrap:anywhere}
+.sale-preview{margin-top:17px;padding:14px;background:#f5f8f6;border:1px solid #e1e9e3;border-radius:8px;color:#52645a;font-size:12px;line-height:2}
+
+.backup-note{padding:14px 15px;border:1px solid #eadfbe;background:#fffaf0;border-radius:8px;color:#765f32;font-size:12px;line-height:1.9;margin-top:15px}
+.backup-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:18px}
+.backup-summary div{padding:15px;background:#f6f9f7;border:1px solid var(--border);border-radius:8px}
+.backup-summary span{display:block;color:var(--muted);font-size:11px}
+.backup-summary strong{display:block;color:var(--green);font-size:22px;margin-top:5px}
+
+.modal-overlay{position:fixed;inset:0;z-index:100;background:#0c1e177a;display:grid;place-items:center;padding:18px}
+.modal{width:100%;max-width:440px;background:white;border:1px solid var(--border);border-radius:13px;padding:23px;box-shadow:0 20px 70px #0003}
 .modal h2{font-size:20px;color:var(--green);margin-bottom:7px}
-.modal p{font-size:12px;color:var(--muted);margin-bottom:20px}
-.modal .field{margin-bottom:14px}
-.modal-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:22px}
+.modal p{font-size:12px;color:var(--muted);margin-bottom:19px}
+.modal .field{margin-bottom:13px}
+.modal-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px}
 .modal-actions button{flex:1}
-footer{
-    margin-top:40px;
-    padding:22px 15px;
-    text-align:center;
-    background:#fff;
-    border-top:1px solid var(--border);
-    color:#8b968f;
-    font-size:11px;
-}
+
+footer{margin-top:35px;padding:21px 15px;text-align:center;background:white;border-top:1px solid var(--border);color:#8b968f;font-size:11px}
+
 @media(max-width:1100px){
-    .app-layout{grid-template-columns:205px minmax(0,1fr);gap:15px}
-    .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
-    .form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-    .shortcut-grid{grid-template-columns:1fr}
+ .app-layout{grid-template-columns:200px minmax(0,1fr);gap:14px}
+ .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:760px){
-    .app-layout{width:94%;display:flex;flex-direction:column;gap:15px;margin-top:18px}
-    .sidebar{position:static;width:100%;padding:11px}
-    .sidebar-heading{padding-bottom:8px;margin-bottom:7px}
-    .sidebar-nav{flex-direction:row;overflow-x:auto;gap:7px;padding-bottom:2px}
-    .nav-item{width:auto;min-width:max-content;padding:10px 13px;text-align:center}
-    .app-content.container{margin:0}
-    .sale-summary{grid-template-columns:1fr}
+ .app-layout{width:94%;display:flex;flex-direction:column;gap:14px;margin-top:17px}
+ .sidebar{position:static;width:100%;padding:10px}
+ .sidebar-heading{padding-bottom:8px;margin-bottom:7px}
+ .sidebar-nav{flex-direction:row;overflow-x:auto;gap:6px;padding-bottom:3px}
+ .nav-item{width:auto;min-width:max-content;padding:9px 12px;text-align:center}
+ .sale-summary{grid-template-columns:1fr}
 }
 @media(max-width:600px){
-    .topbar-inner{width:92%}
-    .brand{font-size:21px}
-    .app-layout{width:94%}
-    .welcome h1,.page-topline h1{font-size:22px}
-    .panel{padding:17px}
-    .form-grid{grid-template-columns:1fr}
-    .stats{gap:10px}
-    .stat-card{padding:14px}
-    .stat-label{font-size:11px}
-    .stat-value{font-size:21px}
-    .search-input{width:100%}
-    .table-toolbar{align-items:stretch}
-    .actions button{flex:1}
+ .topbar-inner{width:92%}
+ .brand{font-size:21px}
+ .welcome h1,.page-topline h1{font-size:22px}
+ .panel{padding:16px}
+ .form-grid{grid-template-columns:1fr}
+ .stats{gap:10px}
+ .stat-card{padding:13px}
+ .stat-value{font-size:21px}
+ .table-toolbar{align-items:stretch}
+ .search-input{width:100%}
+ .backup-summary{grid-template-columns:1fr}
+ .actions button{flex:1}
 }
 </style>
 </head>
 
 <body>
-
 <header class="topbar">
-    <div class="topbar-inner">
-        <div>
-            <div class="brand">GAMY <span>INVENTORY</span></div>
-            <div class="brand-subtitle">نظام إدارة المخازن والمبيعات</div>
-        </div>
-        <div class="header-label">لوحة التحكم</div>
-    </div>
+ <div class="topbar-inner">
+  <div>
+   <div class="brand">GAMY <span>INVENTORY</span></div>
+   <div class="brand-subtitle">نظام إدارة المخازن والمبيعات</div>
+  </div>
+  <div class="header-label">لوحة التحكم</div>
+ </div>
 </header>
 
 <div class="app-layout">
-    <aside class="sidebar">
-        <div class="sidebar-heading">القائمة الرئيسية</div>
-        <nav class="sidebar-nav">
-            <button type="button" class="nav-item active" data-page="dashboard" data-title="لوحة التحكم">لوحة التحكم</button>
-            <button type="button" class="nav-item" data-page="products" data-title="إدارة المنتجات">إدارة المنتجات</button>
-            <button type="button" class="nav-item" data-page="sales" data-title="تسجيل المبيعات">تسجيل المبيعات</button>
-            <button type="button" class="nav-item" data-page="history" data-title="سجل المبيعات">سجل المبيعات</button>
-        </nav>
-    </aside>
+ <aside class="sidebar">
+  <div class="sidebar-heading">القائمة الرئيسية</div>
+  <nav class="sidebar-nav">
+   <button type="button" class="nav-item active" data-page="dashboard" data-title="لوحة التحكم">لوحة التحكم</button>
+   <button type="button" class="nav-item" data-page="products" data-title="إدارة المنتجات">إدارة المنتجات</button>
+   <button type="button" class="nav-item" data-page="sales" data-title="تسجيل المبيعات">تسجيل المبيعات</button>
+   <button type="button" class="nav-item" data-page="history" data-title="سجل المبيعات">سجل المبيعات</button>
+   <button type="button" class="nav-item" data-page="backup" data-title="النسخ الاحتياطي">النسخ الاحتياطي</button>
+  </nav>
+ </aside>
 
-    <main class="container app-content">
+ <main class="app-content">
 
-        <section class="page active" data-page-section="dashboard">
-            <section class="welcome">
-                <h1>إدارة المخازن والمبيعات</h1>
-                <p>تابع منتجاتك وكمياتك ومبيعاتك من مكان واحد.</p>
-            </section>
+  <section class="page active" data-page-section="dashboard">
+   <section class="welcome">
+    <h1>إدارة المخازن والمبيعات</h1>
+    <p>تابع المنتجات والكميات والمبيعات من مكان واحد.</p>
+   </section>
+   <h2 class="section-title">ملخص المخزن</h2>
+   <div class="stats">
+    <div class="stat-card"><div class="stat-label">عدد أنواع المنتجات</div><div class="stat-value" id="productCount">0</div><div class="stat-caption">إجمالي المنتجات المسجلة</div></div>
+    <div class="stat-card"><div class="stat-label">قيمة المخزون</div><div class="stat-value" id="stockValue">0 ج.م</div><div class="stat-caption">محسوبة بسعر الشراء</div></div>
+    <div class="stat-card"><div class="stat-label">إجمالي القطع</div><div class="stat-value" id="totalUnits">0</div><div class="stat-caption">القطع الموجودة بالمخزن</div></div>
+    <div class="stat-card"><div class="stat-label">مخزون منخفض</div><div class="stat-value" id="lowStockCount">0</div><div class="stat-caption">5 قطع أو أقل</div></div>
+    <div class="stat-card"><div class="stat-label">مبيعات اليوم</div><div class="stat-value" id="dashSalesToday">0 ج.م</div><div class="stat-caption">إجمالي البيع اليوم</div></div>
+    <div class="stat-card"><div class="stat-label">ربح اليوم التقديري</div><div class="stat-value" id="dashProfitToday">0 ج.م</div><div class="stat-caption">قبل مصاريف التشغيل</div></div>
+   </div>
 
-            <h2 class="section-title">ملخص المخزن</h2>
-            <div class="stats">
-                <div class="stat-card">
-                    <div class="stat-label">عدد أنواع المنتجات</div>
-                    <div class="stat-value" id="productCount">0</div>
-                    <div class="stat-caption">إجمالي المنتجات المسجلة</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">قيمة المخزون</div>
-                    <div class="stat-value" id="stockValue">0 ج.م</div>
-                    <div class="stat-caption">محسوبة بسعر الشراء</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">إجمالي القطع</div>
-                    <div class="stat-value" id="totalUnits">0</div>
-                    <div class="stat-caption">القطع الموجودة بالمخزن</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">مخزون منخفض</div>
-                    <div class="stat-value" id="lowStockCount">0</div>
-                    <div class="stat-caption">المنتجات التي كميتها 5 قطع أو أقل</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">مبيعات اليوم</div>
-                    <div class="stat-value" id="dashSalesToday">0 ج.م</div>
-                    <div class="stat-caption">إجمالي البيع المسجل اليوم</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">ربح اليوم التقديري</div>
-                    <div class="stat-value" id="dashProfitToday">0 ج.م</div>
-                    <div class="stat-caption">قبل مصاريف التشغيل</div>
-                </div>
-            </div>
+   <section class="panel">
+    <div class="panel-heading"><h2 class="section-title">الوصول السريع</h2><p class="description">اختار القسم الذي تريد العمل عليه.</p></div>
+    <div class="shortcut-grid">
+     <button type="button" class="shortcut-button" data-page-link="products"><strong>إدارة المنتجات</strong><span>إضافة المنتجات وتعديل البيانات ومتابعة الكميات.</span></button>
+     <button type="button" class="shortcut-button" data-page-link="sales"><strong>تسجيل المبيعات</strong><span>تسجيل البيع وخصم الكمية من المخزون.</span></button>
+     <button type="button" class="shortcut-button" data-page-link="history"><strong>سجل المبيعات</strong><span>مراجعة عمليات البيع والإجماليات.</span></button>
+     <button type="button" class="shortcut-button" data-page-link="backup"><strong>النسخ الاحتياطي</strong><span>تنزيل تقرير Excel أو نسخة استعادة.</span></button>
+    </div>
+   </section>
 
-            <section class="panel">
-                <div class="panel-heading">
-                    <h2 class="section-title">الوصول السريع</h2>
-                    <p class="description">اختار القسم الذي تريد العمل عليه.</p>
-                </div>
-                <div class="shortcut-grid">
-                    <button type="button" class="shortcut-button" data-page-link="products">
-                        <strong>إدارة المنتجات</strong>
-                        <span>إضافة المنتجات وتعديل البيانات ومتابعة الكميات.</span>
-                    </button>
-                    <button type="button" class="shortcut-button" data-page-link="sales">
-                        <strong>تسجيل المبيعات</strong>
-                        <span>تسجيل البيع وخصم الكمية من المخزون تلقائيًا.</span>
-                    </button>
-                    <button type="button" class="shortcut-button" data-page-link="history">
-                        <strong>سجل المبيعات</strong>
-                        <span>مراجعة عمليات البيع السابقة والإجماليات.</span>
-                    </button>
-                </div>
-            </section>
+   <section class="panel">
+    <div class="table-toolbar"><h2 class="section-title">أحدث المبيعات</h2><button type="button" class="secondary-btn" data-page-link="history">عرض سجل المبيعات</button></div>
+    <div class="table-wrapper">
+     <table><thead><tr><th>التاريخ والوقت</th><th>المنتج</th><th>الكمية</th><th>إجمالي البيع</th></tr></thead><tbody id="recentSalesBody"></tbody></table>
+    </div>
+   </section>
+  </section>
 
-            <section class="panel">
-                <div class="table-toolbar">
-                    <h2 class="section-title">أحدث المبيعات</h2>
-                    <button type="button" class="secondary-btn" data-page-link="history">عرض سجل المبيعات</button>
-                </div>
-                <div class="table-wrapper">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>التاريخ والوقت</th>
-                                <th>المنتج</th>
-                                <th>الكمية</th>
-                                <th>إجمالي البيع</th>
-                            </tr>
-                        </thead>
-                        <tbody id="recentSalesBody"></tbody>
-                    </table>
-                </div>
-            </section>
-        </section>
+  <section class="page" data-page-section="products">
+   <div class="page-topline"><h1>إدارة المنتجات</h1><p>إضافة المنتجات وتعديل البيانات وإدارة كميات المخزون.</p></div>
+   <section class="panel" id="productFormPanel">
+    <div class="panel-heading"><h2 class="section-title" id="productFormTitle">إضافة منتج جديد</h2><p class="description" id="productFormDescription">أدخل بيانات المنتج واحفظها في المخزون.</p></div>
+    <form id="productForm">
+     <div class="form-grid">
+      <div class="field"><label for="productName">اسم المنتج</label><input id="productName" type="text" placeholder="مثال: تيشيرت أسود" required></div>
+      <div class="field"><label for="productCode">كود المنتج</label><input id="productCode" type="text" placeholder="مثال: TS001" required></div>
+      <div class="field"><label for="productColor">اللون</label><input id="productColor" type="text" placeholder="مثال: أسود"></div>
+      <div class="field"><label for="purchasePrice">سعر الشراء بالجنيه</label><input id="purchasePrice" type="number" min="0.01" step="0.01" required></div>
+      <div class="field"><label for="salePrice">سعر البيع بالجنيه</label><input id="salePrice" type="number" min="0.01" step="0.01" required></div>
+      <div class="field"><label for="productQuantity">الكمية الموجودة</label><input id="productQuantity" type="number" min="0" step="1" required></div>
+     </div>
+     <div class="actions">
+      <button class="primary-btn" type="submit" id="saveProductButton">حفظ المنتج</button>
+      <button class="secondary-btn" type="button" id="clearFormButton">مسح البيانات</button>
+      <button class="secondary-btn" type="button" id="cancelEditButton" hidden>إلغاء التعديل</button>
+     </div>
+     <div id="formMessage" class="message" role="status"></div>
+    </form>
+   </section>
 
-        <section class="page" data-page-section="products">
-            <div class="page-topline">
-                <h1>إدارة المنتجات</h1>
-                <p>إضافة المنتجات وتعديل البيانات وإدارة كميات المخزون.</p>
-            </div>
+   <section class="panel">
+    <div class="table-toolbar"><h2 class="section-title">قائمة المنتجات</h2><input id="searchInput" class="search-input" type="search" placeholder="بحث بالاسم أو الكود أو اللون"></div>
+    <div class="table-wrapper">
+     <table><thead><tr><th>اسم المنتج</th><th>كود المنتج</th><th>اللون</th><th>سعر الشراء</th><th>سعر البيع</th><th>الكمية</th><th>قيمة المخزون</th><th>الإجراءات</th></tr></thead><tbody id="productTableBody"></tbody></table>
+    </div>
+    <div class="table-footer"><span id="tableCount">عدد المنتجات: 0</span><span>كل المبالغ بالجنيه المصري</span></div>
+   </section>
+  </section>
 
-            <section class="panel" id="productFormPanel">
-                <div class="panel-heading">
-                    <h2 class="section-title" id="productFormTitle">إضافة منتج جديد</h2>
-                    <p class="description" id="productFormDescription">أدخل بيانات المنتج واحفظها في قائمة المخزون.</p>
-                </div>
+  <section class="page" data-page-section="sales">
+   <div class="page-topline"><h1>تسجيل المبيعات</h1><p>سجّل البيع وراجع الإجمالي والربح المتوقع.</p></div>
+   <section class="panel">
+    <div class="panel-heading"><h2 class="section-title">ملخص مبيعات اليوم</h2></div>
+    <div class="sale-summary">
+     <div class="sale-stat"><div class="sale-stat-label">مبيعات اليوم</div><div class="sale-stat-value" id="todaySalesTotal">0 ج.م</div></div>
+     <div class="sale-stat"><div class="sale-stat-label">ربح اليوم التقديري</div><div class="sale-stat-value" id="todayProfitTotal">0 ج.م</div></div>
+     <div class="sale-stat"><div class="sale-stat-label">عدد عمليات البيع اليوم</div><div class="sale-stat-value" id="todaySalesCount">0</div></div>
+    </div>
+   </section>
+   <section class="panel">
+    <div class="panel-heading"><h2 class="section-title">تسجيل عملية بيع</h2><p class="description">اختار المنتج والكمية وسعر البيع، وسيتم خصم الكمية عند التأكيد.</p></div>
+    <form id="saleForm">
+     <div class="form-grid">
+      <div class="field"><label for="saleProduct">المنتج</label><select id="saleProduct" required><option value="">اختار المنتج</option></select></div>
+      <div class="field"><label for="saleQuantity">الكمية المباعة</label><input id="saleQuantity" type="number" min="1" step="1" value="1" required></div>
+      <div class="field"><label for="saleUnitPrice">سعر بيع القطعة بالجنيه</label><input id="saleUnitPrice" type="number" min="0.01" step="0.01" required></div>
+     </div>
+     <div class="sale-preview" id="salePreview">اختار المنتج وحدد الكمية لمعاينة الحسابات.</div>
+     <div class="actions"><button class="primary-btn" type="submit">تسجيل عملية البيع</button><button class="secondary-btn" type="button" id="clearSaleFormButton">مسح بيانات البيع</button></div>
+     <div id="saleMessage" class="message" role="status"></div>
+    </form>
+   </section>
+  </section>
 
-                <form id="productForm">
-                    <div class="form-grid">
-                        <div class="field">
-                            <label for="productName">اسم المنتج</label>
-                            <input id="productName" type="text" placeholder="مثال: تيشيرت أسود" required>
-                        </div>
-                        <div class="field">
-                            <label for="productCode">كود المنتج</label>
-                            <input id="productCode" type="text" placeholder="مثال: TS001" required>
-                        </div>
-                        <div class="field">
-                            <label for="productColor">اللون</label>
-                            <input id="productColor" type="text" placeholder="مثال: أسود">
-                        </div>
-                        <div class="field">
-                            <label for="purchasePrice">سعر الشراء بالجنيه</label>
-                            <input id="purchasePrice" type="number" min="0.01" step="0.01" placeholder="200" required>
-                        </div>
-                        <div class="field">
-                            <label for="salePrice">سعر البيع بالجنيه</label>
-                            <input id="salePrice" type="number" min="0.01" step="0.01" placeholder="350" required>
-                        </div>
-                        <div class="field">
-                            <label for="productQuantity">الكمية الموجودة</label>
-                            <input id="productQuantity" type="number" min="0" step="1" placeholder="10" required>
-                        </div>
-                    </div>
+  <section class="page" data-page-section="history">
+   <div class="page-topline"><h1>سجل المبيعات</h1><p>راجع عمليات البيع السابقة وإجمالي كل عملية.</p></div>
+   <section class="panel">
+    <div class="table-toolbar"><h2 class="section-title">عمليات البيع المسجلة</h2><input id="salesSearch" class="search-input" type="search" placeholder="بحث باسم المنتج أو الكود"></div>
+    <div class="table-wrapper">
+     <table><thead><tr><th>التاريخ والوقت</th><th>المنتج</th><th>الكود</th><th>الكمية</th><th>سعر القطعة</th><th>إجمالي البيع</th><th>الربح</th></tr></thead><tbody id="salesTableBody"></tbody></table>
+    </div>
+    <div class="table-footer"><span id="salesTableCount">عدد عمليات البيع: 0</span><span>الربح قبل مصاريف التشغيل</span></div>
+   </section>
+  </section>
 
-                    <div class="actions">
-                        <button class="primary-btn" type="submit" id="saveProductButton">حفظ المنتج</button>
-                        <button class="secondary-btn" type="button" id="clearFormButton">مسح البيانات</button>
-                        <button class="secondary-btn" type="button" id="cancelEditButton" hidden>إلغاء التعديل</button>
-                    </div>
-                    <div id="formMessage" class="message" role="status"></div>
-                </form>
-            </section>
+  <section class="page" data-page-section="backup">
+   <div class="page-topline"><h1>النسخ الاحتياطي</h1><p>نزّل تقرير Excel منظمًا أو احفظ نسخة لاستعادة البيانات لاحقًا.</p></div>
+   <section class="panel">
+    <div class="panel-heading"><h2 class="section-title">بياناتك الحالية</h2><p class="description">الأرقام التالية تمثل البيانات المحفوظة في هذا المتصفح.</p></div>
+    <div class="backup-summary">
+     <div><span>عدد المنتجات</span><strong id="backupProductsCount">0</strong></div>
+     <div><span>عدد عمليات البيع</span><strong id="backupSalesCount">0</strong></div>
+    </div>
+    <div class="actions">
+     <button type="button" class="primary-btn" id="exportBackupButton">تنزيل تقرير Excel</button>
+     <button type="button" class="secondary-btn" id="exportJsonBackupButton">تنزيل نسخة استعادة JSON</button>
+    </div>
+    <div id="exportMessage" class="message" role="status"></div>
+   </section>
+   <section class="panel">
+    <div class="panel-heading"><h2 class="section-title">استعادة نسخة احتياطية</h2><p class="description">اختار ملف JSON سبق تنزيله من هذا البرنامج.</p></div>
+    <div class="actions">
+     <button type="button" class="primary-btn" id="chooseBackupButton">اختيار ملف للاستعادة</button>
+     <input id="backupFileInput" type="file" accept=".json,application/json" hidden>
+    </div>
+    <div class="backup-note">عند الاستعادة سيتم استبدال المنتجات والمبيعات الحالية بالبيانات الموجودة في الملف. احتفظ بنسخة احتياطية من بياناتك الحالية أولًا.</div>
+    <div id="importMessage" class="message" role="status"></div>
+   </section>
+  </section>
 
-            <section class="panel">
-                <div class="table-toolbar">
-                    <h2 class="section-title">قائمة المنتجات</h2>
-                    <input id="searchInput" class="search-input" type="search" placeholder="بحث بالاسم أو الكود أو اللون">
-                </div>
-                <div class="table-wrapper">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>اسم المنتج</th>
-                                <th>كود المنتج</th>
-                                <th>اللون</th>
-                                <th>سعر الشراء</th>
-                                <th>سعر البيع</th>
-                                <th>الكمية</th>
-                                <th>قيمة المخزون</th>
-                                <th>الإجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="productTableBody"></tbody>
-                    </table>
-                </div>
-                <div class="table-footer">
-                    <span id="tableCount">عدد المنتجات: 0</span>
-                    <span>كل المبالغ بالجنيه المصري</span>
-                </div>
-            </section>
-        </section>
-
-        <section class="page" data-page-section="sales">
-            <div class="page-topline">
-                <h1>تسجيل المبيعات</h1>
-                <p>سجّل البيع، راجع الإجمالي، وتابع الربح المتوقع قبل التأكيد.</p>
-            </div>
-
-            <section class="panel">
-                <div class="panel-heading">
-                    <h2 class="section-title">ملخص مبيعات اليوم</h2>
-                </div>
-                <div class="sale-summary">
-                    <div class="sale-stat">
-                        <div class="sale-stat-label">مبيعات اليوم</div>
-                        <div class="sale-stat-value" id="todaySalesTotal">0 ج.م</div>
-                    </div>
-                    <div class="sale-stat">
-                        <div class="sale-stat-label">ربح اليوم التقديري</div>
-                        <div class="sale-stat-value" id="todayProfitTotal">0 ج.م</div>
-                    </div>
-                    <div class="sale-stat">
-                        <div class="sale-stat-label">عدد عمليات البيع اليوم</div>
-                        <div class="sale-stat-value" id="todaySalesCount">0</div>
-                    </div>
-                </div>
-            </section>
-
-            <section class="panel">
-                <div class="panel-heading">
-                    <h2 class="section-title">تسجيل عملية بيع</h2>
-                    <p class="description">اختار المنتج والكمية وسعر البيع، وسيتم خصم الكمية عند تأكيد العملية.</p>
-                </div>
-
-                <form id="saleForm">
-                    <div class="form-grid">
-                        <div class="field">
-                            <label for="saleProduct">المنتج</label>
-                            <select id="saleProduct" required>
-                                <option value="">اختار المنتج</option>
-                            </select>
-                        </div>
-                        <div class="field">
-                            <label for="saleQuantity">الكمية المباعة</label>
-                            <input id="saleQuantity" type="number" min="1" step="1" value="1" required>
-                        </div>
-                        <div class="field">
-                            <label for="saleUnitPrice">سعر بيع القطعة بالجنيه</label>
-                            <input id="saleUnitPrice" type="number" min="0.01" step="0.01" placeholder="350" required>
-                        </div>
-                    </div>
-
-                    <div class="sale-preview" id="salePreview" aria-live="polite">اختار المنتج وحدد الكمية لمعاينة الحسابات.</div>
-
-                    <div class="actions">
-                        <button class="primary-btn" type="submit">تسجيل عملية البيع</button>
-                        <button class="secondary-btn" type="button" id="clearSaleFormButton">مسح بيانات البيع</button>
-                    </div>
-                    <div id="saleMessage" class="message" role="status"></div>
-                </form>
-            </section>
-        </section>
-
-        <section class="page" data-page-section="history">
-            <div class="page-topline">
-                <h1>سجل المبيعات</h1>
-                <p>راجع عمليات البيع السابقة وإجمالي كل عملية.</p>
-            </div>
-
-            <section class="panel">
-                <div class="table-toolbar">
-                    <h2 class="section-title">عمليات البيع المسجلة</h2>
-                    <input id="salesSearch" class="search-input" type="search" placeholder="بحث باسم المنتج أو الكود">
-                </div>
-                <div class="table-wrapper">
-                    <table class="sale-history-table">
-                        <thead>
-                            <tr>
-                                <th>التاريخ والوقت</th>
-                                <th>المنتج</th>
-                                <th>الكود</th>
-                                <th>الكمية</th>
-                                <th>سعر القطعة</th>
-                                <th>إجمالي البيع</th>
-                                <th>الربح</th>
-                            </tr>
-                        </thead>
-                        <tbody id="salesTableBody"></tbody>
-                    </table>
-                </div>
-                <div class="table-footer">
-                    <span id="salesTableCount">عدد عمليات البيع: 0</span>
-                    <span>الربح محسوب قبل مصاريف التشغيل</span>
-                </div>
-            </section>
-        </section>
-    </main>
+ </main>
 </div>
 
-<!-- نافذة إضافة كميات جديدة -->
-<div class="modal-overlay" id="stockModal" hidden>
-    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="stockModalTitle">
-        <h2 id="stockModalTitle">إضافة كمية للمخزون</h2>
-        <p id="stockModalDescription">اكتب عدد القطع الجديدة التي وصلت إلى المخزن.</p>
-        <form id="stockForm">
-            <div class="field">
-                <label for="stockProductName">اسم المنتج</label>
-                <input id="stockProductName" type="text" readonly>
-            </div>
-            <div class="field">
-                <label for="stockCurrentQuantity">الكمية الحالية</label>
-                <input id="stockCurrentQuantity" type="number" readonly>
-            </div>
-            <div class="field">
-                <label for="stockAddQuantity">الكمية الجديدة</label>
-                <input id="stockAddQuantity" type="number" min="1" step="1" required>
-            </div>
-            <div id="stockMessage" class="message" role="status"></div>
-            <div class="modal-actions">
-                <button class="primary-btn" type="submit">تأكيد إضافة الكمية</button>
-                <button class="secondary-btn" type="button" id="closeStockModal">إلغاء</button>
-            </div>
-        </form>
-    </section>
+<div id="stockModal" class="modal-overlay" hidden>
+ <section class="modal" role="dialog" aria-modal="true" aria-labelledby="stockModalTitle">
+  <h2 id="stockModalTitle">إضافة كمية جديدة</h2>
+  <p>اكتب عدد القطع التي تريد إضافتها للمخزون.</p>
+  <form id="stockForm">
+   <div class="field"><label for="stockProductName">اسم المنتج</label><input id="stockProductName" readonly></div>
+   <div class="field"><label for="stockCurrentQuantity">الكمية الحالية</label><input id="stockCurrentQuantity" type="number" readonly></div>
+   <div class="field"><label for="stockAddQuantity">الكمية الجديدة</label><input id="stockAddQuantity" type="number" min="1" step="1" required></div>
+   <div id="stockMessage" class="message" role="status"></div>
+   <div class="modal-actions"><button class="primary-btn" type="submit">حفظ الكمية</button><button class="secondary-btn" id="closeStockModal" type="button">إلغاء</button></div>
+  </form>
+ </section>
 </div>
 
 <footer>GAMY INVENTORY © 2026 | نظام إدارة المخازن والمبيعات</footer>
@@ -688,54 +324,41 @@ footer{
 <script>
 "use strict";
 
+/* الحفاظ على مفاتيح التخزين القديمة */
 const PRODUCT_KEY = "gamy_inventory_products_v1";
 const SALES_KEY = "gamy_inventory_sales_v1";
-
-const navButtons = Array.from(document.querySelectorAll(".nav-item[data-page]"));
-const pages = Array.from(document.querySelectorAll("[data-page-section]"));
-const headerLabel = document.querySelector(".header-label");
-
-const productForm = document.getElementById("productForm");
-const productTable = document.getElementById("productTableBody");
-const searchInput = document.getElementById("searchInput");
-const saleForm = document.getElementById("saleForm");
-const salesSearch = document.getElementById("salesSearch");
+const $ = id => document.getElementById(id);
 
 let products = [];
 let sales = [];
 let editingProductId = null;
 let stockProductId = null;
 
-/* تحميل المنتجات القديمة */
-try {
-    const stored = localStorage.getItem(PRODUCT_KEY);
-    const parsed = stored ? JSON.parse(stored) : [];
-
-    if (Array.isArray(parsed)) {
-        products = parsed.filter(p => p && typeof p === "object").map((p, index) => ({
-            id: String(p.id || ("product-" + index + "-" + Date.now())),
-            name: String(p.name || ""),
-            code: String(p.code || ""),
-            color: String(p.color || ""),
-            purchasePrice: Math.max(0, Number(p.purchasePrice) || 0),
-            salePrice: Math.max(0, Number(p.salePrice) || 0),
-            quantity: Math.max(0, Number(p.quantity) || 0)
-        }));
+function readStorageArray(key) {
+    try {
+        const raw = localStorage.getItem(key);
+        const data = raw ? JSON.parse(raw) : [];
+        return Array.isArray(data) ? data : [];
+    } catch (error) {
+        console.error("Storage read error:", error);
+        return [];
     }
-} catch (error) {
-    products = [];
 }
 
-/* تحميل المبيعات القديمة */
-try {
-    const stored = localStorage.getItem(SALES_KEY);
-    const parsed = stored ? JSON.parse(stored) : [];
-    if (Array.isArray(parsed)) {
-        sales = parsed.filter(s => s && typeof s === "object" && s.id && s.createdAt);
-    }
-} catch (error) {
-    sales = [];
-}
+products = readStorageArray(PRODUCT_KEY)
+    .filter(p => p && typeof p === "object")
+    .map((p, i) => ({
+        id: String(p.id || ("product-" + i + "-" + Date.now())),
+        name: String(p.name || ""),
+        code: String(p.code || ""),
+        color: String(p.color || ""),
+        purchasePrice: Math.max(0, Number(p.purchasePrice) || 0),
+        salePrice: Math.max(0, Number(p.salePrice) || 0),
+        quantity: Math.max(0, Number(p.quantity) || 0)
+    }));
+
+sales = readStorageArray(SALES_KEY)
+    .filter(s => s && typeof s === "object" && s.id && s.createdAt);
 
 function formatMoney(value) {
     return new Intl.NumberFormat("ar-EG", {
@@ -750,19 +373,21 @@ function normalize(value) {
 }
 
 function findProduct(id) {
-    return products.find(p => p.id === id);
+    return products.find(p => String(p.id) === String(id));
 }
 
-function showMessage(elementId, text, type) {
-    const element = document.getElementById(elementId);
-    element.textContent = text;
-    element.className = "message " + type;
+function showMessage(id, text, type = "info") {
+    const el = $(id);
+    if (!el) return;
+    el.textContent = text;
+    el.className = "message " + type;
 }
 
-function clearMessage(elementId) {
-    const element = document.getElementById(elementId);
-    element.textContent = "";
-    element.className = "message";
+function clearMessage(id) {
+    const el = $(id);
+    if (!el) return;
+    el.textContent = "";
+    el.className = "message";
 }
 
 function saveProducts() {
@@ -770,57 +395,70 @@ function saveProducts() {
         localStorage.setItem(PRODUCT_KEY, JSON.stringify(products));
         return true;
     } catch (error) {
-        showMessage("formMessage", "تعذر حفظ المنتجات في المتصفح.", "error");
-        return false;
-    }
-}
-
-function saveSales() {
-    try {
-        localStorage.setItem(SALES_KEY, JSON.stringify(sales));
-        return true;
-    } catch (error) {
-        showMessage("saleMessage", "تعذر حفظ سجل المبيعات في المتصفح.", "error");
+        console.error(error);
+        showMessage("formMessage", "تعذر حفظ بيانات المنتجات في المتصفح.", "error");
         return false;
     }
 }
 
 function createCell(value, className = "") {
-    const cell = document.createElement("td");
-    cell.textContent = value;
-    if (className) cell.className = className;
-    return cell;
+    const td = document.createElement("td");
+    td.textContent = value == null ? "" : String(value);
+    if (className) td.className = className;
+    return td;
 }
 
-/* التنقل بين الأقسام */
-function showPage(name, updateHash = true) {
-    const valid = ["dashboard", "products", "sales", "history"];
-    const target = valid.includes(name) ? name : "dashboard";
+function emptyRow(body, columns, message) {
+    const tr = document.createElement("tr");
+    const td = document.createElement("td");
+    td.colSpan = columns;
+    td.className = "empty-state";
+    td.textContent = message;
+    tr.appendChild(td);
+    body.appendChild(tr);
+}
 
-    pages.forEach(page => {
-        page.classList.toggle("active", page.dataset.pageSection === target);
+function updateBackupSummary() {
+    $("backupProductsCount").textContent = products.length.toLocaleString("ar-EG");
+    $("backupSalesCount").textContent = sales.length.toLocaleString("ar-EG");
+}
+
+/* التنقل بين الصفحات */
+function showPage(name, updateHash = true) {
+    const allowed = ["dashboard", "products", "sales", "history", "backup"];
+    const target = allowed.includes(name) ? name : "dashboard";
+
+    document.querySelectorAll("[data-page-section]").forEach(section => {
+        section.classList.toggle("active", section.dataset.pageSection === target);
     });
 
-    navButtons.forEach(button => {
+    document.querySelectorAll(".nav-item[data-page]").forEach(button => {
         const active = button.dataset.page === target;
         button.classList.toggle("active", active);
         button.setAttribute("aria-current", active ? "page" : "false");
     });
 
-    const activeButton = navButtons.find(button => button.dataset.page === target);
-    if (activeButton) headerLabel.textContent = activeButton.dataset.title;
+    const activeButton = document.querySelector('.nav-item[data-page="' + target + '"]');
+    const label = document.querySelector(".header-label");
+    if (label && activeButton) label.textContent = activeButton.dataset.title;
 
     if (updateHash && location.hash !== "#" + target) {
-        location.hash = target;
+        try {
+            location.hash = target;
+        } catch (error) {
+            console.warn("Hash navigation unavailable:", error);
+        }
     }
 
     renderProducts();
     renderSales();
     updateSalePreview();
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    updateBackupSummary();
+
+    window.scrollTo(0, 0);
 }
 
-navButtons.forEach(button => {
+document.querySelectorAll(".nav-item[data-page]").forEach(button => {
     button.addEventListener("click", () => showPage(button.dataset.page));
 });
 
@@ -829,24 +467,25 @@ document.querySelectorAll("[data-page-link]").forEach(button => {
 });
 
 window.addEventListener("hashchange", () => {
-    showPage(location.hash.slice(1) || "dashboard", false);
+    showPage(location.hash.slice(1), false);
 });
 
-/* إغلاق قوائم الثلاث نقط */
+/* إغلاق قوائم المنتجات */
 function closeMenus() {
     document.querySelectorAll(".actions-dropdown").forEach(menu => menu.hidden = true);
-    document.querySelectorAll(".dots-button").forEach(button => button.setAttribute("aria-expanded", "false"));
+    document.querySelectorAll(".dots-button").forEach(button => {
+        button.setAttribute("aria-expanded", "false");
+    });
 }
 
 document.addEventListener("click", event => {
     if (!event.target.closest(".action-menu-wrap")) closeMenus();
 });
 
-/* تحديث قائمة المنتجات داخل نموذج البيع */
+/* قائمة المنتجات في نموذج البيع */
 function renderSaleOptions() {
-    const select = document.getElementById("saleProduct");
+    const select = $("saleProduct");
     const oldValue = select.value;
-
     select.replaceChildren();
 
     const first = document.createElement("option");
@@ -861,53 +500,50 @@ function renderSaleOptions() {
         select.appendChild(option);
     });
 
-    if (products.some(product => product.id === oldValue)) {
-        select.value = oldValue;
-    }
+    if (products.some(p => String(p.id) === oldValue)) select.value = oldValue;
 }
 
-/* لوحة التحكم والمنتجات */
+/* عرض المنتجات */
 function renderProducts() {
-    productTable.replaceChildren();
+    const body = $("productTableBody");
+    body.replaceChildren();
 
-    const term = normalize(searchInput.value);
-    const filtered = products.filter(product =>
-        normalize(product.name).includes(term) ||
-        normalize(product.code).includes(term) ||
-        normalize(product.color).includes(term)
+    const term = normalize($("searchInput").value);
+    const filtered = products.filter(p =>
+        normalize(p.name).includes(term) ||
+        normalize(p.code).includes(term) ||
+        normalize(p.color).includes(term)
     );
 
-    const totalUnits = products.reduce((sum, p) => sum + Number(p.quantity || 0), 0);
-    const stockValue = products.reduce((sum, p) => sum + Number(p.purchasePrice || 0) * Number(p.quantity || 0), 0);
-    const lowStock = products.filter(p => Number(p.quantity || 0) <= 5).length;
+    const units = products.reduce((sum, p) => sum + Number(p.quantity || 0), 0);
+    const stockValue = products.reduce((sum, p) =>
+        sum + Number(p.purchasePrice || 0) * Number(p.quantity || 0), 0
+    );
+    const low = products.filter(p => Number(p.quantity || 0) <= 5).length;
 
-    document.getElementById("productCount").textContent = products.length.toLocaleString("ar-EG");
-    document.getElementById("stockValue").textContent = formatMoney(stockValue);
-    document.getElementById("totalUnits").textContent = totalUnits.toLocaleString("ar-EG");
-    document.getElementById("lowStockCount").textContent = lowStock.toLocaleString("ar-EG");
-    document.getElementById("tableCount").textContent = "عدد المنتجات: " + filtered.length.toLocaleString("ar-EG");
+    $("productCount").textContent = products.length.toLocaleString("ar-EG");
+    $("stockValue").textContent = formatMoney(stockValue);
+    $("totalUnits").textContent = units.toLocaleString("ar-EG");
+    $("lowStockCount").textContent = low.toLocaleString("ar-EG");
+    $("tableCount").textContent = "عدد المنتجات: " + filtered.length.toLocaleString("ar-EG");
 
     renderSaleOptions();
 
     if (!filtered.length) {
-        const row = document.createElement("tr");
-        const cell = document.createElement("td");
-        cell.colSpan = 8;
-        cell.className = "empty-state";
-        cell.textContent = term ? "لا توجد نتائج مطابقة للبحث." : "لا توجد منتجات مسجلة حتى الآن.";
-        row.appendChild(cell);
-        productTable.appendChild(row);
+        emptyRow(body, 8, term ? "لا توجد نتائج مطابقة للبحث." : "لا توجد منتجات مسجلة حتى الآن.");
     } else {
-        filtered.forEach(product => {
-            const row = document.createElement("tr");
+        filtered.forEach(p => {
+            const tr = document.createElement("tr");
 
-            row.appendChild(createCell(product.name, "product-name"));
-            row.appendChild(createCell(product.code, "code-text"));
-            row.appendChild(createCell(product.color || "—"));
-            row.appendChild(createCell(formatMoney(product.purchasePrice)));
-            row.appendChild(createCell(formatMoney(product.salePrice)));
-            row.appendChild(createCell(Number(product.quantity).toLocaleString("ar-EG")));
-            row.appendChild(createCell(formatMoney(Number(product.purchasePrice) * Number(product.quantity))));
+            tr.append(
+                createCell(p.name, "product-name"),
+                createCell(p.code, "code-text"),
+                createCell(p.color || "—"),
+                createCell(formatMoney(p.purchasePrice)),
+                createCell(formatMoney(p.salePrice)),
+                createCell(Number(p.quantity).toLocaleString("ar-EG")),
+                createCell(formatMoney(p.purchasePrice * p.quantity))
+            );
 
             const actionCell = document.createElement("td");
             actionCell.className = "action-cell";
@@ -931,7 +567,7 @@ function renderProducts() {
             edit.textContent = "تعديل المنتج";
             edit.addEventListener("click", () => {
                 closeMenus();
-                startEditProduct(product.id);
+                startEditProduct(p.id);
             });
 
             const stock = document.createElement("button");
@@ -939,84 +575,87 @@ function renderProducts() {
             stock.textContent = "إضافة كمية جديدة";
             stock.addEventListener("click", () => {
                 closeMenus();
-                openStockModal(product.id);
+                openStockModal(p.id);
             });
 
             const remove = document.createElement("button");
             remove.type = "button";
-            remove.textContent = "حذف المنتج";
             remove.className = "menu-delete";
+            remove.textContent = "حذف المنتج";
             remove.addEventListener("click", () => {
                 closeMenus();
-                deleteProduct(product.id);
+                deleteProduct(p.id);
             });
 
             dots.addEventListener("click", event => {
                 event.stopPropagation();
-                const open = menu.hidden;
+                const shouldOpen = menu.hidden;
                 closeMenus();
-                menu.hidden = !open;
-                dots.setAttribute("aria-expanded", String(open));
+                menu.hidden = !shouldOpen;
+                dots.setAttribute("aria-expanded", String(shouldOpen));
             });
 
             menu.append(edit, stock, remove);
             wrap.append(dots, menu);
             actionCell.appendChild(wrap);
-            row.appendChild(actionCell);
-            productTable.appendChild(row);
+            tr.appendChild(actionCell);
+            body.appendChild(tr);
         });
     }
 
     renderDashboardSales();
+    updateBackupSummary();
 }
 
-searchInput.addEventListener("input", renderProducts);
+$("searchInput").addEventListener("input", renderProducts);
 
-/* إضافة وتعديل المنتجات */
+/* نموذج إضافة وتعديل المنتجات */
 function clearProductForm() {
-    productForm.reset();
+    $("productForm").reset();
     editingProductId = null;
 
-    document.getElementById("productFormTitle").textContent = "إضافة منتج جديد";
-    document.getElementById("productFormDescription").textContent = "أدخل بيانات المنتج واحفظها في قائمة المخزون.";
-    document.getElementById("saveProductButton").textContent = "حفظ المنتج";
-    document.getElementById("cancelEditButton").hidden = true;
+    $("productFormTitle").textContent = "إضافة منتج جديد";
+    $("productFormDescription").textContent = "أدخل بيانات المنتج واحفظها في المخزون.";
+    $("saveProductButton").textContent = "حفظ المنتج";
+    $("cancelEditButton").hidden = true;
+
     clearMessage("formMessage");
 }
 
 function startEditProduct(id) {
-    const product = findProduct(id);
-    if (!product) return;
+    const p = findProduct(id);
+    if (!p) return;
 
-    editingProductId = id;
+    editingProductId = p.id;
 
-    document.getElementById("productName").value = product.name;
-    document.getElementById("productCode").value = product.code;
-    document.getElementById("productColor").value = product.color || "";
-    document.getElementById("purchasePrice").value = product.purchasePrice;
-    document.getElementById("salePrice").value = product.salePrice;
-    document.getElementById("productQuantity").value = product.quantity;
+    $("productName").value = p.name;
+    $("productCode").value = p.code;
+    $("productColor").value = p.color;
+    $("purchasePrice").value = p.purchasePrice;
+    $("salePrice").value = p.salePrice;
+    $("productQuantity").value = p.quantity;
 
-    document.getElementById("productFormTitle").textContent = "تعديل بيانات المنتج";
-    document.getElementById("productFormDescription").textContent = "عدّل بيانات المنتج ثم احفظ التعديلات. استخدم إضافة كمية جديدة لزيادة الرصيد الحالي.";
-    document.getElementById("saveProductButton").textContent = "حفظ التعديلات";
-    document.getElementById("cancelEditButton").hidden = false;
+    $("productFormTitle").textContent = "تعديل بيانات المنتج";
+    $("productFormDescription").textContent = "عدّل البيانات ثم احفظ التغييرات.";
+    $("saveProductButton").textContent = "حفظ التعديلات";
+    $("cancelEditButton").hidden = false;
 
-    document.getElementById("productFormPanel").scrollIntoView({ behavior: "smooth", block: "start" });
+    showPage("products");
+    $("productFormPanel").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-document.getElementById("clearFormButton").addEventListener("click", clearProductForm);
-document.getElementById("cancelEditButton").addEventListener("click", clearProductForm);
+$("clearFormButton").addEventListener("click", clearProductForm);
+$("cancelEditButton").addEventListener("click", clearProductForm);
 
-productForm.addEventListener("submit", event => {
+$("productForm").addEventListener("submit", event => {
     event.preventDefault();
 
-    const name = document.getElementById("productName").value.trim();
-    const code = document.getElementById("productCode").value.trim();
-    const color = document.getElementById("productColor").value.trim();
-    const purchasePrice = Number(document.getElementById("purchasePrice").value);
-    const salePrice = Number(document.getElementById("salePrice").value);
-    const quantityText = document.getElementById("productQuantity").value;
+    const name = $("productName").value.trim();
+    const code = $("productCode").value.trim();
+    const color = $("productColor").value.trim();
+    const purchasePrice = Number($("purchasePrice").value);
+    const salePrice = Number($("salePrice").value);
+    const quantityText = $("productQuantity").value;
     const quantity = Number(quantityText);
 
     if (!name || !code) {
@@ -1035,22 +674,22 @@ productForm.addEventListener("submit", event => {
         return;
     }
 
-    const duplicate = products.some(product =>
-        product.id !== editingProductId &&
-        normalize(product.code) === normalize(code)
+    const duplicate = products.some(p =>
+        String(p.id) !== String(editingProductId) && normalize(p.code) === normalize(code)
     );
 
     if (duplicate) {
-        showMessage("formMessage", "كود المنتج مستخدم بالفعل. اكتب كودًا مختلفًا.", "error");
+        showMessage("formMessage", "كود المنتج مستخدم بالفعل.", "error");
         return;
     }
 
     const values = { name, code, color, purchasePrice, salePrice, quantity };
 
-    if (editingProductId) {
-        const index = products.findIndex(product => product.id === editingProductId);
+    if (editingProductId !== null) {
+        const index = products.findIndex(p => String(p.id) === String(editingProductId));
+
         if (index < 0) {
-            showMessage("formMessage", "لم يتم العثور على المنتج المطلوب تعديله.", "error");
+            showMessage("formMessage", "لم يتم العثور على المنتج.", "error");
             return;
         }
 
@@ -1062,69 +701,69 @@ productForm.addEventListener("submit", event => {
             return;
         }
 
-        renderProducts();
         clearProductForm();
         showMessage("formMessage", "تم حفظ تعديلات المنتج بنجاح.", "success");
     } else {
-        const product = {
+        const newProduct = {
             id: Date.now().toString() + Math.random().toString(16).slice(2),
             ...values
         };
 
-        products.push(product);
+        products.push(newProduct);
 
         if (!saveProducts()) {
             products.pop();
             return;
         }
 
-        renderProducts();
         clearProductForm();
         showMessage("formMessage", "تم حفظ المنتج بنجاح.", "success");
     }
+
+    renderProducts();
+    renderSales();
 });
 
-/* نافذة إضافة كميات جديدة */
+/* نافذة إضافة كمية جديدة */
 function openStockModal(id) {
-    const product = findProduct(id);
-    if (!product) return;
+    const p = findProduct(id);
+    if (!p) return;
 
-    stockProductId = id;
-    document.getElementById("stockProductName").value = product.name;
-    document.getElementById("stockCurrentQuantity").value = product.quantity;
-    document.getElementById("stockAddQuantity").value = "";
+    stockProductId = p.id;
+    $("stockProductName").value = p.name;
+    $("stockCurrentQuantity").value = p.quantity;
+    $("stockAddQuantity").value = "";
+
     clearMessage("stockMessage");
-    document.getElementById("stockModal").hidden = false;
-    document.getElementById("stockAddQuantity").focus();
+    $("stockModal").hidden = false;
+    $("stockAddQuantity").focus();
 }
 
 function closeStockModal() {
-    document.getElementById("stockModal").hidden = true;
+    $("stockModal").hidden = true;
     stockProductId = null;
-    document.getElementById("stockForm").reset();
+    $("stockForm").reset();
     clearMessage("stockMessage");
 }
 
-document.getElementById("closeStockModal").addEventListener("click", closeStockModal);
+$("closeStockModal").addEventListener("click", closeStockModal);
 
-document.getElementById("stockModal").addEventListener("click", event => {
+$("stockModal").addEventListener("click", event => {
     if (event.target.id === "stockModal") closeStockModal();
 });
 
 document.addEventListener("keydown", event => {
-    if (event.key === "Escape" && !document.getElementById("stockModal").hidden) {
-        closeStockModal();
-    }
+    if (event.key === "Escape" && !$("stockModal").hidden) closeStockModal();
 });
 
-document.getElementById("stockForm").addEventListener("submit", event => {
+$("stockForm").addEventListener("submit", event => {
     event.preventDefault();
 
-    const product = findProduct(stockProductId);
-    const amountText = document.getElementById("stockAddQuantity").value;
+    const p = findProduct(stockProductId);
+    const amountText = $("stockAddQuantity").value;
     const amount = Number(amountText);
 
-    if (!product) {
+    if (!p) {
         showMessage("stockMessage", "المنتج غير موجود.", "error");
         return;
     }
@@ -1134,11 +773,11 @@ document.getElementById("stockForm").addEventListener("submit", event => {
         return;
     }
 
-    const oldQuantity = product.quantity;
-    product.quantity = Number(product.quantity) + amount;
+    const previousQuantity = p.quantity;
+    p.quantity += amount;
 
     if (!saveProducts()) {
-        product.quantity = oldQuantity;
+        p.quantity = previousQuantity;
         return;
     }
 
@@ -1149,57 +788,62 @@ document.getElementById("stockForm").addEventListener("submit", event => {
 
 /* حذف المنتج */
 function deleteProduct(id) {
-    const product = findProduct(id);
-    if (!product) return;
+    const p = findProduct(id);
+    if (!p) return;
 
-    if (!confirm("هل أنت متأكد من حذف المنتج: " + product.name + "؟")) return;
+    if (!confirm("هل أنت متأكد من حذف المنتج: " + p.name + "؟")) return;
 
-    const oldProducts = products;
-    products = products.filter(item => item.id !== id);
+    const previousProducts = products;
+    products = products.filter(item => String(item.id) !== String(id));
 
     if (!saveProducts()) {
-        products = oldProducts;
+        products = previousProducts;
         return;
     }
 
-    if (editingProductId === id) clearProductForm();
+    if (String(editingProductId) === String(id)) clearProductForm();
 
     renderProducts();
+    renderSales();
     showMessage("formMessage", "تم حذف المنتج.", "success");
 }
 
-/* حساب ومعاينة عملية البيع */
+/* حسابات البيع */
 function updateSalePreview() {
-    const product = findProduct(document.getElementById("saleProduct").value);
-    const quantity = Number(document.getElementById("saleQuantity").value);
-    const unitPrice = Number(document.getElementById("saleUnitPrice").value);
-    const preview = document.getElementById("salePreview");
+    const p = findProduct($("saleProduct").value);
+    const quantity = Number($("saleQuantity").value);
+    const price = Number($("saleUnitPrice").value);
 
-    if (!product) {
-        preview.textContent = "اختار المنتج وحدد الكمية لمعاينة الحسابات.";
+    if (!p) {
+        $("salePreview").textContent = "اختار المنتج وحدد الكمية لمعاينة الحسابات.";
         return;
     }
 
     if (!Number.isInteger(quantity) || quantity <= 0 ||
-        !Number.isFinite(unitPrice) || unitPrice <= 0) {
-        preview.textContent = "أدخل كمية صحيحة وسعر بيع أكبر من صفر.";
+        !Number.isFinite(price) || price <= 0) {
+        $("salePreview").textContent = "أدخل كمية صحيحة وسعر بيع أكبر من صفر.";
         return;
     }
 
-    const total = quantity * unitPrice;
-    const profit = quantity * (unitPrice - Number(product.purchasePrice));
-    const warning = quantity > Number(product.quantity)
-        ? " الكمية المطلوبة أكبر من المتاح بالمخزون (" + product.quantity + ")."
+    const warning = quantity > Number(p.quantity)
+        ? " الكمية المطلوبة أكبر من المتاح بالمخزون (" + p.quantity + ")."
         : "";
 
-    preview.textContent =
-        "إجمالي البيع: " + formatMoney(total) +
-        " | الربح المتوقع: " + formatMoney(profit) +
-        " | المتاح: " + Number(product.quantity).toLocaleString("ar-EG") +
-        " قطعة." + warning;
+    $("salePreview").textContent =
+        "إجمالي البيع: " + formatMoney(quantity * price) +
+        " | الربح المتوقع: " + formatMoney(quantity * (price - p.purchasePrice)) +
+        " | المتاح: " + Number(p.quantity).toLocaleString("ar-EG") + " قطعة." + warning;
 }
 
-/* تاريخ محلي لاحتساب مبيعات اليوم */
+$("saleProduct").addEventListener("change", () => {
+    const p = findProduct($("saleProduct").value);
+    $("saleUnitPrice").value = p ? p.salePrice : "";
+    updateSalePreview();
+});
+
+$("saleQuantity").addEventListener("input", updateSalePreview);
+$("saleUnitPrice").addEventListener("input", updateSalePreview);
+
 function isToday(value) {
     const date = new Date(value);
     const now = new Date();
@@ -1211,113 +855,118 @@ function isToday(value) {
 }
 
 function renderDashboardSales() {
-    const today = sales.filter(sale => isToday(sale.createdAt));
-    const total = today.reduce((sum, sale) => sum + Number(sale.total || 0), 0);
-    const profit = today.reduce((sum, sale) => sum + Number(sale.profit || 0), 0);
+    const today = sales.filter(s => isToday(s.createdAt));
 
-    document.getElementById("dashSalesToday").textContent = formatMoney(total);
-    document.getElementById("dashProfitToday").textContent = formatMoney(profit);
+    $("dashSalesToday").textContent = formatMoney(
+        today.reduce((sum, s) => sum + Number(s.total || 0), 0)
+    );
 
-    const tbody = document.getElementById("recentSalesBody");
-    tbody.replaceChildren();
+    $("dashProfitToday").textContent = formatMoney(
+        today.reduce((sum, s) => sum + Number(s.profit || 0), 0)
+    );
 
-    const recent = sales.slice().sort((a, b) =>
+    const body = $("recentSalesBody");
+    body.replaceChildren();
+
+    const recent = [...sales].sort((a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     ).slice(0, 5);
 
     if (!recent.length) {
-        const row = document.createElement("tr");
-        const cell = document.createElement("td");
-        cell.colSpan = 4;
-        cell.className = "empty-state";
-        cell.textContent = "لا توجد مبيعات مسجلة حتى الآن.";
-        row.appendChild(cell);
-        tbody.appendChild(row);
+        emptyRow(body, 4, "لا توجد مبيعات مسجلة حتى الآن.");
         return;
     }
 
-    recent.forEach(sale => {
-        const row = document.createElement("tr");
-        const date = new Date(sale.createdAt);
-        row.appendChild(createCell(Number.isNaN(date.getTime()) ? "—" : date.toLocaleString("ar-EG")));
-        row.appendChild(createCell(sale.productName || "منتج محذوف", "product-name"));
-        row.appendChild(createCell(Number(sale.quantity || 0).toLocaleString("ar-EG")));
-        row.appendChild(createCell(formatMoney(sale.total)));
-        tbody.appendChild(row);
+    recent.forEach(s => {
+        const tr = document.createElement("tr");
+        const date = new Date(s.createdAt);
+
+        tr.append(
+            createCell(Number.isNaN(date.getTime()) ? "—" : date.toLocaleString("ar-EG")),
+            createCell(s.productName || "منتج محذوف", "product-name"),
+            createCell(Number(s.quantity || 0).toLocaleString("ar-EG")),
+            createCell(formatMoney(s.total))
+        );
+
+        body.appendChild(tr);
     });
 }
 
-/* سجل المبيعات */
 function renderSales() {
-    const tbody = document.getElementById("salesTableBody");
-    const term = normalize(salesSearch.value);
-    tbody.replaceChildren();
+    const body = $("salesTableBody");
+    body.replaceChildren();
 
-    const today = sales.filter(sale => isToday(sale.createdAt));
-    const total = today.reduce((sum, sale) => sum + Number(sale.total || 0), 0);
-    const profit = today.reduce((sum, sale) => sum + Number(sale.profit || 0), 0);
+    const term = normalize($("salesSearch").value);
+    const today = sales.filter(s => isToday(s.createdAt));
 
-    document.getElementById("todaySalesTotal").textContent = formatMoney(total);
-    document.getElementById("todayProfitTotal").textContent = formatMoney(profit);
-    document.getElementById("todaySalesCount").textContent = today.length.toLocaleString("ar-EG");
+    $("todaySalesTotal").textContent = formatMoney(
+        today.reduce((sum, s) => sum + Number(s.total || 0), 0)
+    );
 
-    const filtered = sales.filter(sale =>
-        normalize(sale.productName).includes(term) ||
-        normalize(sale.productCode).includes(term)
-    ).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    $("todayProfitTotal").textContent = formatMoney(
+        today.reduce((sum, s) => sum + Number(s.profit || 0), 0)
+    );
 
-    document.getElementById("salesTableCount").textContent =
-        "عدد العمليات: " + filtered.length.toLocaleString("ar-EG");
+    $("todaySalesCount").textContent = today.length.toLocaleString("ar-EG");
+
+    const filtered = [...sales].filter(s =>
+        normalize(s.productName).includes(term) ||
+        normalize(s.productCode).includes(term)
+    ).sort((a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+
+    $("salesTableCount").textContent = "عدد العمليات: " + filtered.length.toLocaleString("ar-EG");
 
     if (!filtered.length) {
-        const row = document.createElement("tr");
-        const cell = document.createElement("td");
-        cell.colSpan = 7;
-        cell.className = "empty-state";
-        cell.textContent = term ? "لا توجد عمليات مطابقة للبحث." : "لا توجد مبيعات مسجلة حتى الآن.";
-        row.appendChild(cell);
-        tbody.appendChild(row);
+        emptyRow(body, 7, term ? "لا توجد عمليات مطابقة للبحث." : "لا توجد مبيعات مسجلة حتى الآن.");
     } else {
-        filtered.forEach(sale => {
-            const row = document.createElement("tr");
-            const date = new Date(sale.createdAt);
+        filtered.forEach(s => {
+            const tr = document.createElement("tr");
+            const date = new Date(s.createdAt);
 
-            row.appendChild(createCell(Number.isNaN(date.getTime()) ? "—" : date.toLocaleString("ar-EG")));
-            row.appendChild(createCell(sale.productName || "منتج محذوف", "product-name"));
-            row.appendChild(createCell(sale.productCode || "—", "code-text"));
-            row.appendChild(createCell(Number(sale.quantity || 0).toLocaleString("ar-EG")));
-            row.appendChild(createCell(formatMoney(sale.unitPrice)));
-            row.appendChild(createCell(formatMoney(sale.total)));
-            row.appendChild(createCell(formatMoney(sale.profit)));
-            tbody.appendChild(row);
+            tr.append(
+                createCell(Number.isNaN(date.getTime()) ? "—" : date.toLocaleString("ar-EG")),
+                createCell(s.productName || "منتج محذوف", "product-name"),
+                createCell(s.productCode || "—", "code-text"),
+                createCell(Number(s.quantity || 0).toLocaleString("ar-EG")),
+                createCell(formatMoney(s.unitPrice)),
+                createCell(formatMoney(s.total)),
+                createCell(formatMoney(s.profit))
+            );
+
+            body.appendChild(tr);
         });
     }
 
     renderDashboardSales();
+    updateBackupSummary();
 }
 
-/* تحديث سعر البيع تلقائيًا عند اختيار المنتج */
-document.getElementById("saleProduct").addEventListener("change", function() {
-    const product = findProduct(this.value);
-    document.getElementById("saleUnitPrice").value = product ? product.salePrice : "";
+$("salesSearch").addEventListener("input", renderSales);
+
+function clearSaleForm() {
+    $("saleForm").reset();
+    $("saleQuantity").value = "1";
+    $("saleUnitPrice").value = "";
+
+    clearMessage("saleMessage");
+    renderSaleOptions();
     updateSalePreview();
-});
+}
 
-document.getElementById("saleQuantity").addEventListener("input", updateSalePreview);
-document.getElementById("saleUnitPrice").addEventListener("input", updateSalePreview);
-salesSearch.addEventListener("input", renderSales);
+$("clearSaleFormButton").addEventListener("click", clearSaleForm);
 
-/* تسجيل عملية البيع */
-saleForm.addEventListener("submit", event => {
+$("saleForm").addEventListener("submit", event => {
     event.preventDefault();
 
-    const product = findProduct(document.getElementById("saleProduct").value);
-    const quantityText = document.getElementById("saleQuantity").value.trim();
+    const p = findProduct($("saleProduct").value);
+    const quantityText = $("saleQuantity").value.trim();
     const quantity = Number(quantityText);
-    const priceText = document.getElementById("saleUnitPrice").value.trim();
+    const priceText = $("saleUnitPrice").value.trim();
     const unitPrice = Number(priceText);
 
-    if (!product) {
+    if (!p) {
         showMessage("saleMessage", "اختار المنتج أولًا.", "error");
         return;
     }
@@ -1332,49 +981,49 @@ saleForm.addEventListener("submit", event => {
         return;
     }
 
-    if (quantity > Number(product.quantity)) {
-        showMessage("saleMessage", "الكمية المطلوبة أكبر من الرصيد المتاح: " + product.quantity + " قطعة.", "error");
+    if (quantity > Number(p.quantity)) {
+        showMessage("saleMessage", "الكمية أكبر من الرصيد المتاح: " + p.quantity + " قطعة.", "error");
         return;
     }
 
-    const oldProductStorage = localStorage.getItem(PRODUCT_KEY);
+    const oldProductsStorage = localStorage.getItem(PRODUCT_KEY);
     const oldSalesStorage = localStorage.getItem(SALES_KEY);
-    const oldQuantity = Number(product.quantity);
+    const oldQuantity = p.quantity;
 
     const sale = {
         id: Date.now().toString() + Math.random().toString(16).slice(2),
-        productId: product.id,
-        productName: product.name,
-        productCode: product.code,
+        productId: p.id,
+        productName: p.name,
+        productCode: p.code,
         quantity,
         unitPrice,
-        unitCost: Number(product.purchasePrice),
+        unitCost: Number(p.purchasePrice),
         total: quantity * unitPrice,
-        profit: quantity * (unitPrice - Number(product.purchasePrice)),
+        profit: quantity * (unitPrice - Number(p.purchasePrice)),
         createdAt: new Date().toISOString()
     };
 
-    product.quantity = oldQuantity - quantity;
+    p.quantity -= quantity;
     sales.push(sale);
 
     try {
         localStorage.setItem(PRODUCT_KEY, JSON.stringify(products));
         localStorage.setItem(SALES_KEY, JSON.stringify(sales));
     } catch (error) {
-        product.quantity = oldQuantity;
-        sales = sales.filter(item => item.id !== sale.id);
+        p.quantity = oldQuantity;
+        sales = sales.filter(s => s.id !== sale.id);
 
         try {
-            if (oldProductStorage === null) localStorage.removeItem(PRODUCT_KEY);
-            else localStorage.setItem(PRODUCT_KEY, oldProductStorage);
+            if (oldProductsStorage === null) localStorage.removeItem(PRODUCT_KEY);
+            else localStorage.setItem(PRODUCT_KEY, oldProductsStorage);
 
             if (oldSalesStorage === null) localStorage.removeItem(SALES_KEY);
             else localStorage.setItem(SALES_KEY, oldSalesStorage);
         } catch (restoreError) {
-            // لا تُحذف بيانات أخرى عند فشل الاستعادة.
+            console.error("تعذر استرجاع التخزين السابق:", restoreError);
         }
 
-        showMessage("saleMessage", "تعذر حفظ عملية البيع. لم يتم اعتمادها.", "error");
+        showMessage("saleMessage", "تعذر حفظ البيع. لم يتم اعتماد العملية.", "error");
         return;
     }
 
@@ -1384,23 +1033,343 @@ saleForm.addEventListener("submit", event => {
     showMessage("saleMessage", "تم تسجيل البيع وخصم الكمية من المخزون بنجاح.", "success");
 });
 
-function clearSaleForm() {
-    saleForm.reset();
-    document.getElementById("saleQuantity").value = "1";
-    document.getElementById("saleUnitPrice").value = "";
-    clearMessage("saleMessage");
-    renderSaleOptions();
-    updateSalePreview();
+/* اسم ملفات التصدير */
+function getLocalDateForFilename() {
+    const now = new Date();
+    return now.getFullYear() + "-" +
+        String(now.getMonth() + 1).padStart(2, "0") + "-" +
+        String(now.getDate()).padStart(2, "0");
 }
 
-document.getElementById("clearSaleFormButton").addEventListener("click", clearSaleForm);
+/* تحميل مكتبة Excel عند الضغط فقط */
+let xlsxPromise = null;
 
-/* تشغيل أولي */
+function loadXlsxLibrary() {
+    if (window.XLSX) return Promise.resolve(window.XLSX);
+    if (xlsxPromise) return xlsxPromise;
+
+    xlsxPromise = new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = "https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js";
+
+        script.onload = () => {
+            if (window.XLSX) resolve(window.XLSX);
+            else reject(new Error("لم يتم تحميل مكتبة Excel."));
+        };
+
+        script.onerror = () => reject(new Error("تعذر تحميل مكتبة Excel. تأكد من اتصال الإنترنت."));
+        document.head.appendChild(script);
+    }).catch(error => {
+        xlsxPromise = null;
+        throw error;
+    });
+
+    return xlsxPromise;
+}
+
+function setSheetLayout(sheet, widths, lastColumn, rowCount) {
+    sheet["!cols"] = widths.map(width => ({ wch: width }));
+    sheet["!autofilter"] = {
+        ref: "A1:" + lastColumn + Math.max(1, rowCount)
+    };
+}
+
+/* زر Excel */
+$("exportBackupButton").addEventListener("click", async () => {
+    const button = $("exportBackupButton");
+    button.disabled = true;
+    button.textContent = "جاري تجهيز التقرير...";
+    showMessage("exportMessage", "جاري تجهيز ملف Excel...", "info");
+
+    try {
+        const XLSX = await loadXlsxLibrary();
+        const workbook = XLSX.utils.book_new();
+        const now = new Date();
+
+        const totalUnits = products.reduce((sum, p) => sum + Number(p.quantity || 0), 0);
+        const stockValue = products.reduce((sum, p) =>
+            sum + Number(p.purchasePrice || 0) * Number(p.quantity || 0), 0
+        );
+        const lowStock = products.filter(p => Number(p.quantity || 0) <= 5).length;
+        const todaySales = sales.filter(s => isToday(s.createdAt));
+        const dailyRevenue = todaySales.reduce((sum, s) => sum + Number(s.total || 0), 0);
+        const dailyProfit = todaySales.reduce((sum, s) => sum + Number(s.profit || 0), 0);
+
+        const summaryData = [
+            ["تقرير GAMY INVENTORY", "القيمة"],
+            ["تاريخ إعداد التقرير", now.toLocaleString("ar-EG")],
+            ["عدد أنواع المنتجات", products.length],
+            ["إجمالي القطع في المخزن", totalUnits],
+            ["قيمة المخزون بسعر الشراء (جنيه)", stockValue],
+            ["عدد المنتجات منخفضة المخزون", lowStock],
+            ["إجمالي عمليات البيع المسجلة", sales.length],
+            ["مبيعات اليوم (جنيه)", dailyRevenue],
+            ["ربح اليوم التقديري (جنيه)", dailyProfit]
+        ];
+
+        const summarySheet = XLSX.utils.aoa_to_sheet(summaryData);
+        summarySheet["!cols"] = [{ wch: 38 }, { wch: 25 }];
+        XLSX.utils.book_append_sheet(workbook, summarySheet, "الملخص");
+
+        const productsData = [
+            ["اسم المنتج", "كود المنتج", "اللون", "سعر الشراء", "سعر البيع", "الكمية", "قيمة المخزون"],
+            ...products.map(p => [
+                p.name,
+                p.code,
+                p.color || "",
+                Number(p.purchasePrice || 0),
+                Number(p.salePrice || 0),
+                Number(p.quantity || 0),
+                Number(p.purchasePrice || 0) * Number(p.quantity || 0)
+            ])
+        ];
+
+        const productsSheet = XLSX.utils.aoa_to_sheet(productsData);
+        setSheetLayout(productsSheet, [26, 18, 15, 18, 18, 12, 20], "G", productsData.length);
+        XLSX.utils.book_append_sheet(workbook, productsSheet, "المنتجات");
+
+        const salesData = [
+            ["التاريخ والوقت", "اسم المنتج", "كود المنتج", "الكمية", "سعر القطعة", "إجمالي البيع", "الربح"],
+            ...sales.map(s => {
+                const date = new Date(s.createdAt);
+                return [
+                    Number.isNaN(date.getTime()) ? "" : date.toLocaleString("ar-EG"),
+                    s.productName || "",
+                    s.productCode || "",
+                    Number(s.quantity || 0),
+                    Number(s.unitPrice || 0),
+                    Number(s.total || 0),
+                    Number(s.profit || 0)
+                ];
+            })
+        ];
+
+        const salesSheet = XLSX.utils.aoa_to_sheet(salesData);
+        setSheetLayout(salesSheet, [24, 26, 18, 12, 16, 18, 16], "G", salesData.length);
+        XLSX.utils.book_append_sheet(workbook, salesSheet, "المبيعات");
+
+        XLSX.writeFile(
+            workbook,
+            "GAMY-INVENTORY-" + getLocalDateForFilename() + ".xlsx",
+            { bookType: "xlsx" }
+        );
+
+        showMessage("exportMessage", "تم إنشاء تقرير Excel بالملخص والمنتجات والمبيعات.", "success");
+    } catch (error) {
+        console.error("Excel export error:", error);
+        showMessage("exportMessage", error.message || "تعذر إنشاء تقرير Excel.", "error");
+    } finally {
+        button.disabled = false;
+        button.textContent = "تنزيل تقرير Excel";
+    }
+});
+
+/* تنزيل نسخة JSON للاستعادة */
+$("exportJsonBackupButton").addEventListener("click", () => {
+    try {
+        const backup = {
+            app: "GAMY INVENTORY",
+            formatVersion: 1,
+            exportedAt: new Date().toISOString(),
+            products,
+            sales
+        };
+
+        const blob = new Blob(
+            [JSON.stringify(backup, null, 2)],
+            { type: "application/json;charset=utf-8" }
+        );
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+
+        link.href = url;
+        link.download = "GAMY-INVENTORY-backup-" + getLocalDateForFilename() + ".json";
+        link.style.display = "none";
+
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
+        showMessage("exportMessage", "تم تنزيل نسخة JSON للاستعادة.", "success");
+    } catch (error) {
+        console.error(error);
+        showMessage("exportMessage", "تعذر تنزيل النسخة الاحتياطية.", "error");
+    }
+});
+
+/* استعادة نسخة JSON */
+$("chooseBackupButton").addEventListener("click", () => {
+    $("backupFileInput").click();
+});
+
+function validateImportedProducts(list) {
+    if (!Array.isArray(list)) throw new Error("قائمة المنتجات غير صحيحة.");
+
+    const ids = new Set();
+    const codes = new Set();
+
+    return list.map((p, index) => {
+        if (!p || typeof p !== "object") throw new Error("يوجد سجل منتج غير صالح.");
+
+        const id = String(p.id || ("restored-product-" + index + "-" + Date.now()));
+        const name = String(p.name || "").trim();
+        const code = String(p.code || "").trim();
+        const color = String(p.color || "");
+        const purchasePrice = Number(p.purchasePrice);
+        const salePrice = Number(p.salePrice);
+        const quantity = Number(p.quantity);
+
+        if (!name || !code) throw new Error("يوجد منتج بلا اسم أو كود.");
+        if (!Number.isFinite(purchasePrice) || purchasePrice < 0 ||
+            !Number.isFinite(salePrice) || salePrice < 0) {
+            throw new Error("يوجد سعر غير صالح في النسخة.");
+        }
+        if (!Number.isInteger(quantity) || quantity < 0) {
+            throw new Error("يوجد مقدار مخزون غير صالح.");
+        }
+
+        const normalizedCode = normalize(code);
+
+        if (ids.has(id)) throw new Error("يوجد رقم داخلي مكرر لمنتج.");
+        if (codes.has(normalizedCode)) throw new Error("يوجد كود منتج مكرر.");
+
+        ids.add(id);
+        codes.add(normalizedCode);
+
+        return { id, name, code, color, purchasePrice, salePrice, quantity };
+    });
+}
+
+function validateImportedSales(list) {
+    if (!Array.isArray(list)) throw new Error("قائمة المبيعات غير صحيحة.");
+
+    const ids = new Set();
+
+    return list.map((s, index) => {
+        if (!s || typeof s !== "object") throw new Error("يوجد سجل بيع غير صالح.");
+
+        const id = String(s.id || ("restored-sale-" + index + "-" + Date.now()));
+        const createdAt = String(s.createdAt || "");
+        const quantity = Number(s.quantity);
+        const unitPrice = Number(s.unitPrice);
+        const total = Number(s.total);
+        const profit = Number(s.profit);
+        const unitCost = Number(s.unitCost);
+
+        if (!createdAt || Number.isNaN(new Date(createdAt).getTime())) {
+            throw new Error("يوجد تاريخ بيع غير صالح.");
+        }
+        if (!Number.isInteger(quantity) || quantity <= 0) {
+            throw new Error("يوجد مقدار بيع غير صالح.");
+        }
+        if (!Number.isFinite(unitPrice) || unitPrice < 0 ||
+            !Number.isFinite(total) || !Number.isFinite(profit)) {
+            throw new Error("يوجد سعر أو إجمالي غير صالح في المبيعات.");
+        }
+        if (ids.has(id)) throw new Error("يوجد رقم مكرر لعملية بيع.");
+
+        ids.add(id);
+
+        return {
+            id,
+            productId: String(s.productId || ""),
+            productName: String(s.productName || ""),
+            productCode: String(s.productCode || ""),
+            quantity,
+            unitPrice,
+            unitCost: Number.isFinite(unitCost) ? unitCost : 0,
+            total,
+            profit,
+            createdAt
+        };
+    });
+}
+
+function restoreStorageValue(key, value) {
+    try {
+        if (value === null) localStorage.removeItem(key);
+        else localStorage.setItem(key, value);
+    } catch (error) {
+        console.error("تعذرت استعادة التخزين السابق:", error);
+    }
+}
+
+$("backupFileInput").addEventListener("change", async event => {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+
+    clearMessage("importMessage");
+
+    try {
+        const backup = JSON.parse(await file.text());
+
+        if (!backup ||
+            backup.app !== "GAMY INVENTORY" ||
+            (backup.formatVersion !== undefined && backup.formatVersion !== 1) ||
+            !Array.isArray(backup.products) ||
+            !Array.isArray(backup.sales)) {
+            throw new Error("الملف ليس نسخة احتياطية صالحة من GAMY INVENTORY.");
+        }
+
+        const newProducts = validateImportedProducts(backup.products);
+        const newSales = validateImportedSales(backup.sales);
+
+        const approved = confirm(
+            "سيتم استبدال البيانات الحالية بالنسخة المختارة.\n\n" +
+            "المنتجات داخل النسخة: " + newProducts.length + "\n" +
+            "عمليات البيع داخل النسخة: " + newSales.length + "\n\n" +
+            "هل تريد الاستمرار؟"
+        );
+
+        if (!approved) {
+            showMessage("importMessage", "تم إلغاء الاستعادة. بياناتك لم تتغير.", "info");
+            return;
+        }
+
+        const oldProducts = localStorage.getItem(PRODUCT_KEY);
+        const oldSales = localStorage.getItem(SALES_KEY);
+
+        try {
+            localStorage.setItem(PRODUCT_KEY, JSON.stringify(newProducts));
+            localStorage.setItem(SALES_KEY, JSON.stringify(newSales));
+        } catch (storageError) {
+            restoreStorageValue(PRODUCT_KEY, oldProducts);
+            restoreStorageValue(SALES_KEY, oldSales);
+            throw new Error("تعذر حفظ البيانات المستعادة. لم تكتمل العملية.");
+        }
+
+        products = newProducts;
+        sales = newSales;
+
+        clearProductForm();
+        clearSaleForm();
+        renderProducts();
+        renderSales();
+        updateSalePreview();
+        updateBackupSummary();
+
+        showMessage(
+            "importMessage",
+            "تمت الاستعادة بنجاح. المنتجات: " + products.length +
+            "، المبيعات: " + sales.length + ".",
+            "success"
+        );
+    } catch (error) {
+        console.error("Import error:", error);
+        showMessage("importMessage", "لم تتم الاستعادة: " + error.message, "error");
+    } finally {
+        event.target.value = "";
+    }
+});
+
+/* تشغيل الموقع بعد تعريف كل الوظائف */
 renderProducts();
 renderSales();
 updateSalePreview();
+updateBackupSummary();
 showPage(location.hash.slice(1) || "dashboard", false);
-</script>
 
+</script>
 </body>
 </html>
