@@ -149,6 +149,310 @@ footer{margin-top:35px;padding:21px 15px;text-align:center;background:white;bord
  .backup-summary{grid-template-columns:1fr}
  .actions button{flex:1}
 }
+
+
+/* ===== GAMY INVENTORY: SETTINGS & RGB SMOKE ===== */
+:root {
+  --page-bg: var(--bg);
+  --panel-bg: #fff;
+  --field-bg: #fff;
+  --soft-bg: #f5f8f6;
+}
+
+body {
+  background: var(--page-bg);
+  transition: background .25s, color .25s;
+}
+
+.panel, .stat-card, .sidebar, .modal, footer {
+  transition: background .25s, color .25s, border-color .25s;
+}
+
+/* زر الإعدادات الوحيد */
+.gamy-settings-wrap {
+  width: 92%;
+  max-width: 1500px;
+  margin: 12px auto 0;
+  position: relative;
+  z-index: 100;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.gamy-settings-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 43px;
+  padding: 9px 17px;
+  color: #fff;
+  background: linear-gradient(135deg, #205648, #153e35);
+  border: 1px solid #c5a35b;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 800;
+  box-shadow: 0 5px 16px #153e351c;
+  transition: transform .2s, box-shadow .2s;
+}
+
+.gamy-settings-trigger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px #153e3530;
+}
+
+.gamy-settings-trigger .settings-icon {
+  font-size: 18px;
+}
+
+/* لوحة الإعدادات المنسدلة */
+.gamy-settings-panel {
+  position: absolute;
+  top: 51px;
+  right: 0;
+  width: min(360px, 100%);
+  padding: 19px;
+  background: var(--panel-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  box-shadow: 0 18px 55px #10251c25;
+  animation: settingsAppear .18s ease-out;
+}
+
+@keyframes settingsAppear {
+  from { opacity: 0; transform: translateY(-7px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.gamy-settings-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 13px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.gamy-settings-heading h2 {
+  color: var(--green);
+  font-size: 18px;
+}
+
+.gamy-settings-close {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--soft-bg);
+  color: var(--text);
+  font-size: 20px;
+}
+
+.gamy-setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.gamy-setting-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.gamy-setting-info strong {
+  font-size: 13px;
+  color: var(--text);
+}
+
+.gamy-setting-info small {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.gamy-setting-control {
+  flex-shrink: 0;
+  min-height: 37px;
+  max-width: 145px;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--field-bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 12px;
+}
+
+.gamy-setting-control:focus-visible,
+.gamy-settings-trigger:focus-visible,
+.gamy-settings-close:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.gamy-smoke-switch {
+  min-width: 93px;
+  border: 1px solid #c5a35b80;
+  border-radius: 8px;
+  padding: 8px 10px;
+  background: #edf4ef;
+  color: #205648;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.gamy-smoke-switch.is-off {
+  background: #f6eeee;
+  color: #a83232;
+  border-color: #a8323240;
+}
+
+.gamy-smoke-strength-wrap {
+  padding-top: 13px;
+}
+
+.gamy-smoke-strength-wrap label {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.gamy-smoke-strength-wrap input {
+  width: 100%;
+  accent-color: var(--green2);
+  cursor: pointer;
+}
+
+.gamy-smoke-levels {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+body.dark-mode {
+  --bg: #101713;
+  --white: #18221c;
+  --text: #e5eee8;
+  --muted: #a0b0a6;
+  --border: #304138;
+  --green: #8fc3a6;
+  --green2: #5c9b7c;
+  --panel-bg: #18221c;
+  --field-bg: #202d25;
+  --soft-bg: #202d25;
+}
+
+body.dark-mode .sidebar,
+body.dark-mode .panel,
+body.dark-mode .stat-card,
+body.dark-mode .modal,
+body.dark-mode footer {
+  background: var(--panel-bg);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+body.dark-mode .field label,
+body.dark-mode td,
+body.dark-mode th,
+body.dark-mode .nav-item,
+body.dark-mode .shortcut-button,
+body.dark-mode .sale-preview {
+  color: var(--text);
+}
+
+body.dark-mode .field input,
+body.dark-mode .field select,
+body.dark-mode .search-input,
+body.dark-mode .dots-button,
+body.dark-mode .actions-dropdown,
+body.dark-mode .actions-dropdown button,
+body.dark-mode .secondary-btn {
+  background: #202d25;
+  color: var(--text);
+  border-color: var(--border);
+}
+
+body.dark-mode thead,
+body.dark-mode .sale-stat,
+body.dark-mode .sale-preview,
+body.dark-mode .shortcut-button,
+body.dark-mode .backup-summary div {
+  background: #202d25;
+  border-color: var(--border);
+}
+
+body.dark-mode .nav-item.active {
+  background: #263e30;
+  border-color: #42644e;
+  color: #d6f1df;
+}
+
+body.dark-mode .topbar {
+  background: #0b2118;
+}
+
+body.dark-mode .table-wrapper {
+  border-color: var(--border);
+}
+
+body.dark-mode td {
+  border-bottom-color: var(--border);
+}
+
+body.dark-mode .product-name,
+body.dark-mode .stat-value,
+body.dark-mode .section-title,
+body.dark-mode .welcome h1,
+body.dark-mode .page-topline h1,
+body.dark-mode .modal h2 {
+  color: #a8d9bb;
+}
+
+/* لوحة الإعدادات في الوضع الليلي */
+body.dark-mode .gamy-settings-panel {
+  background: #18221c;
+  border-color: #304138;
+}
+
+body.dark-mode .gamy-settings-heading h2 {
+  color: #a8d9bb;
+}
+
+/* طبقة تأثير الدخان */
+#smokeCanvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9998;
+}
+
+@media (max-width: 600px) {
+  .gamy-settings-wrap {
+    width: 94%;
+  }
+
+  .gamy-settings-panel {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gamy-settings-panel {
+    animation: none;
+  }
+}
+
+
 </style>
 </head>
 
@@ -172,10 +476,11 @@ footer{margin-top:35px;padding:21px 15px;text-align:center;background:white;bord
    <button type="button" class="nav-item" data-page="sales" data-title="تسجيل المبيعات">تسجيل المبيعات</button>
    <button type="button" class="nav-item" data-page="history" data-title="سجل المبيعات">سجل المبيعات</button>
    <button type="button" class="nav-item" data-page="backup" data-title="النسخ الاحتياطي">النسخ الاحتياطي</button>
+   <button type="button" class="nav-item" data-page="inventoryAudit" data-title="جرد المخزن">📋 جرد المخزن</button>
   </nav>
- </aside>
+   </aside>
 
- <main class="app-content">
+   <main class="app-content">
 
   <section class="page active" data-page-section="dashboard">
    <section class="welcome">
@@ -302,6 +607,94 @@ footer{margin-top:35px;padding:21px 15px;text-align:center;background:white;bord
    </section>
   </section>
 
+<section class="page" data-page-section="inventoryAudit">
+  <div class="page-topline">
+    <h1>📋 جرد المخزن</h1>
+    <p>قارن الكميات الفعلية بالكميات المسجلة واكتشف العجز والزيادة.</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card">
+      <div class="stat-label">المنتجات التي تم جردها</div>
+      <div class="stat-value" id="auditCounted">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">عدد المنتجات التي بها عجز</div>
+      <div class="stat-value" id="auditShortage">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">عدد المنتجات التي بها زيادة</div>
+      <div class="stat-value" id="auditSurplus">0</div>
+    </div>
+  </div>
+
+  <section class="panel">
+    <div class="panel-heading">
+      <h2 class="section-title">تسجيل الجرد الفعلي</h2>
+      <p class="description">
+        اكتب العدد الذي وجدته فعليًا أمام كل منتج. اترك الخانة فارغة للمنتجات التي لم تجردها.
+      </p>
+    </div>
+
+    <div class="table-toolbar">
+      <input id="auditSearch" class="search-input"
+        type="search" placeholder="ابحث باسم المنتج أو الكود أو اللون">
+      <button type="button" class="secondary-btn" id="auditFillCurrent">
+        نسخ الكميات المسجلة
+      </button>
+    </div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>اسم المنتج</th>
+            <th>الكود</th>
+            <th>اللون</th>
+            <th>الكمية المسجلة</th>
+            <th>الكمية الفعلية</th>
+            <th>الفرق</th>
+            <th>الحالة</th>
+          </tr>
+        </thead>
+        <tbody id="auditTableBody"></tbody>
+      </table>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="primary-btn" id="saveAuditButton">
+        حفظ نتيجة الجرد
+      </button>
+      <button type="button" class="secondary-btn" id="clearAuditButton">
+        مسح الكميات المدخلة
+      </button>
+    </div>
+
+    <div id="auditMessage" class="message" role="status"></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-heading">
+      <h2 class="section-title">سجل الجرد السابق</h2>
+      <p class="description">النتائج المحفوظة، بالتاريخ وعدد المنتجات والعجز والزيادة.</p>
+    </div>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>تاريخ الجرد</th>
+            <th>عدد المنتجات المجردة</th>
+            <th>منتجات بها عجز</th>
+            <th>منتجات بها زيادة</th>
+            <th>منتجات مطابقة</th>
+          </tr>
+        </thead>
+        <tbody id="auditHistoryBody"></tbody>
+      </table>
+    </div>
+  </section>
+</section>
+
  </main>
 </div>
 
@@ -425,7 +818,7 @@ function updateBackupSummary() {
 
 /* التنقل بين الصفحات */
 function showPage(name, updateHash = true) {
-    const allowed = ["dashboard", "products", "sales", "history", "backup"];
+   const allowed = ["dashboard", "products", "sales", "history", "backup", "inventoryAudit"];
     const target = allowed.includes(name) ? name : "dashboard";
 
     document.querySelectorAll("[data-page-section]").forEach(section => {
@@ -1363,6 +1756,275 @@ $("backupFileInput").addEventListener("change", async event => {
     }
 });
 
+/* ===== GAMY INVENTORY: STOCK AUDIT ===== */
+const AUDIT_KEY = "gamy_inventory_audits_v1";
+
+function readAudits() {
+    try {
+        const value = JSON.parse(localStorage.getItem(AUDIT_KEY) || "[]");
+        return Array.isArray(value) ? value : [];
+    } catch {
+        return [];
+    }
+}
+
+let inventoryAudits = readAudits();
+
+function renderAuditTable() {
+    const body = $("auditTableBody");
+    const term = normalize($("auditSearch").value);
+    body.replaceChildren();
+
+    const filtered = products.filter(p =>
+        normalize(p.name).includes(term) ||
+        normalize(p.code).includes(term) ||
+        normalize(p.color).includes(term)
+    );
+
+    if (!filtered.length) {
+        emptyRow(body, 7, "لا توجد منتجات مطابقة للبحث.");
+    }
+
+    filtered.forEach(p => {
+        const tr = document.createElement("tr");
+        tr.dataset.productId = p.id;
+
+        const actualCell = document.createElement("td");
+        const input = document.createElement("input");
+        input.type = "number";
+        input.min = "0";
+        input.step = "1";
+        input.inputMode = "numeric";
+        input.className = "search-input audit-actual";
+        input.style.width = "115px";
+        input.setAttribute("aria-label", "الكمية الفعلية: " + p.name);
+        actualCell.appendChild(input);
+
+        tr.append(
+            createCell(p.name, "product-name"),
+            createCell(p.code, "code-text"),
+            createCell(p.color || "—"),
+            createCell(p.quantity.toLocaleString("ar-EG")),
+            actualCell,
+            createCell("—", "audit-difference"),
+            createCell("لم يتم الجرد", "audit-status")
+        );
+
+        body.appendChild(tr);
+    });
+
+    body.querySelectorAll(".audit-actual").forEach(input => {
+        input.addEventListener("input", () => updateAuditRow(input));
+    });
+
+    updateAuditSummary();
+}
+
+function updateAuditRow(input) {
+    const row = input.closest("tr");
+    const product = findProduct(row.dataset.productId);
+    if (!product) return;
+
+    const differenceCell = row.querySelector(".audit-difference");
+    const statusCell = row.querySelector(".audit-status");
+
+    if (input.value.trim() === "") {
+        differenceCell.textContent = "—";
+        statusCell.textContent = "لم يتم الجرد";
+        updateAuditSummary();
+        return;
+    }
+
+    const actual = Number(input.value);
+
+    if (!Number.isInteger(actual) || actual < 0) {
+        differenceCell.textContent = "—";
+        statusCell.textContent = "كمية غير صحيحة";
+        updateAuditSummary();
+        return;
+    }
+
+    const difference = actual - Number(product.quantity);
+
+    differenceCell.textContent =
+        (difference > 0 ? "+" : "") + difference.toLocaleString("ar-EG");
+
+    statusCell.textContent = difference < 0
+        ? "عجز " + Math.abs(difference).toLocaleString("ar-EG")
+        : difference > 0
+            ? "زيادة " + difference.toLocaleString("ar-EG")
+            : "مطابق";
+
+    updateAuditSummary();
+}
+
+function updateAuditSummary() {
+    const rows = [...$("auditTableBody").querySelectorAll("tr[data-product-id]")];
+    let counted = 0;
+    let shortage = 0;
+    let surplus = 0;
+
+    rows.forEach(row => {
+        const input = row.querySelector(".audit-actual");
+        if (!input || input.value.trim() === "") return;
+
+        const actual = Number(input.value);
+        if (!Number.isInteger(actual) || actual < 0) return;
+
+        const product = findProduct(row.dataset.productId);
+        if (!product) return;
+
+        counted++;
+
+        const difference = actual - Number(product.quantity);
+        if (difference < 0) shortage++;
+        if (difference > 0) surplus++;
+    });
+
+    $("auditCounted").textContent = counted.toLocaleString("ar-EG");
+    $("auditShortage").textContent = shortage.toLocaleString("ar-EG");
+    $("auditSurplus").textContent = surplus.toLocaleString("ar-EG");
+}
+
+function renderAuditHistory() {
+    const body = $("auditHistoryBody");
+    body.replaceChildren();
+
+    if (!inventoryAudits.length) {
+        emptyRow(body, 5, "لا توجد نتائج جرد محفوظة حتى الآن.");
+        return;
+    }
+
+    [...inventoryAudits].reverse().forEach(audit => {
+        const date = new Date(audit.createdAt);
+        const tr = document.createElement("tr");
+
+        tr.append(
+            createCell(Number.isNaN(date.getTime()) ? "—" : date.toLocaleString("ar-EG")),
+            createCell(audit.items.length),
+            createCell(audit.shortage),
+            createCell(audit.surplus),
+            createCell(audit.matched)
+        );
+
+        body.appendChild(tr);
+    });
+}
+
+$("auditSearch").addEventListener("input", renderAuditTable);
+
+$("auditFillCurrent").addEventListener("click", () => {
+    $("auditTableBody").querySelectorAll("tr[data-product-id]").forEach(row => {
+        const product = findProduct(row.dataset.productId);
+        const input = row.querySelector(".audit-actual");
+        if (product && input) {
+            input.value = String(product.quantity);
+            updateAuditRow(input);
+        }
+    });
+
+    showMessage("auditMessage",
+        "تم نسخ الكميات المسجلة إلى خانات الجرد. عدّل الكميات لتطابق العد الفعلي.",
+        "info");
+});
+
+$("clearAuditButton").addEventListener("click", () => {
+    $("auditTableBody").querySelectorAll(".audit-actual").forEach(input => {
+        input.value = "";
+        updateAuditRow(input);
+    });
+    clearMessage("auditMessage");
+});
+
+$("saveAuditButton").addEventListener("click", () => {
+    const rows = [...$("auditTableBody").querySelectorAll("tr[data-product-id]")];
+    const items = [];
+
+    for (const row of rows) {
+        const input = row.querySelector(".audit-actual");
+        if (!input || input.value.trim() === "") continue;
+
+        const actual = Number(input.value);
+        const product = findProduct(row.dataset.productId);
+
+        if (!product) continue;
+
+        if (!Number.isInteger(actual) || actual < 0) {
+            showMessage("auditMessage",
+                "راجع الكميات المدخلة؛ لازم تكون أعدادًا صحيحة لا تقل عن صفر.",
+                "error");
+            input.focus();
+            return;
+        }
+
+        const recorded = Number(product.quantity);
+        const difference = actual - recorded;
+
+        items.push({
+            productId: product.id,
+            name: product.name,
+            code: product.code,
+            color: product.color,
+            recorded,
+            actual,
+            difference,
+            status: difference < 0 ? "عجز" : difference > 0 ? "زيادة" : "مطابق"
+        });
+    }
+
+    if (!items.length) {
+        showMessage("auditMessage",
+            "اكتب الكمية الفعلية لمنتج واحد على الأقل قبل الحفظ.",
+            "error");
+        return;
+    }
+
+    const audit = {
+        id: Date.now().toString() + Math.random().toString(16).slice(2),
+        createdAt: new Date().toISOString(),
+        items,
+        shortage: items.filter(item => item.difference < 0).length,
+        surplus: items.filter(item => item.difference > 0).length,
+        matched: items.filter(item => item.difference === 0).length
+    };
+
+    const previousAudits = localStorage.getItem(AUDIT_KEY);
+
+    inventoryAudits.push(audit);
+
+    try {
+        localStorage.setItem(AUDIT_KEY, JSON.stringify(inventoryAudits));
+    } catch (error) {
+        inventoryAudits = inventoryAudits.filter(item => item.id !== audit.id);
+        showMessage("auditMessage",
+            "تعذر حفظ الجرد في المتصفح. تأكد من توفر مساحة تخزين.",
+            "error");
+        return;
+    }
+
+    renderAuditHistory();
+    showMessage("auditMessage",
+        "تم حفظ نتيجة الجرد بنجاح. المنتجات المجردة: " + items.length +
+        "، العجز: " + audit.shortage +
+        "، الزيادة: " + audit.surplus +
+        "، المطابق: " + audit.matched +
+        ". لم يتم تغيير كميات المخزون.",
+        "success");
+});
+
+/* تجهيز الجرد عند فتح القسم */
+const originalShowPageForAudit = showPage;
+showPage = function(name, updateHash = true) {
+    originalShowPageForAudit(name, updateHash);
+    if (name === "inventoryAudit") {
+        renderAuditTable();
+        renderAuditHistory();
+    }
+};
+
+renderAuditHistory();
+/* ===== END STOCK AUDIT ===== */
+
 /* تشغيل الموقع بعد تعريف كل الوظائف */
 renderProducts();
 renderSales();
@@ -1370,6 +2032,545 @@ updateSalePreview();
 updateBackupSummary();
 showPage(location.hash.slice(1) || "dashboard", false);
 
+
+/* ===== GAMY INVENTORY: SETTINGS & RGB SMOKE ===== */
+(() => {
+  "use strict";
+
+  const LANG_KEY = "gamy_inventory_language_v1";
+  const THEME_KEY = "gamy_inventory_theme_v1";
+  const SMOKE_KEY = "gamy_inventory_smoke_v1";
+  const SMOKE_POWER_KEY = "gamy_inventory_smoke_strength_v1";
+
+  const readPreference = (key, fallback) => {
+    try {
+      return localStorage.getItem(key) ?? fallback;
+    } catch {
+      return fallback;
+    }
+  };
+
+  const savePreference = (key, value) => {
+    try {
+      localStorage.setItem(key, value);
+    } catch (error) {
+      console.warn("Could not save preference:", error);
+    }
+  };
+
+  let language = readPreference(LANG_KEY, "ar");
+  let smokeEnabled = readPreference(SMOKE_KEY, "on") === "on";
+  let smokePower = Number(readPreference(SMOKE_POWER_KEY, "5"));
+
+  if (!Number.isFinite(smokePower)) smokePower = 5;
+  smokePower = Math.max(1, Math.min(10, smokePower));
+
+  const translations = {
+    "نظام إدارة المخازن والمبيعات": "Inventory & Sales Management",
+    "لوحة التحكم": "Dashboard",
+    "القائمة الرئيسية": "Main Menu",
+    "إدارة المنتجات": "Products",
+    "تسجيل المبيعات": "Record Sale",
+    "سجل المبيعات": "Sales History",
+    "النسخ الاحتياطي": "Backup & Restore",
+    "إدارة المخازن والمبيعات": "Inventory & Sales Management",
+    "تابع المنتجات والكميات والمبيعات من مكان واحد.": "Manage products, stock, and sales in one place.",
+    "ملخص المخزن": "Inventory Overview",
+    "عدد أنواع المنتجات": "Product Types",
+    "إجمالي المنتجات المسجلة": "Total registered products",
+    "قيمة المخزون": "Inventory Value",
+    "محسوبة بسعر الشراء": "Calculated at purchase cost",
+    "إجمالي القطع": "Total Units",
+    "القطع الموجودة بالمخزن": "Units currently in stock",
+    "مخزون منخفض": "Low Stock",
+    "5 قطع أو أقل": "5 units or fewer",
+    "مبيعات اليوم": "Today's Sales",
+    "إجمالي البيع اليوم": "Total sales today",
+    "ربح اليوم التقديري": "Estimated Profit Today",
+    "قبل مصاريف التشغيل": "Before operating expenses",
+    "الوصول السريع": "Quick Access",
+    "اختار القسم الذي تريد العمل عليه.": "Choose a section to work in.",
+    "إضافة المنتجات وتعديل البيانات ومتابعة الكميات.": "Add products, edit details, and track stock.",
+    "تسجيل البيع وخصم الكمية من المخزون.": "Record sales and deduct stock.",
+    "مراجعة عمليات البيع والإجماليات.": "Review sales transactions and totals.",
+    "تنزيل تقرير Excel أو نسخة استعادة.": "Download an Excel report or backup.",
+    "أحدث المبيعات": "Recent Sales",
+    "عرض سجل المبيعات": "View Sales History",
+    "التاريخ والوقت": "Date & Time",
+    "المنتج": "Product",
+    "الكمية": "Quantity",
+    "إجمالي البيع": "Sales Total",
+    "إضافة منتج جديد": "Add New Product",
+    "أدخل بيانات المنتج واحفظها في المخزون.": "Enter product details and save to inventory.",
+    "اسم المنتج": "Product Name",
+    "كود المنتج": "Product Code",
+    "اللون": "Color",
+    "سعر الشراء بالجنيه": "Purchase Price (EGP)",
+    "سعر البيع بالجنيه": "Sale Price (EGP)",
+    "الكمية الموجودة": "Stock Quantity",
+    "حفظ المنتج": "Save Product",
+    "مسح البيانات": "Clear Form",
+    "إلغاء التعديل": "Cancel Edit",
+    "قائمة المنتجات": "Product List",
+    "بحث بالاسم أو الكود أو اللون": "Search name, code, or color",
+    "سعر الشراء": "Purchase Price",
+    "سعر البيع": "Sale Price",
+    "الإجراءات": "Actions",
+    "كل المبالغ بالجنيه المصري": "All amounts in Egyptian pounds",
+    "سجّل البيع وراجع الإجمالي والربح المتوقع.": "Record sales and review totals and estimated profit.",
+    "ملخص مبيعات اليوم": "Today's Sales Summary",
+    "عدد عمليات البيع اليوم": "Sales Transactions Today",
+    "تسجيل عملية بيع": "Record a Sale",
+    "اختار المنتج والكمية وسعر البيع، وسيتم خصم الكمية عند التأكيد.": "Choose a product, quantity, and price. Stock is deducted upon confirmation.",
+    "اختار المنتج": "Choose a product",
+    "الكمية المباعة": "Quantity Sold",
+    "سعر بيع القطعة بالجنيه": "Unit Sale Price (EGP)",
+    "تسجيل عملية البيع": "Record Sale",
+    "مسح بيانات البيع": "Clear Sale Form",
+    "راجع عمليات البيع السابقة وإجمالي كل عملية.": "Review previous sales and transaction totals.",
+    "عمليات البيع المسجلة": "Recorded Sales",
+    "بحث باسم المنتج أو الكود": "Search product name or code",
+    "الكود": "Code",
+    "سعر القطعة": "Unit Price",
+    "الربح": "Profit",
+    "الربح قبل مصاريف التشغيل": "Profit before operating expenses",
+    "نزّل تقرير Excel منظمًا أو احفظ نسخة لاستعادة البيانات لاحقًا.": "Download an Excel report or save a backup for later restoration.",
+    "بياناتك الحالية": "Your Current Data",
+    "الأرقام التالية تمثل البيانات المحفوظة في هذا المتصفح.": "These figures represent data saved in this browser.",
+    "عدد المنتجات": "Products",
+    "عدد عمليات البيع": "Sales Transactions",
+    "تنزيل تقرير Excel": "Download Excel Report",
+    "تنزيل نسخة استعادة JSON": "Download JSON Backup",
+    "استعادة نسخة احتياطية": "Restore a Backup",
+    "اختار ملف JSON سبق تنزيله من هذا البرنامج.": "Choose a JSON file previously downloaded from this app.",
+    "اختيار ملف للاستعادة": "Choose Backup File",
+    "إضافة كمية جديدة": "Add Stock",
+    "اكتب عدد القطع التي تريد إضافتها للمخزون.": "Enter the number of units to add to stock.",
+    "الكمية الحالية": "Current Quantity",
+    "حفظ الكمية": "Save Quantity",
+    "إلغاء": "Cancel",
+    "تعديل المنتج": "Edit Product",
+    "حذف المنتج": "Delete Product",
+    "إجراءات المنتج": "Product Actions",
+    "لا توجد نتائج مطابقة للبحث.": "No matching search results.",
+    "لا توجد منتجات مسجلة حتى الآن.": "No products registered yet.",
+    "لا توجد مبيعات مسجلة حتى الآن.": "No sales recorded yet.",
+    "لا توجد عمليات مطابقة للبحث.": "No matching transactions.",
+    "أضف منتجات للمخزن أولًا": "Add products to inventory first",
+    "منتج محذوف": "Deleted product",
+    "مثال: تيشيرت أسود": "Example: Black T-shirt",
+    "مثال: أسود": "Example: Black",
+    "مثال: TS001": "Example: TS001",
+    "عدد المنتجات: ": "Products: ",
+    "عدد العمليات: ": "Transactions: "
+  };
+
+  const reverseTranslations = Object.fromEntries(
+    Object.entries(translations).map(([ar, en]) => [en, ar])
+  );
+
+  const originalText = new WeakMap();
+
+  function translateValue(value, targetLanguage) {
+    if (targetLanguage === "ar") {
+      return reverseTranslations[value] || value;
+    }
+
+    if (translations[value]) return translations[value];
+
+    let result = value;
+    const phrases = Object.entries(translations)
+      .sort((a, b) => b[0].length - a[0].length);
+
+    for (const [ar, en] of phrases) {
+      if (result.includes(ar)) result = result.split(ar).join(en);
+    }
+
+    return result;
+  }
+
+  function translatePage(targetLanguage) {
+    language = targetLanguage;
+    document.documentElement.lang = language;
+    document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
+    savePreference(LANG_KEY, language);
+
+    const walker = document.createTreeWalker(
+      document.body,
+      NodeFilter.SHOW_TEXT
+    );
+
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+
+    nodes.forEach(node => {
+      const parent = node.parentElement;
+      if (!parent || parent.closest("script,style,canvas,.gamy-settings-wrap")) return;
+
+      if (!originalText.has(node)) originalText.set(node, node.nodeValue);
+      node.nodeValue = translateValue(originalText.get(node), language);
+    });
+
+    document.querySelectorAll("[placeholder]").forEach(el => {
+      if (!el.dataset.originalPlaceholder) {
+        el.dataset.originalPlaceholder = el.placeholder;
+      }
+      el.placeholder = translateValue(el.dataset.originalPlaceholder, language);
+    });
+
+    document.querySelectorAll("[data-title]").forEach(el => {
+      if (!el.dataset.originalTitle) {
+        el.dataset.originalTitle = el.dataset.title;
+      }
+      el.dataset.title = translateValue(el.dataset.originalTitle, language);
+    });
+
+    const headerLabel = document.querySelector(".header-label");
+    const activeNav = document.querySelector(".nav-item.active");
+
+    if (headerLabel && activeNav) {
+      headerLabel.textContent = activeNav.dataset.title || activeNav.textContent;
+    }
+
+    document.title = language === "ar"
+      ? "GAMY INVENTORY | إدارة المخازن"
+      : "GAMY INVENTORY | Inventory Management";
+
+    updateSettingsLabels();
+  }
+
+  function applyTheme(theme) {
+    document.body.classList.toggle("dark-mode", theme === "dark");
+    savePreference(THEME_KEY, theme);
+
+    const button = document.querySelector(".gamy-theme-button");
+    if (button) {
+      button.textContent = theme === "dark"
+        ? (language === "ar" ? "☀️ تشغيل الوضع النهاري" : "☀️ Light Mode")
+        : (language === "ar" ? "🌙 تشغيل الوضع الليلي" : "🌙 Dark Mode");
+
+      button.setAttribute("aria-pressed", String(theme === "dark"));
+    }
+  }
+
+  /* زر واحد يفتح لوحة الإعدادات */
+  const settingsWrap = document.createElement("div");
+  settingsWrap.className = "gamy-settings-wrap";
+
+  settingsWrap.innerHTML = `
+    <button type="button"
+      class="gamy-settings-trigger"
+      aria-expanded="false"
+      aria-controls="gamySettingsPanel">
+      <span class="settings-icon" aria-hidden="true">⚙️</span>
+      <span class="gamy-settings-button-label">الإعدادات</span>
+    </button>
+
+    <section class="gamy-settings-panel" id="gamySettingsPanel" hidden>
+      <div class="gamy-settings-heading">
+        <h2 class="gamy-settings-title">إعدادات الموقع</h2>
+        <button type="button" class="gamy-settings-close" aria-label="إغلاق الإعدادات">×</button>
+      </div>
+
+      <div class="gamy-setting-row">
+        <div class="gamy-setting-info">
+          <strong class="gamy-language-title">🌐 اللغة</strong>
+          <small class="gamy-language-description">اختار لغة الواجهة</small>
+        </div>
+        <select class="gamy-setting-control gamy-language-select" aria-label="Language">
+          <option value="ar">العربية</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+
+      <div class="gamy-setting-row">
+        <div class="gamy-setting-info">
+          <strong class="gamy-theme-title">🌙 المظهر</strong>
+          <small class="gamy-theme-description">تغيير شكل الموقع</small>
+        </div>
+        <button type="button" class="gamy-setting-control gamy-theme-button"></button>
+      </div>
+
+      <div class="gamy-setting-row">
+        <div class="gamy-setting-info">
+          <strong class="gamy-smoke-title">💨 دخان الماوس</strong>
+          <small class="gamy-smoke-description">تأثير أزرق وأحمر مع الحركة</small>
+        </div>
+        <button type="button" class="gamy-smoke-switch" aria-pressed="true"></button>
+      </div>
+
+      <div class="gamy-smoke-strength-wrap">
+        <label class="gamy-smoke-strength-label" for="gamySmokeStrength">قوة تأثير الدخان</label>
+        <input id="gamySmokeStrength" type="range" min="1" max="10" step="1">
+        <div class="gamy-smoke-levels">
+          <span class="gamy-smoke-low">خفيف</span>
+          <span class="gamy-smoke-high">قوي</span>
+        </div>
+      </div>
+    </section>
+  `;
+
+  document.querySelector(".topbar").insertAdjacentElement("afterend", settingsWrap);
+
+  const settingsTrigger = settingsWrap.querySelector(".gamy-settings-trigger");
+  const settingsPanel = settingsWrap.querySelector(".gamy-settings-panel");
+  const languageSelect = settingsWrap.querySelector(".gamy-language-select");
+  const themeButton = settingsWrap.querySelector(".gamy-theme-button");
+  const smokeButton = settingsWrap.querySelector(".gamy-smoke-switch");
+  const strengthSlider = settingsWrap.querySelector("#gamySmokeStrength");
+
+  function setSettingsOpen(open) {
+    settingsPanel.hidden = !open;
+    settingsTrigger.setAttribute("aria-expanded", String(open));
+  }
+
+  settingsTrigger.addEventListener("click", () => {
+    setSettingsOpen(settingsPanel.hidden);
+  });
+
+  settingsWrap.querySelector(".gamy-settings-close").addEventListener("click", () => {
+    setSettingsOpen(false);
+    settingsTrigger.focus();
+  });
+
+  document.addEventListener("click", event => {
+    if (!settingsWrap.contains(event.target)) setSettingsOpen(false);
+  });
+
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && !settingsPanel.hidden) {
+      setSettingsOpen(false);
+      settingsTrigger.focus();
+    }
+  });
+
+  languageSelect.value = language;
+  languageSelect.addEventListener("change", () => {
+    translatePage(languageSelect.value);
+  });
+
+  themeButton.addEventListener("click", () => {
+    const nextTheme = document.body.classList.contains("dark-mode") ? "light" : "dark";
+    applyTheme(nextTheme);
+  });
+
+  function updateSettingsLabels() {
+    const english = language === "en";
+
+    settingsWrap.querySelector(".gamy-settings-button-label").textContent =
+      english ? "Settings" : "الإعدادات";
+
+    settingsWrap.querySelector(".gamy-settings-title").textContent =
+      english ? "Site Settings" : "إعدادات الموقع";
+
+    settingsWrap.querySelector(".gamy-language-title").textContent =
+      english ? "🌐 Language" : "🌐 اللغة";
+
+    settingsWrap.querySelector(".gamy-language-description").textContent =
+      english ? "Choose interface language" : "اختار لغة الواجهة";
+
+    settingsWrap.querySelector(".gamy-theme-title").textContent =
+      english ? "🌙 Appearance" : "🌙 المظهر";
+
+    settingsWrap.querySelector(".gamy-theme-description").textContent =
+      english ? "Change the site appearance" : "تغيير شكل الموقع";
+
+    settingsWrap.querySelector(".gamy-smoke-title").textContent =
+      english ? "💨 Mouse Trail" : "💨 دخان الماوس";
+
+    settingsWrap.querySelector(".gamy-smoke-description").textContent =
+      english ? "Blue and red trail on movement" : "تأثير أزرق وأحمر مع الحركة";
+
+    settingsWrap.querySelector(".gamy-smoke-strength-label").textContent =
+      english ? "Smoke intensity" : "قوة تأثير الدخان";
+
+    settingsWrap.querySelector(".gamy-smoke-low").textContent =
+      english ? "Soft" : "خفيف";
+
+    settingsWrap.querySelector(".gamy-smoke-high").textContent =
+      english ? "Strong" : "قوي";
+
+    settingsWrap.querySelector(".gamy-settings-close").setAttribute(
+      "aria-label", english ? "Close settings" : "إغلاق الإعدادات"
+    );
+
+    applyTheme(document.body.classList.contains("dark-mode") ? "dark" : "light");
+    updateSmokeButton();
+  }
+
+  function updateSmokeButton() {
+    const english = language === "en";
+
+    smokeButton.textContent = smokeEnabled
+      ? (english ? "ON" : "تشغيل")
+      : (english ? "OFF" : "إيقاف");
+
+    smokeButton.classList.toggle("is-off", !smokeEnabled);
+    smokeButton.setAttribute("aria-pressed", String(smokeEnabled));
+  }
+
+  strengthSlider.value = String(smokePower);
+
+  strengthSlider.addEventListener("input", () => {
+    smokePower = Number(strengthSlider.value);
+    savePreference(SMOKE_POWER_KEY, String(smokePower));
+  });
+
+  smokeButton.addEventListener("click", () => {
+    smokeEnabled = !smokeEnabled;
+    savePreference(SMOKE_KEY, smokeEnabled ? "on" : "off");
+    updateSmokeButton();
+
+    if (!smokeEnabled) {
+      particles = [];
+      if (frame) cancelAnimationFrame(frame);
+      frame = 0;
+      if (context) context.clearRect(0, 0, width, height);
+    }
+  });
+
+  /* دخان سريع بألوان أزرق وأحمر */
+  const canvas = document.createElement("canvas");
+  canvas.id = "smokeCanvas";
+  canvas.setAttribute("aria-hidden", "true");
+  document.body.appendChild(canvas);
+
+  const context = canvas.getContext("2d");
+
+  let particles = [];
+  let width = 0;
+  let height = 0;
+  let frame = 0;
+  let lastSpawn = 0;
+
+  function resizeCanvas() {
+    const ratio = Math.min(window.devicePixelRatio || 1, 2);
+
+    width = window.innerWidth;
+    height = window.innerHeight;
+
+    canvas.width = Math.round(width * ratio);
+    canvas.height = Math.round(height * ratio);
+    context.setTransform(ratio, 0, 0, ratio, 0, 0);
+  }
+
+  function addSmoke(x, y) {
+    if (!smokeEnabled) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const count = Math.max(1, Math.round(smokePower / 2));
+    const colors = [
+      [0, 170, 255],
+      [255, 45, 75]
+    ];
+
+    for (let i = 0; i < count; i++) {
+      const color = colors[Math.floor(Math.random() * colors.length)];
+
+      particles.push({
+        x: x + (Math.random() - 0.5) * 8,
+        y: y + (Math.random() - 0.5) * 8,
+        vx: (Math.random() - 0.5) * 2.6,
+        vy: (Math.random() - 0.5) * 2.6,
+        radius: 2 + Math.random() * (2 + smokePower * 0.35),
+        alpha: 0.75 + Math.random() * 0.2,
+        life: 1,
+        decay: 0.035 + Math.random() * 0.035,
+        color
+      });
+    }
+
+    if (particles.length > 180) {
+      particles.splice(0, particles.length - 180);
+    }
+  }
+
+  function animateSmoke() {
+    context.clearRect(0, 0, width, height);
+
+    particles = particles.filter(p => p.life > 0.03);
+
+    for (const p of particles) {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vx *= 0.97;
+      p.vy *= 0.97;
+      p.radius *= 0.985;
+      p.life -= p.decay;
+
+      const alpha = Math.max(0, p.alpha * p.life);
+      const [r, g, b] = p.color;
+
+      /* نقطة مضيئة صغيرة بدون غيمة كبيرة أو بطيئة */
+      context.beginPath();
+      context.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+      context.shadowColor = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+      context.shadowBlur = 5;
+      context.arc(p.x, p.y, Math.max(0.5, p.radius), 0, Math.PI * 2);
+      context.fill();
+    }
+
+    context.shadowBlur = 0;
+
+    if (smokeEnabled || particles.length) {
+      frame = requestAnimationFrame(animateSmoke);
+    } else {
+      frame = 0;
+      context.clearRect(0, 0, width, height);
+    }
+  }
+
+  window.addEventListener("resize", resizeCanvas);
+
+  document.addEventListener("pointermove", event => {
+    if (event.pointerType === "touch" || !smokeEnabled) return;
+
+    const now = performance.now();
+    if (now - lastSpawn < 12) return;
+    lastSpawn = now;
+
+    addSmoke(event.clientX, event.clientY);
+
+    if (!frame) frame = requestAnimationFrame(animateSmoke);
+  }, { passive: true });
+
+  resizeCanvas();
+
+  /* ترجمة النصوص التي تظهر ديناميكيًا */
+  const observer = new MutationObserver(records => {
+    if (language !== "en") return;
+
+    for (const record of records) {
+      for (const node of record.addedNodes) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          if (!originalText.has(node)) originalText.set(node, node.nodeValue);
+          node.nodeValue = translateValue(originalText.get(node), language);
+        } else if (
+          node.nodeType === Node.ELEMENT_NODE &&
+          !node.closest(".gamy-settings-wrap, #smokeCanvas")
+        ) {
+          const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
+
+          while (walker.nextNode()) {
+            const textNode = walker.currentNode;
+            if (!originalText.has(textNode)) {
+              originalText.set(textNode, textNode.nodeValue);
+            }
+            textNode.nodeValue = translateValue(originalText.get(textNode), language);
+          }
+        }
+      }
+    }
+  });
+
+  observer.observe(document.body, { childList: true, subtree: true });
+
+  applyTheme(readPreference(THEME_KEY, "light"));
+  translatePage(language);
+  updateSmokeButton();
+
+  if (smokeEnabled) frame = requestAnimationFrame(animateSmoke);
+})();
 </script>
 </body>
 </html>
