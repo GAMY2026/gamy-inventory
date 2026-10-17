@@ -474,11 +474,12 @@ body.dark-mode .gamy-settings-heading h2 {
   <nav class="sidebar-nav">
    <button type="button" class="nav-item active" data-page="dashboard" data-title="لوحة التحكم">لوحة التحكم</button>
    <button type="button" class="nav-item" data-page="products" data-title="إدارة المنتجات">إدارة المنتجات</button>
+   <button type="button" class="nav-item" data-page="receipts" data-title="استلامات البضاعة">استلامات البضاعة</button>
    <button type="button" class="nav-item" data-page="sales" data-title="تسجيل المبيعات">تسجيل المبيعات</button>
    <button type="button" class="nav-item" data-page="history" data-title="سجل المبيعات">سجل المبيعات</button>
    <button type="button" class="nav-item" data-page="backup" data-title="النسخ الاحتياطي">النسخ الاحتياطي</button>
-   <button type="button" class="nav-item" data-page="inventoryAudit" data-title="جرد المخزن">📋 جرد المخزن</button>
-  </nav>
+<button type="button" class="nav-item" data-page="inventoryAudit" data-title="جرد المخزن">جرد المخزن</button>
+
    </aside>
 
    <main class="app-content">
@@ -630,7 +631,8 @@ body.dark-mode .gamy-settings-heading h2 {
 
 <section class="page" data-page-section="inventoryAudit">
   <div class="page-topline">
-    <h1>📋 جرد المخزن</h1>
+   
+<h1>جرد المخزن</h1>
     <p>قارن الكميات الفعلية بالكميات المسجلة واكتشف العجز والزيادة.</p>
   </div>
 
@@ -845,7 +847,7 @@ function updateBackupSummary() {
 
 /* التنقل بين الصفحات */
 function showPage(name, updateHash = true) {
-   const allowed = ["dashboard", "products", "sales", "history", "backup", "inventoryAudit"];
+const allowed = ["dashboard", "products", "receipts", "sales", "history", "backup", "inventoryAudit"];
     const target = allowed.includes(name) ? name : "dashboard";
 
     document.querySelectorAll("[data-page-section]").forEach(section => {
@@ -2899,6 +2901,87 @@ $("exportAuditExcelButton").addEventListener("click", async () => {
         button.disabled = false;
     }
 });
+
+/* استلامات البضاعة: إضافة الأصناف وحساب الإجمالي */
+(function setupReceipts() {
+    const receiptBody = document.getElementById("receiptTableBody");
+    const addButton = document.getElementById("addReceiptRowButton");
+    const grandTotal = document.getElementById("receiptGrandTotal");
+
+    if (!receiptBody || !addButton || !grandTotal) return;
+
+    function updateReceiptTotals() {
+        let total = 0;
+
+        receiptBody.querySelectorAll("tr").forEach(row => {
+            const quantity = Number(row.querySelector(".receipt-quantity").value) || 0;
+            const cost = Number(row.querySelector(".receipt-cost").value) || 0;
+            const rowTotal = quantity * cost;
+
+            row.querySelector(".receipt-total").textContent =
+                rowTotal.toLocaleString("ar-EG", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }) + " ج.م";
+
+            total += rowTotal;
+        });
+
+        grandTotal.textContent =
+            total.toLocaleString("ar-EG", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }) + " ج.م";
+    }
+
+    function addReceiptRow() {
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+            <td><input type="text" class="receipt-name" placeholder="اسم الصنف"></td>
+            <td><input type="text" class="receipt-code" placeholder="كود المنتج"></td>
+            <td><input type="text" class="receipt-size" placeholder="المقاس"></td>
+            <td><input type="text" class="receipt-color" placeholder="اللون"></td>
+            <td><input type="number" class="receipt-quantity" min="1" step="1" value="1"></td>
+            <td><input type="number" class="receipt-cost" min="0" step="0.01" placeholder="0.00"></td>
+            <td class="receipt-total">0.00 ج.م</td>
+            <td><button type="button" class="secondary-btn receipt-delete">حذف</button></td>
+        `;
+
+        receiptBody.appendChild(row);
+        updateReceiptTotals();
+    }
+
+    addButton.addEventListener("click", addReceiptRow);
+
+    receiptBody.addEventListener("input", event => {
+        if (
+            event.target.matches(".receipt-quantity, .receipt-cost") ||
+            event.target.matches("input")
+        ) {
+            updateReceiptTotals();
+        }
+    });
+
+    receiptBody.addEventListener("click", event => {
+        const deleteButton = event.target.closest(".receipt-delete");
+        if (!deleteButton) return;
+
+        const rows = receiptBody.querySelectorAll("tr");
+
+        if (rows.length === 1) {
+            rows[0].querySelectorAll("input").forEach(input => {
+                input.value = input.classList.contains("receipt-quantity") ? "1" : "";
+            });
+        } else {
+            deleteButton.closest("tr").remove();
+        }
+
+        updateReceiptTotals();
+    });
+
+    updateReceiptTotals();
+})();
 
 </script>
 </body>
