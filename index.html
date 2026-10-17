@@ -453,6 +453,38 @@ body.dark-mode .gamy-settings-heading h2 {
   }
 }
 
+/* تكبير مربعات الكتابة في استلامات البضاعة */
+[data-page-section="receipts"] input {
+  min-height: 46px;
+  padding: 10px 12px;
+  font-size: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+[data-page-section="receipts"] table th,
+[data-page-section="receipts"] table td {
+  padding: 12px 10px;
+}
+
+[data-page-section="receipts"] .table-wrapper {
+  overflow-x: auto;
+}
+
+[data-page-section="receipts"] .receipt-name,
+[data-page-section="receipts"] .receipt-code {
+  min-width: 150px;
+}
+
+[data-page-section="receipts"] .receipt-size,
+[data-page-section="receipts"] .receipt-color {
+  min-width: 110px;
+}
+
+[data-page-section="receipts"] .receipt-quantity,
+[data-page-section="receipts"] .receipt-cost {
+  min-width: 125px;
+}
 
 </style>
 </head>
