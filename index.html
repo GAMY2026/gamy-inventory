@@ -2572,6 +2572,178 @@ showPage(location.hash.slice(1) || "dashboard", false);
 
   if (smokeEnabled) frame = requestAnimationFrame(animateSmoke);
 })();
+ 
+$("exportAuditExcelButton").addEventListener("click", async () => {
+    const button = $("exportAuditExcelButton");
+    button.disabled = true;
+
+    try {
+        showMessage("auditMessage", "جاري تجهيز تقرير الجرد...", "info");
+
+        const XLSX = await loadXlsxLibrary();
+
+        // قراءة الكميات الفعلية المدخلة حاليًا
+        const enteredQuantities = new Map();
+
+        $("auditTableBody")
+            .querySelectorAll("tr[data-product-id]")
+            .forEach(row => {
+                const input = row.querySelector(".audit-actual");
+
+                if (input && input.value.trim() !== "") {
+                    const actual = Number(input.value);
+
+                    if (Number.isInteger(actual) && actual >= 0) {
+                        enteredQuantities.set(row.dataset.productId, actual);
+                    }
+                }
+            });
+
+        // ورقة الجرد الحالي
+        const currentRows = [[
+            "اسم المنتج",
+            "كود المنتج",
+            "اللون",
+            "الكمية المسجلة",
+            "الكمية الفعلية",
+            "الفرق",
+            "حالة الجرد"
+        ]];
+
+        products.forEach(product => {
+            const recorded = Number(product.quantity) || 0;
+            const hasActual = enteredQuantities.has(product.id);
+            const actual = enteredQuantities.get(product.id);
+
+            let difference = "";
+            let status = "لم يتم الجرد";
+
+            if (hasActual) {
+                difference = actual - recorded;
+                status = difference < 0
+                    ? "عجز"
+                    : difference > 0
+                        ? "زيادة"
+                        : "مطابق";
+            }
+
+            currentRows.push([
+                product.name || "",
+                product.code || "",
+                product.color || "",
+                recorded,
+                hasActual ? actual : "",
+                difference,
+                status
+            ]);
+        });
+
+        // ورقة سجل الجرد المحفوظ
+        const historyRows = [[
+            "تاريخ الجرد",
+            "اسم المنتج",
+            "كود المنتج",
+            "اللون",
+            "الكمية المسجلة",
+            "الكمية الفعلية",
+            "الفرق",
+            "الحالة"
+        ]];
+
+        [...inventoryAudits]
+            .sort((a, b) =>
+                new Date(b.createdAt) - new Date(a.createdAt)
+            )
+            .forEach(audit => {
+                audit.items.forEach(item => {
+                    historyRows.push([
+                        new Date(audit.createdAt).toLocaleString("ar-EG"),
+                        item.name || "",
+                        item.code || "",
+                        item.color || "",
+                        item.recorded,
+                        item.actual,
+                        item.difference,
+                        item.difference < 0
+                            ? "عجز"
+                            : item.difference > 0
+                                ? "زيادة"
+                                : "مطابق"
+                    ]);
+                });
+            });
+
+        // ورقة ملخص الجرد الحالي
+        const counted = enteredQuantities.size;
+        let shortage = 0;
+        let surplus = 0;
+        let matched = 0;
+
+        products.forEach(product => {
+            if (!enteredQuantities.has(product.id)) return;
+
+            const difference =
+                enteredQuantities.get(product.id) - (Number(product.quantity) || 0);
+
+            if (difference < 0) shortage++;
+            else if (difference > 0) surplus++;
+            else matched++;
+        });
+
+        const summaryRows = [
+            ["تقرير الجرد الفعلي - GAMY INVENTORY"],
+            ["تاريخ استخراج التقرير", new Date().toLocaleString("ar-EG")],
+            ["إجمالي المنتجات المسجلة", products.length],
+            ["المنتجات التي تم إدخال جردها حاليًا", counted],
+            ["عدد حالات العجز", shortage],
+            ["عدد حالات الزيادة", surplus],
+            ["عدد المنتجات المطابقة", matched],
+            ["عدد عمليات الجرد المحفوظة", inventoryAudits.length]
+        ];
+
+        const workbook = XLSX.utils.book_new();
+
+        const summarySheet = XLSX.utils.aoa_to_sheet(summaryRows);
+        const currentSheet = XLSX.utils.aoa_to_sheet(currentRows);
+        const historySheet = XLSX.utils.aoa_to_sheet(historyRows);
+
+        setSheetLayout(summarySheet, [42, 30], "B", summaryRows.length);
+        setSheetLayout(
+            currentSheet,
+            [28, 18, 18, 18, 18, 14, 20],
+            "G",
+            currentRows.length
+        );
+        setSheetLayout(
+            historySheet,
+            [24, 28, 18, 18, 18, 18, 14, 18],
+            "H",
+            historyRows.length
+        );
+
+        XLSX.utils.book_append_sheet(workbook, summarySheet, "ملخص الجرد");
+        XLSX.utils.book_append_sheet(workbook, currentSheet, "الجرد الحالي");
+        XLSX.utils.book_append_sheet(workbook, historySheet, "سجل الجرد");
+
+        XLSX.writeFile(
+            workbook,
+            "GAMY_Inventory_Audit_" + new Date().toISOString().slice(0, 10) + ".xlsx"
+        );
+
+        showMessage("auditMessage", "تم تجهيز تقرير الجرد وتنزيل ملف Excel.", "success");
+
+    } catch (error) {
+        console.error("Audit Excel export error:", error);
+        showMessage(
+            "auditMessage",
+            "تعذر تنزيل تقرير الجرد. تأكد من اتصال الإنترنت وحاول مرة أخرى.",
+            "error"
+        );
+    } finally {
+        button.disabled = false;
+    }
+});
+
 </script>
 </body>
 </html>
