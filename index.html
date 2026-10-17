@@ -629,6 +629,60 @@ body.dark-mode .gamy-settings-heading h2 {
    </section>
   </section>
 
+<section class="page" data-page-section="receipts">
+  <div class="page-topline">
+    <h1>استلامات البضاعة</h1>
+    <p>تسجيل الأصناف والكميات وتكلفة القطع الواردة للمخزن.</p>
+  </div>
+
+  <section class="panel">
+    <div class="panel-heading">
+      <h2 class="section-title">الأصناف المستلمة</h2>
+      <p class="description">أدخل بيانات كل صنف، والإجمالي سيُحسب تلقائيًا.</p>
+    </div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>الصنف</th>
+            <th>كود المنتج</th>
+            <th>المقاس</th>
+            <th>اللون</th>
+            <th>الكمية</th>
+            <th>تكلفة القطعة</th>
+            <th>الإجمالي</th>
+            <th>حذف</th>
+          </tr>
+        </thead>
+        <tbody id="receiptTableBody">
+          <tr>
+            <td><input type="text" class="receipt-name" placeholder="اسم الصنف"></td>
+            <td><input type="text" class="receipt-code" placeholder="الكود"></td>
+            <td><input type="text" class="receipt-size" placeholder="المقاس"></td>
+            <td><input type="text" class="receipt-color" placeholder="اللون"></td>
+            <td><input type="number" class="receipt-quantity" min="1" step="1" value="1"></td>
+            <td><input type="number" class="receipt-cost" min="0" step="0.01" placeholder="0"></td>
+            <td class="receipt-total">0.00 ج.م</td>
+            <td><button type="button" class="secondary-btn receipt-delete">حذف</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="secondary-btn" id="addReceiptRowButton">إضافة صنف</button>
+    </div>
+
+    <div class="sale-preview">
+      إجمالي الاستلام:
+      <strong id="receiptGrandTotal">0.00 ج.م</strong>
+    </div>
+
+    <div id="receiptMessage" class="message" role="status"></div>
+  </section>
+</section>
+
 <section class="page" data-page-section="inventoryAudit">
   <div class="page-topline">
    
