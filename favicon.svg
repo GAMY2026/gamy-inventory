@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#111111"/>
+      <stop offset="100%" stop-color="#2b2b2b"/>
+    </linearGradient>
+
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F7D774"/>
+      <stop offset="100%" stop-color="#B88920"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="100" height="100" rx="22" fill="url(#bg)"/>
+
+  <rect x="13" y="13" width="74" height="74" rx="18"
+        fill="none"
+        stroke="url(#gold)"
+        stroke-width="2"/>
+
+  <path d="M25 34 L50 22 L75 34 L50 47 Z"
+        fill="none"
+        stroke="url(#gold)"
+        stroke-width="3"
+        stroke-linejoin="round"/>
+
+  <path d="M25 34 V67 L50 80 L75 67 V34"
+        fill="none"
+        stroke="url(#gold)"
+        stroke-width="3"
+        stroke-linejoin="round"/>
+
+  <path d="M50 47 V80"
+        stroke="url(#gold)"
+        stroke-width="3"/>
+
+  <text x="50" y="64"
+        text-anchor="middle"
+        font-family="Arial, sans-serif"
+        font-size="27"
+        font-weight="bold"
+        fill="#FFFFFF">G</text>
+</svg>
