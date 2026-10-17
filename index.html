@@ -525,6 +525,26 @@ body.dark-mode .gamy-settings-heading h2 {
       <div class="field"><label for="productName">اسم المنتج</label><input id="productName" type="text" placeholder="مثال: تيشيرت أسود" required></div>
       <div class="field"><label for="productCode">كود المنتج</label><input id="productCode" type="text" placeholder="مثال: TS001" required></div>
       <div class="field"><label for="productColor">اللون</label><input id="productColor" type="text" placeholder="مثال: أسود"></div>
+      <div class="field"><label for="productSize">المقاس</label><input id="productSize" type="text" placeholder="مثال: L"></div>
+      <div class="field">
+       <label for="productModel">الموديل</label>
+       <select id="productModel">
+        <option value="">اختار الموديل</option>
+        <option value="تيشيرت">تيشيرت</option>
+        <option value="قميص">قميص</option>
+        <option value="شورت">شورت</option>
+        <option value="بنطلون">بنطلون</option>
+        <option value="جاكيت">جاكيت</option>
+       </select>
+      </div>
+      <div class="field">
+       <label for="productGender">النوع</label>
+       <select id="productGender">
+        <option value="">اختار النوع</option>
+        <option value="رجالي">رجالي</option>
+        <option value="حريمي">حريمي</option>
+       </select>
+      </div>
       <div class="field"><label for="purchasePrice">سعر الشراء بالجنيه</label><input id="purchasePrice" type="number" min="0.01" step="0.01" required></div>
       <div class="field"><label for="salePrice">سعر البيع بالجنيه</label><input id="salePrice" type="number" min="0.01" step="0.01" required></div>
       <div class="field"><label for="productQuantity">الكمية الموجودة</label><input id="productQuantity" type="number" min="0" step="1" required></div>
@@ -749,6 +769,9 @@ products = readStorageArray(PRODUCT_KEY)
         name: String(p.name || ""),
         code: String(p.code || ""),
         color: String(p.color || ""),
+        size: String(p.size || ""),
+        model: String(p.model || ""),
+        gender: String(p.gender || ""),
         purchasePrice: Math.max(0, Number(p.purchasePrice) || 0),
         salePrice: Math.max(0, Number(p.salePrice) || 0),
         quantity: Math.max(0, Number(p.quantity) || 0)
@@ -1028,6 +1051,9 @@ function startEditProduct(id) {
     $("productName").value = p.name;
     $("productCode").value = p.code;
     $("productColor").value = p.color;
+    $("productSize").value = p.size || "";
+    $("productModel").value = p.model || "";
+    $("productGender").value = p.gender || "";
     $("purchasePrice").value = p.purchasePrice;
     $("salePrice").value = p.salePrice;
     $("productQuantity").value = p.quantity;
@@ -1050,6 +1076,9 @@ $("productForm").addEventListener("submit", event => {
     const name = $("productName").value.trim();
     const code = $("productCode").value.trim();
     const color = $("productColor").value.trim();
+    const size = $("productSize").value.trim();
+    const model = $("productModel").value;
+    const gender = $("productGender").value;
     const purchasePrice = Number($("purchasePrice").value);
     const salePrice = Number($("salePrice").value);
     const quantityText = $("productQuantity").value;
@@ -1080,7 +1109,7 @@ $("productForm").addEventListener("submit", event => {
         return;
     }
 
-    const values = { name, code, color, purchasePrice, salePrice, quantity };
+    const values = { name, code, color, size, model, gender, purchasePrice, salePrice, quantity };
 
     if (editingProductId !== null) {
         const index = products.findIndex(p => String(p.id) === String(editingProductId));
@@ -1613,6 +1642,9 @@ function validateImportedProducts(list) {
         const name = String(p.name || "").trim();
         const code = String(p.code || "").trim();
         const color = String(p.color || "");
+        const size = String(p.size || "");
+        const model = String(p.model || "");
+        const gender = String(p.gender || "");
         const purchasePrice = Number(p.purchasePrice);
         const salePrice = Number(p.salePrice);
         const quantity = Number(p.quantity);
@@ -1634,7 +1666,7 @@ function validateImportedProducts(list) {
         ids.add(id);
         codes.add(normalizedCode);
 
-        return { id, name, code, color, purchasePrice, salePrice, quantity };
+        return { id, name, code, color, size, model, gender, purchasePrice, salePrice, quantity };
     });
 }
 
@@ -2109,6 +2141,19 @@ showPage(location.hash.slice(1) || "dashboard", false);
     "اسم المنتج": "Product Name",
     "كود المنتج": "Product Code",
     "اللون": "Color",
+    "المقاس": "Size",
+    "الموديل": "Model",
+    "النوع": "Type",
+    "اختار الموديل": "Choose model",
+    "اختار النوع": "Choose type",
+    "تيشيرت": "T-shirt",
+    "قميص": "Shirt",
+    "شورت": "Shorts",
+    "بنطلون": "Pants",
+    "جاكيت": "Jacket",
+    "رجالي": "Men's",
+    "حريمي": "Women's",
+    "مثال: L": "Example: L",
     "سعر الشراء بالجنيه": "Purchase Price (EGP)",
     "سعر البيع بالجنيه": "Sale Price (EGP)",
     "الكمية الموجودة": "Stock Quantity",
@@ -2577,50 +2622,264 @@ showPage(location.hash.slice(1) || "dashboard", false);
   if (smokeEnabled) frame = requestAnimationFrame(animateSmoke);
 })();
 
-/* تنزيل تقرير الجرد Excel */
+
+/* ===== تقرير الجرد Excel بالألوان ===== */
+let styledXlsxPromise = null;
+
+function loadStyledXlsxLibrary() {
+    if (window.XLSX_STYLED) return Promise.resolve(window.XLSX_STYLED);
+    if (styledXlsxPromise) return styledXlsxPromise;
+
+    styledXlsxPromise = new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = "https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js";
+
+        script.onload = () => {
+            if (window.XLSX) {
+                window.XLSX_STYLED = window.XLSX;
+                resolve(window.XLSX);
+            } else {
+                reject(new Error("لم يتم تحميل مكتبة Excel."));
+            }
+        };
+
+        script.onerror = () => reject(new Error("تعذر تحميل مكتبة Excel. تأكد من اتصال الإنترنت."));
+        document.head.appendChild(script);
+    }).catch(error => {
+        styledXlsxPromise = null;
+        throw error;
+    });
+
+    return styledXlsxPromise;
+}
+
+const AUDIT_COLORS = {
+    header:   { fill: "153E35", font: "FFFFFF" },
+    shortage: { fill: "F4A6A6", font: "7A1212" },  /* عجز = أحمر */
+    matched:  { fill: "FFF3A3", font: "5C4B00" },  /* مطابق = أصفر */
+    surplus:  { fill: "BFDBFE", font: "1E3A8A" },  /* زيادة = أزرق فاتح */
+    none:     { fill: "FFFFFF", font: "24332C" }   /* لم يتم الجرد */
+};
+
+function buildAuditSheet(XLSX, headers, rows, statuses, widths) {
+    const sheet = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+    const line = { style: "thin", color: { rgb: "9AA79F" } };
+    const borders = { top: line, bottom: line, left: line, right: line };
+    const alignment = { horizontal: "center", vertical: "center", wrapText: true };
+
+    for (let r = 0; r <= rows.length; r++) {
+        const palette = r === 0
+            ? AUDIT_COLORS.header
+            : (AUDIT_COLORS[statuses[r - 1]] || AUDIT_COLORS.none);
+
+        for (let c = 0; c < headers.length; c++) {
+            const ref = XLSX.utils.encode_cell({ r, c });
+            if (!sheet[ref]) sheet[ref] = { t: "s", v: "" };
+
+            sheet[ref].s = {
+                font: { name: "Arial", sz: 11, bold: r === 0, color: { rgb: palette.font } },
+                fill: { patternType: "solid", fgColor: { rgb: palette.fill } },
+                alignment,
+                border: borders
+            };
+        }
+    }
+
+    sheet["!cols"] = widths.map(w => ({ wch: w }));
+    sheet["!rows"] = [{ hpt: 28 }];
+    sheet["!autofilter"] = {
+        ref: XLSX.utils.encode_range({
+            s: { r: 0, c: 0 },
+            e: { r: rows.length, c: headers.length - 1 }
+        })
+    };
+
+    return sheet;
+}
+
+/* ===== تقرير الجرد Excel: التاريخ واليوم والموديلات والأنواع ===== */
+const PRODUCT_MODELS = ["تيشيرت", "قميص", "شورت", "بنطلون", "جاكيت"];
+const PRODUCT_GENDERS = ["رجالي", "حريمي"];
+
 $("exportAuditExcelButton").addEventListener("click", async () => {
     const button = $("exportAuditExcelButton");
     button.disabled = true;
     showMessage("auditMessage", "جاري تجهيز تقرير الجرد...", "info");
 
     try {
-        const XLSX = await loadXlsxLibrary();
-        const workbook = XLSX.utils.book_new();
+        const XLSX = await loadStyledXlsxLibrary();
 
-        const totalUnits = products.reduce((sum, p) => sum + Number(p.quantity || 0), 0);
-        const stockValue = products.reduce((sum, p) =>
-            sum + Number(p.purchasePrice || 0) * Number(p.quantity || 0), 0
+        const now = new Date();
+        const reportDate = now.toLocaleDateString("ar-EG", { year: "numeric", month: "2-digit", day: "2-digit" });
+        const reportDay = now.toLocaleDateString("ar-EG", { weekday: "long" });
+
+        /* الكميات الفعلية المكتوبة حاليًا في الجدول */
+        const entered = new Map();
+        $("auditTableBody").querySelectorAll("tr[data-product-id]").forEach(row => {
+            const input = row.querySelector(".audit-actual");
+            if (!input || input.value.trim() === "") return;
+
+            const actual = Number(input.value);
+            if (Number.isInteger(actual) && actual >= 0) {
+                entered.set(row.dataset.productId, actual);
+            }
+        });
+
+        /* ترتيب: النوع ثم الموديل ثم الاسم */
+        const rank = (list, value) => {
+            const i = list.indexOf(value);
+            return i === -1 ? list.length : i;
+        };
+
+        const sorted = [...products].sort((a, b) =>
+            rank(PRODUCT_GENDERS, a.gender) - rank(PRODUCT_GENDERS, b.gender) ||
+            rank(PRODUCT_MODELS, a.model) - rank(PRODUCT_MODELS, b.model) ||
+            String(a.name).localeCompare(String(b.name), "ar")
         );
 
+        const headers = [
+            "م", "التاريخ", "اليوم", "اسم المنتج", "الموديل", "النوع",
+            "الكود", "اللون", "المقاس", "سعر الشراء", "سعر البيع",
+            "الكمية المسجلة", "الكمية الفعلية", "الفرق", "الحالة", "قيمة المخزون"
+        ];
+        const widths = [6, 16, 14, 26, 14, 12, 16, 14, 12, 14, 14, 16, 16, 12, 16, 18];
+
+        const records = sorted.map(p => {
+            const recorded = Number(p.quantity) || 0;
+            const purchase = Number(p.purchasePrice) || 0;
+            const hasActual = entered.has(p.id);
+            const actual = hasActual ? entered.get(p.id) : "";
+            const difference = hasActual ? actual - recorded : "";
+
+            let status = "none";
+            let label = "لم يتم الجرد";
+
+            if (hasActual) {
+                if (difference < 0) { status = "shortage"; label = "عجز"; }
+                else if (difference > 0) { status = "surplus"; label = "زيادة"; }
+                else { status = "matched"; label = "مطابق"; }
+            }
+
+            return {
+                p,
+                status,
+                row: [
+                    0,
+                    reportDate,
+                    reportDay,
+                    p.name || "",
+                    p.model || "غير محدد",
+                    p.gender || "غير محدد",
+                    p.code || "",
+                    p.color || "",
+                    p.size || "",
+                    purchase,
+                    Number(p.salePrice) || 0,
+                    recorded,
+                    actual,
+                    difference,
+                    label,
+                    purchase * recorded
+                ]
+            };
+        });
+
+        const build = filter => {
+            const list = records.filter(filter);
+            return {
+                rows: list.map((r, i) => [i + 1, ...r.row.slice(1)]),
+                statuses: list.map(r => r.status)
+            };
+        };
+
+        const all = build(() => true);
+        const matched = build(r => r.status === "matched");
+        const notMatched = build(r => r.status === "shortage" || r.status === "surplus");
+        const men = build(r => r.p.gender === "رجالي");
+        const women = build(r => r.p.gender === "حريمي");
+
         /* ورقة الملخص */
-        const summaryData = [
-            ["تقرير الجرد - GAMY INVENTORY", "القيمة"],
-            ["تاريخ إعداد التقرير", new Date().toLocaleString("ar-EG")],
+        const count = key => records.filter(r => r.status === key).length;
+        const totalUnits = products.reduce((s, p) => s + Number(p.quantity || 0), 0);
+        const stockValue = products.reduce((s, p) =>
+            s + Number(p.purchasePrice || 0) * Number(p.quantity || 0), 0
+        );
+
+        const summaryRows = [
+            ["التاريخ", reportDate],
+            ["اليوم", reportDay],
+            ["إجمالي أنواع المنتجات", products.length],
             ["إجمالي القطع", totalUnits],
-            ["قيمة المخزون بسعر الشراء (جنيه)", stockValue]
+            ["قيمة المخزون بسعر الشراء (جنيه)", stockValue],
+            ["المنتجات التي تم جردها", entered.size],
+            ["مطابق", count("matched")],
+            ["غير مطابق (عجز + زيادة)", count("shortage") + count("surplus")],
+            ["عجز", count("shortage")],
+            ["زيادة", count("surplus")],
+            ["لم يتم جردها", count("none")]
+        ];
+        const summaryStatuses = [
+            "none", "none", "none", "none", "none", "none",
+            "matched", "none", "shortage", "surplus", "none"
         ];
 
-        const summarySheet = XLSX.utils.aoa_to_sheet(summaryData);
-        summarySheet["!cols"] = [{ wch: 38 }, { wch: 25 }];
-        XLSX.utils.book_append_sheet(workbook, summarySheet, "الملخص");
+        /* ورقة ملخص الموديلات حسب النوع */
+        const groups = new Map();
+        records.forEach(r => {
+            const gender = r.p.gender || "غير محدد";
+            const model = r.p.model || "غير محدد";
+            const key = gender + "|" + model;
 
-        /* ورقة المنتجات */
-        const productsData = [
-            ["اسم المنتج", "كود المنتج", "اللون", "سعر الشراء", "سعر البيع", "الكمية", "قيمة المخزون"],
-            ...products.map(p => [
-                p.name || "",
-                p.code || "",
-                p.color || "",
-                Number(p.purchasePrice || 0),
-                Number(p.salePrice || 0),
-                Number(p.quantity || 0),
-                Number(p.purchasePrice || 0) * Number(p.quantity || 0)
-            ])
+            if (!groups.has(key)) {
+                groups.set(key, {
+                    gender, model, products: 0, units: 0, value: 0,
+                    shortage: 0, matched: 0, surplus: 0, none: 0
+                });
+            }
+
+            const g = groups.get(key);
+            g.products++;
+            g.units += Number(r.p.quantity) || 0;
+            g.value += (Number(r.p.purchasePrice) || 0) * (Number(r.p.quantity) || 0);
+            g[r.status]++;
+        });
+
+        const modelRows = [...groups.values()].map(g => [
+            g.gender, g.model, g.products, g.units, g.value,
+            g.shortage, g.matched, g.surplus, g.none
+        ]);
+
+        const modelHeaders = [
+            "النوع", "الموديل", "عدد المنتجات", "إجمالي القطع",
+            "قيمة المخزون", "عجز", "مطابق", "زيادة", "لم يتم الجرد"
         ];
 
-        const productsSheet = XLSX.utils.aoa_to_sheet(productsData);
-        setSheetLayout(productsSheet, [26, 18, 15, 18, 18, 12, 20], "G", productsData.length);
-        XLSX.utils.book_append_sheet(workbook, productsSheet, "المنتجات");
+        const workbook = XLSX.utils.book_new();
+        workbook.Workbook = { Views: [{ RTL: true }] };
+
+        XLSX.utils.book_append_sheet(workbook,
+            buildAuditSheet(XLSX, ["البيان", "القيمة"], summaryRows, summaryStatuses, [36, 28]),
+            "ملخص الجرد");
+
+        XLSX.utils.book_append_sheet(workbook,
+            buildAuditSheet(XLSX, modelHeaders, modelRows, modelRows.map(() => "none"),
+                [12, 16, 16, 16, 18, 10, 10, 10, 16]),
+            "ملخص الموديلات");
+
+        XLSX.utils.book_append_sheet(workbook,
+            buildAuditSheet(XLSX, headers, all.rows, all.statuses, widths), "الجرد");
+
+        XLSX.utils.book_append_sheet(workbook,
+            buildAuditSheet(XLSX, headers, matched.rows, matched.statuses, widths), "مطابق");
+
+        XLSX.utils.book_append_sheet(workbook,
+            buildAuditSheet(XLSX, headers, notMatched.rows, notMatched.statuses, widths), "غير مطابق");
+
+        XLSX.utils.book_append_sheet(workbook,
+            buildAuditSheet(XLSX, headers, men.rows, men.statuses, widths), "رجالي");
+
+        XLSX.utils.book_append_sheet(workbook,
+            buildAuditSheet(XLSX, headers, women.rows, women.statuses, widths), "حريمي");
 
         XLSX.writeFile(
             workbook,
