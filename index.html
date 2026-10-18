@@ -488,6 +488,7 @@ body.dark-mode .gamy-settings-heading h2 {
 
 </style>
 </head>
+
 <body>
  
 <!-- GAMY INVENTORY - Login Screen -->
@@ -524,11 +525,11 @@ body.dark-mode .gamy-settings-heading h2 {
    <button type="button" class="nav-item" data-page="sales" data-title="تسجيل المبيعات">تسجيل المبيعات</button>
    <button type="button" class="nav-item" data-page="history" data-title="سجل المبيعات">سجل المبيعات</button>
    <button type="button" class="nav-item" data-page="backup" data-title="النسخ الاحتياطي">النسخ الاحتياطي</button>
-   <button type="button" class="nav-item" data-page="inventoryAudit" data-title="جرد المخزن">جرد المخزن</button>
-  </nav>
- </aside>
+<button type="button" class="nav-item" data-page="inventoryAudit" data-title="جرد المخزن">جرد المخزن</button>
 
- <main class="app-content">
+   </aside>
+
+   <main class="app-content">
 
   <section class="page active" data-page-section="dashboard">
    <section class="welcome">
@@ -539,8 +540,308 @@ body.dark-mode .gamy-settings-heading h2 {
    <div class="stats">
     <div class="stat-card"><div class="stat-label">عدد أنواع المنتجات</div><div class="stat-value" id="productCount">0</div><div class="stat-caption">إجمالي المنتجات المسجلة</div></div>
     <div class="stat-card"><div class="stat-label">قيمة المخزون</div><div class="stat-value" id="stockValue">0 ج.م</div><div class="stat-caption">محسوبة بسعر الشراء</div></div>
-    <div class="stat-card"><div class="stat-label">إجمالي القطع</div><div class="stat-value"
-                                                                      <script>
+    <div class="stat-card"><div class="stat-label">إجمالي القطع</div><div class="stat-value" id="totalUnits">0</div><div class="stat-caption">القطع الموجودة بالمخزن</div></div>
+    <div class="stat-card"><div class="stat-label">مخزون منخفض</div><div class="stat-value" id="lowStockCount">0</div><div class="stat-caption">5 قطع أو أقل</div></div>
+    <div class="stat-card"><div class="stat-label">مبيعات اليوم</div><div class="stat-value" id="dashSalesToday">0 ج.م</div><div class="stat-caption">إجمالي البيع اليوم</div></div>
+    <div class="stat-card"><div class="stat-label">ربح اليوم التقديري</div><div class="stat-value" id="dashProfitToday">0 ج.م</div><div class="stat-caption">قبل مصاريف التشغيل</div></div>
+   </div>
+
+   <section class="panel">
+    <div class="panel-heading"><h2 class="section-title">الوصول السريع</h2><p class="description">اختار القسم الذي تريد العمل عليه.</p></div>
+    <div class="shortcut-grid">
+     <button type="button" class="shortcut-button" data-page-link="products"><strong>إدارة المنتجات</strong><span>إضافة المنتجات وتعديل البيانات ومتابعة الكميات.</span></button>
+     <button type="button" class="shortcut-button" data-page-link="sales"><strong>تسجيل المبيعات</strong><span>تسجيل البيع وخصم الكمية من المخزون.</span></button>
+     <button type="button" class="shortcut-button" data-page-link="history"><strong>سجل المبيعات</strong><span>مراجعة عمليات البيع والإجماليات.</span></button>
+     <button type="button" class="shortcut-button" data-page-link="backup"><strong>النسخ الاحتياطي</strong><span>تنزيل تقرير Excel أو نسخة استعادة.</span></button>
+    </div>
+   </section>
+
+   <section class="panel">
+    <div class="table-toolbar"><h2 class="section-title">أحدث المبيعات</h2><button type="button" class="secondary-btn" data-page-link="history">عرض سجل المبيعات</button></div>
+    <div class="table-wrapper">
+     <table><thead><tr><th>التاريخ والوقت</th><th>المنتج</th><th>الكمية</th><th>إجمالي البيع</th></tr></thead><tbody id="recentSalesBody"></tbody></table>
+    </div>
+   </section>
+  </section>
+
+  <section class="page" data-page-section="products">
+   <div class="page-topline"><h1>إدارة المنتجات</h1><p>إضافة المنتجات وتعديل البيانات وإدارة كميات المخزون.</p></div>
+   <section class="panel" id="productFormPanel">
+    <div class="panel-heading"><h2 class="section-title" id="productFormTitle">إضافة منتج جديد</h2><p class="description" id="productFormDescription">أدخل بيانات المنتج واحفظها في المخزون.</p></div>
+    <form id="productForm">
+     <div class="form-grid">
+      <div class="field"><label for="productName">اسم المنتج</label><input id="productName" type="text" placeholder="مثال: تيشيرت أسود" required></div>
+      <div class="field"><label for="productCode">كود المنتج</label><input id="productCode" type="text" placeholder="مثال: TS001" required></div>
+      <div class="field"><label for="productColor">اللون</label><input id="productColor" type="text" placeholder="مثال: أسود"></div>
+      <div class="field"><label for="productSize">المقاس</label><input id="productSize" type="text" placeholder="مثال: L"></div>
+      <div class="field">
+       <label for="productModel">الموديل</label>
+       <select id="productModel">
+        <option value="">اختار الموديل</option>
+        <option value="تيشيرت">تيشيرت</option>
+        <option value="قميص">قميص</option>
+        <option value="شورت">شورت</option>
+        <option value="بنطلون">بنطلون</option>
+        <option value="جاكيت">جاكيت</option>
+       </select>
+      </div>
+      <div class="field">
+       <label for="productGender">النوع</label>
+       <select id="productGender">
+        <option value="">اختار النوع</option>
+        <option value="رجالي">رجالي</option>
+        <option value="حريمي">حريمي</option>
+       </select>
+      </div>
+      <div class="field"><label for="purchasePrice">سعر الشراء بالجنيه</label><input id="purchasePrice" type="number" min="0.01" step="0.01" required></div>
+      <div class="field"><label for="salePrice">سعر البيع بالجنيه</label><input id="salePrice" type="number" min="0.01" step="0.01" required></div>
+      <div class="field"><label for="productQuantity">الكمية الموجودة</label><input id="productQuantity" type="number" min="0" step="1" required></div>
+     </div>
+     <div class="actions">
+      <button class="primary-btn" type="submit" id="saveProductButton">حفظ المنتج</button>
+      <button class="secondary-btn" type="button" id="clearFormButton">مسح البيانات</button>
+      <button class="secondary-btn" type="button" id="cancelEditButton" hidden>إلغاء التعديل</button>
+     </div>
+     <div id="formMessage" class="message" role="status"></div>
+    </form>
+   </section>
+
+   <section class="panel">
+    <div class="table-toolbar"><h2 class="section-title">قائمة المنتجات</h2><input id="searchInput" class="search-input" type="search" placeholder="بحث بالاسم أو الكود أو اللون"></div>
+    <div class="table-wrapper">
+     <table><thead><tr><th>اسم المنتج</th><th>كود المنتج</th><th>اللون</th><th>سعر الشراء</th><th>سعر البيع</th><th>الكمية</th><th>قيمة المخزون</th><th>الإجراءات</th></tr></thead><tbody id="productTableBody"></tbody></table>
+    </div>
+    <div class="table-footer"><span id="tableCount">عدد المنتجات: 0</span><span>كل المبالغ بالجنيه المصري</span></div>
+   </section>
+  </section>
+
+  <section class="page" data-page-section="sales">
+   <div class="page-topline"><h1>تسجيل المبيعات</h1><p>سجّل البيع وراجع الإجمالي والربح المتوقع.</p></div>
+   <section class="panel">
+    <div class="panel-heading"><h2 class="section-title">ملخص مبيعات اليوم</h2></div>
+    <div class="sale-summary">
+     <div class="sale-stat"><div class="sale-stat-label">مبيعات اليوم</div><div class="sale-stat-value" id="todaySalesTotal">0 ج.م</div></div>
+     <div class="sale-stat"><div class="sale-stat-label">ربح اليوم التقديري</div><div class="sale-stat-value" id="todayProfitTotal">0 ج.م</div></div>
+     <div class="sale-stat"><div class="sale-stat-label">عدد عمليات البيع اليوم</div><div class="sale-stat-value" id="todaySalesCount">0</div></div>
+    </div>
+   </section>
+   <section class="panel">
+    <div class="panel-heading"><h2 class="section-title">تسجيل عملية بيع</h2><p class="description">اختار المنتج والكمية وسعر البيع، وسيتم خصم الكمية عند التأكيد.</p></div>
+    <form id="saleForm">
+     <div class="form-grid">
+      <div class="field"><label for="saleProduct">المنتج</label><select id="saleProduct" required><option value="">اختار المنتج</option></select></div>
+      <div class="field"><label for="saleQuantity">الكمية المباعة</label><input id="saleQuantity" type="number" min="1" step="1" value="1" required></div>
+      <div class="field"><label for="saleUnitPrice">سعر بيع القطعة بالجنيه</label><input id="saleUnitPrice" type="number" min="0.01" step="0.01" required></div>
+     </div>
+     <div class="sale-preview" id="salePreview">اختار المنتج وحدد الكمية لمعاينة الحسابات.</div>
+     <div class="actions"><button class="primary-btn" type="submit">تسجيل عملية البيع</button><button class="secondary-btn" type="button" id="clearSaleFormButton">مسح بيانات البيع</button></div>
+     <div id="saleMessage" class="message" role="status"></div>
+    </form>
+   </section>
+  </section>
+
+  <section class="page" data-page-section="history">
+   <div class="page-topline"><h1>سجل المبيعات</h1><p>راجع عمليات البيع السابقة وإجمالي كل عملية.</p></div>
+   <section class="panel">
+    <div class="table-toolbar"><h2 class="section-title">عمليات البيع المسجلة</h2><input id="salesSearch" class="search-input" type="search" placeholder="بحث باسم المنتج أو الكود"></div>
+    <div class="table-wrapper">
+     <table><thead><tr><th>التاريخ والوقت</th><th>المنتج</th><th>الكود</th><th>الكمية</th><th>سعر القطعة</th><th>إجمالي البيع</th><th>الربح</th></tr></thead><tbody id="salesTableBody"></tbody></table>
+    </div>
+    <div class="table-footer"><span id="salesTableCount">عدد عمليات البيع: 0</span><span>الربح قبل مصاريف التشغيل</span></div>
+   </section>
+  </section>
+
+  <section class="page" data-page-section="backup">
+   <div class="page-topline"><h1>النسخ الاحتياطي</h1><p>نزّل تقرير Excel منظمًا أو احفظ نسخة لاستعادة البيانات لاحقًا.</p></div>
+   <section class="panel">
+    <div class="panel-heading"><h2 class="section-title">بياناتك الحالية</h2><p class="description">الأرقام التالية تمثل البيانات المحفوظة في هذا المتصفح.</p></div>
+    <div class="backup-summary">
+     <div><span>عدد المنتجات</span><strong id="backupProductsCount">0</strong></div>
+     <div><span>عدد عمليات البيع</span><strong id="backupSalesCount">0</strong></div>
+    </div>
+    <div class="actions">
+     <button type="button" class="primary-btn" id="exportBackupButton">تنزيل تقرير Excel</button>
+     <button type="button" class="secondary-btn" id="exportJsonBackupButton">تنزيل نسخة استعادة JSON</button>
+    </div>
+    <div id="exportMessage" class="message" role="status"></div>
+   </section>
+   <section class="panel">
+    <div class="panel-heading"><h2 class="section-title">استعادة نسخة احتياطية</h2><p class="description">اختار ملف JSON سبق تنزيله من هذا البرنامج.</p></div>
+    <div class="actions">
+     <button type="button" class="primary-btn" id="chooseBackupButton">اختيار ملف للاستعادة</button>
+     <input id="backupFileInput" type="file" accept=".json,application/json" hidden>
+    </div>
+    <div class="backup-note">عند الاستعادة سيتم استبدال المنتجات والمبيعات الحالية بالبيانات الموجودة في الملف. احتفظ بنسخة احتياطية من بياناتك الحالية أولًا.</div>
+    <div id="importMessage" class="message" role="status"></div>
+   </section>
+  </section>
+
+<section class="page" data-page-section="receipts">
+  <div class="page-topline">
+    <h1>استلامات البضاعة</h1>
+    <p>تسجيل الأصناف والكميات وتكلفة القطع الواردة للمخزن.</p>
+  </div>
+
+  <section class="panel">
+    <div class="panel-heading">
+      <h2 class="section-title">الأصناف المستلمة</h2>
+      <p class="description">أدخل بيانات كل صنف، والإجمالي سيُحسب تلقائيًا.</p>
+    </div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>الصنف</th>
+            <th>كود المنتج</th>
+            <th>المقاس</th>
+            <th>اللون</th>
+            <th>الكمية</th>
+            <th>تكلفة القطعة</th>
+            <th>الإجمالي</th>
+            <th>حذف</th>
+          </tr>
+        </thead>
+        <tbody id="receiptTableBody">
+          <tr>
+            <td><input type="text" class="receipt-name" placeholder="اسم الصنف"></td>
+            <td><input type="text" class="receipt-code" placeholder="الكود"></td>
+            <td><input type="text" class="receipt-size" placeholder="المقاس"></td>
+            <td><input type="text" class="receipt-color" placeholder="اللون"></td>
+            <td><input type="number" class="receipt-quantity" min="1" step="1" value="1"></td>
+            <td><input type="number" class="receipt-cost" min="0" step="0.01" placeholder="0"></td>
+            <td class="receipt-total">0.00 ج.م</td>
+            <td><button type="button" class="secondary-btn receipt-delete">حذف</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="secondary-btn" id="addReceiptRowButton">إضافة صنف</button>
+    </div>
+
+    <div class="sale-preview">
+      إجمالي الاستلام:
+      <strong id="receiptGrandTotal">0.00 ج.م</strong>
+    </div>
+
+    <div id="receiptMessage" class="message" role="status"></div>
+  </section>
+</section>
+
+<section class="page" data-page-section="inventoryAudit">
+  <div class="page-topline">
+   
+<h1>جرد المخزن</h1>
+    <p>قارن الكميات الفعلية بالكميات المسجلة واكتشف العجز والزيادة.</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card">
+      <div class="stat-label">المنتجات التي تم جردها</div>
+      <div class="stat-value" id="auditCounted">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">عدد المنتجات التي بها عجز</div>
+      <div class="stat-value" id="auditShortage">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">عدد المنتجات التي بها زيادة</div>
+      <div class="stat-value" id="auditSurplus">0</div>
+    </div>
+  </div>
+
+  <section class="panel">
+    <div class="panel-heading">
+      <h2 class="section-title">تسجيل الجرد الفعلي</h2>
+      <p class="description">
+        اكتب العدد الذي وجدته فعليًا أمام كل منتج. اترك الخانة فارغة للمنتجات التي لم تجردها.
+      </p>
+    </div>
+
+    <div class="table-toolbar">
+      <input id="auditSearch" class="search-input"
+        type="search" placeholder="ابحث باسم المنتج أو الكود أو اللون">
+      <button type="button" class="secondary-btn" id="auditFillCurrent">
+        نسخ الكميات المسجلة
+      </button>
+    </div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>اسم المنتج</th>
+            <th>الكود</th>
+            <th>اللون</th>
+            <th>الكمية المسجلة</th>
+            <th>الكمية الفعلية</th>
+            <th>الفرق</th>
+            <th>الحالة</th>
+          </tr>
+        </thead>
+        <tbody id="auditTableBody"></tbody>
+      </table>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="primary-btn" id="saveAuditButton">
+        حفظ نتيجة الجرد
+      </button>
+      <button type="button" class="secondary-btn" id="clearAuditButton">
+        مسح الكميات المدخلة
+      </button>
+      <button type="button" class="primary-btn" id="exportAuditExcelButton">
+        تنزيل تقرير الجرد Excel
+      </button>
+    </div>
+
+    <div id="auditMessage" class="message" role="status"></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-heading">
+      <h2 class="section-title">سجل الجرد السابق</h2>
+      <p class="description">النتائج المحفوظة، بالتاريخ وعدد المنتجات والعجز والزيادة.</p>
+    </div>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>تاريخ الجرد</th>
+            <th>عدد المنتجات المجردة</th>
+            <th>منتجات بها عجز</th>
+            <th>منتجات بها زيادة</th>
+            <th>منتجات مطابقة</th>
+          </tr>
+        </thead>
+        <tbody id="auditHistoryBody"></tbody>
+      </table>
+    </div>
+  </section>
+</section>
+
+ </main>
+</div>
+
+<div id="stockModal" class="modal-overlay" hidden>
+ <section class="modal" role="dialog" aria-modal="true" aria-labelledby="stockModalTitle">
+  <h2 id="stockModalTitle">إضافة كمية جديدة</h2>
+  <p>اكتب عدد القطع التي تريد إضافتها للمخزون.</p>
+  <form id="stockForm">
+   <div class="field"><label for="stockProductName">اسم المنتج</label><input id="stockProductName" readonly></div>
+   <div class="field"><label for="stockCurrentQuantity">الكمية الحالية</label><input id="stockCurrentQuantity" type="number" readonly></div>
+   <div class="field"><label for="stockAddQuantity">الكمية الجديدة</label><input id="stockAddQuantity" type="number" min="1" step="1" required></div>
+   <div id="stockMessage" class="message" role="status"></div>
+   <div class="modal-actions"><button class="primary-btn" type="submit">حفظ الكمية</button><button class="secondary-btn" id="closeStockModal" type="button">إلغاء</button></div>
+  </form>
+ </section>
+</div>
+
+<footer>GAMY INVENTORY © 2026 | نظام إدارة المخازن والمبيعات</footer>
+
+<script>
 "use strict";
 
 /* الحفاظ على مفاتيح التخزين القديمة */
@@ -1593,7 +1894,8 @@ $("backupFileInput").addEventListener("change", async event => {
         event.target.value = "";
     }
 });
-         /* ===== GAMY INVENTORY: STOCK AUDIT ===== */
+
+/* ===== GAMY INVENTORY: STOCK AUDIT ===== */
 const AUDIT_KEY = "gamy_inventory_audits_v1";
 
 function readAudits() {
@@ -2422,7 +2724,9 @@ showPage(location.hash.slice(1) || "dashboard", false);
 
   if (smokeEnabled) frame = requestAnimationFrame(animateSmoke);
 })();
-     /* ===== تقرير الجرد Excel بالألوان ===== */
+
+
+/* ===== تقرير الجرد Excel بالألوان ===== */
 let styledXlsxPromise = null;
 
 function loadStyledXlsxLibrary() {
@@ -2699,19 +3003,13 @@ $("exportAuditExcelButton").addEventListener("click", async () => {
     }
 });
 
-/* ===== استلامات البضاعة: حساب الإجمالي + إضافة الكميات للمخزن ===== */
+/* استلامات البضاعة: إضافة الأصناف وحساب الإجمالي */
 (function setupReceipts() {
     const receiptBody = document.getElementById("receiptTableBody");
     const addButton = document.getElementById("addReceiptRowButton");
-    const confirmButton = document.getElementById("confirmReceiptButton");
     const grandTotal = document.getElementById("receiptGrandTotal");
 
     if (!receiptBody || !addButton || !grandTotal) return;
-
-    const money = value => value.toLocaleString("ar-EG", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    }) + " ج.م";
 
     function updateReceiptTotals() {
         let total = 0;
@@ -2721,11 +3019,20 @@ $("exportAuditExcelButton").addEventListener("click", async () => {
             const cost = Number(row.querySelector(".receipt-cost").value) || 0;
             const rowTotal = quantity * cost;
 
-            row.querySelector(".receipt-total").textContent = money(rowTotal);
+            row.querySelector(".receipt-total").textContent =
+                rowTotal.toLocaleString("ar-EG", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }) + " ج.م";
+
             total += rowTotal;
         });
 
-        grandTotal.textContent = money(total);
+        grandTotal.textContent =
+            total.toLocaleString("ar-EG", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }) + " ج.م";
     }
 
     function addReceiptRow() {
@@ -2746,21 +3053,15 @@ $("exportAuditExcelButton").addEventListener("click", async () => {
         updateReceiptTotals();
     }
 
-    function resetReceiptTable() {
-        const rows = receiptBody.querySelectorAll("tr");
-        rows.forEach((row, index) => { if (index > 0) row.remove(); });
-
-        rows[0].querySelectorAll("input").forEach(input => {
-            input.value = input.classList.contains("receipt-quantity") ? "1" : "";
-        });
-
-        updateReceiptTotals();
-    }
-
     addButton.addEventListener("click", addReceiptRow);
 
     receiptBody.addEventListener("input", event => {
-        if (event.target.matches("input")) updateReceiptTotals();
+        if (
+            event.target.matches(".receipt-quantity, .receipt-cost") ||
+            event.target.matches("input")
+        ) {
+            updateReceiptTotals();
+        }
     });
 
     receiptBody.addEventListener("click", event => {
@@ -2780,113 +3081,11 @@ $("exportAuditExcelButton").addEventListener("click", async () => {
         updateReceiptTotals();
     });
 
-    /* تأكيد الاستلام: زيادة المخزن تلقائيًا */
-    if (confirmButton) confirmButton.addEventListener("click", () => {
-        const rows = [...receiptBody.querySelectorAll("tr")];
-        const items = [];
-
-        for (let i = 0; i < rows.length; i++) {
-            const row = rows[i];
-            const val = selector => row.querySelector(selector).value.trim();
-
-            const name = val(".receipt-name");
-            const code = val(".receipt-code");
-            const size = val(".receipt-size");
-            const color = val(".receipt-color");
-            const costText = val(".receipt-cost");
-            const qty = Number(val(".receipt-quantity"));
-            const cost = Number(costText || 0);
-
-            /* تجاهل الصف الفاضي */
-            if (!name && !code && !costText) continue;
-
-            if (!name || !code) {
-                showMessage("receiptMessage", "الصف رقم " + (i + 1) + ": اكتب اسم الصنف وكوده.", "error");
-                return;
-            }
-            if (!Number.isInteger(qty) || qty <= 0) {
-                showMessage("receiptMessage", "الصف رقم " + (i + 1) + ": الكمية لازم تكون عددًا صحيحًا أكبر من صفر.", "error");
-                return;
-            }
-            if (!Number.isFinite(cost) || cost <= 0) {
-                showMessage("receiptMessage", "الصف رقم " + (i + 1) + ": تكلفة القطعة لازم تكون أكبر من صفر.", "error");
-                return;
-            }
-
-            items.push({ name, code, size, color, qty, cost });
-        }
-
-        if (!items.length) {
-            showMessage("receiptMessage", "اكتب صنفًا واحدًا على الأقل قبل التأكيد.", "error");
-            return;
-        }
-
-        const totalUnits = items.reduce((sum, item) => sum + item.qty, 0);
-
-        if (!confirm("سيتم إضافة " + items.length + " صنف (" + totalUnits + " قطعة) إلى المخزن. هل تريد الاستمرار؟")) {
-            return;
-        }
-
-        const backup = JSON.stringify(products);
-        let added = 0;
-        let updated = 0;
-
-        items.forEach(item => {
-            const existing = products.find(p => normalize(p.code) === normalize(item.code));
-
-            if (existing) {
-                const oldQty = Number(existing.quantity) || 0;
-                const oldCost = Number(existing.purchasePrice) || 0;
-
-                /* متوسط التكلفة بين القديم والجديد */
-                existing.purchasePrice = Math.round(
-                    ((oldQty * oldCost + item.qty * item.cost) / (oldQty + item.qty)) * 100
-                ) / 100;
-                existing.quantity = oldQty + item.qty;
-
-                if (!existing.size && item.size) existing.size = item.size;
-                if (!existing.color && item.color) existing.color = item.color;
-
-                updated++;
-            } else {
-                products.push({
-                    id: Date.now().toString() + Math.random().toString(16).slice(2),
-                    name: item.name,
-                    code: item.code,
-                    color: item.color,
-                    size: item.size,
-                    model: "",
-                    gender: "",
-                    purchasePrice: item.cost,
-                    salePrice: 0,
-                    quantity: item.qty
-                });
-                added++;
-            }
-        });
-
-        if (!saveProducts()) {
-            products = JSON.parse(backup);
-            showMessage("receiptMessage", "تعذر حفظ الاستلام. لم يتم تغيير المخزن.", "error");
-            return;
-        }
-
-        renderProducts();
-        resetReceiptTable();
-
-        showMessage(
-            "receiptMessage",
-            "تم الاستلام: " + totalUnits + " قطعة. أصناف زادت كميتها: " + updated +
-            "، أصناف جديدة اتضافت للمخزن: " + added + "." +
-            (added ? " راجع الأصناف الجديدة في إدارة المنتجات وحدد سعر البيع." : ""),
-            "success"
-        );
-    });
-
     updateReceiptTotals();
 })();
-</script>
 
+</script>
+ 
 <script>
 /* GAMY INVENTORY - Basic Login */
 (function () {
@@ -2902,7 +3101,7 @@ $("exportAuditExcelButton").addEventListener("click", async () => {
   const correctUsername = "admin";
 
   // غيّر القيمة دي بنفسك لكلمة مرور تجريبية غير مستخدمة في أي حساب آخر
-  const correctPassword = "Gamy2026Test";
+const correctPassword = "Gamy2026Test";
 
   if (sessionStorage.getItem("gamyInventoryLoggedIn") === "yes") {
     screen.style.display = "none";
