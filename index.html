@@ -730,6 +730,119 @@ body.dark-mode .gamy-settings-heading h2 {
 
     <div id="receiptMessage" class="message" role="status"></div>
   </section>
+ 
+saveButton.addEventListener("click", () => {
+    const rows = Array.from(receiptBody.querySelectorAll("tr"));
+    const entries = [];
+
+    for (const row of rows) {
+        const name = row.querySelector(".receipt-name").value.trim();
+        const code = row.querySelector(".receipt-code").value.trim();
+        const size = row.querySelector(".receipt-size").value.trim();
+        const color = row.querySelector(".receipt-color").value.trim();
+        const qtyText = row.querySelector(".receipt-quantity").value;
+        const costText = row.querySelector(".receipt-cost").value;
+        const quantity = Number(qtyText);
+        const cost = Number(costText);
+
+        const isBlank = !name && !code && !size && !color &&
+            !qtyText.trim() && !costText.trim();
+
+        if (isBlank) continue;
+
+        if (!name || !code) {
+            showMessage("receiptMessage", "اكتب اسم الصنف وكوده.", "error");
+            return;
+        }
+
+        if (!qtyText.trim() || !Number.isInteger(quantity) || quantity <= 0) {
+            showMessage("receiptMessage", "اكتب كمية صحيحة أكبر من صفر.", "error");
+            return;
+        }
+
+        if (!costText.trim() || !Number.isFinite(cost) || cost < 0) {
+            showMessage("receiptMessage", "اكتب سعر شراء صحيحًا.", "error");
+            return;
+        }
+
+        entries.push({
+            name,
+            code,
+            size,
+            color,
+            quantity,
+            actualQuantity: quantity,
+            cost
+        });
+    }
+
+    if (!entries.length) {
+        showMessage("receiptMessage", "أضف صنفًا واكتب بياناته أولًا.", "error");
+        return;
+    }
+
+    const seenCodes = new Set();
+
+    for (const item of entries) {
+        const key = normalize(item.code);
+
+        if (seenCodes.has(key)) {
+            showMessage("receiptMessage", "لا تكرر كود الصنف في أكثر من صف.", "error");
+            return;
+        }
+
+        seenCodes.add(key);
+
+        const existing = products.find(p => normalize(p.code) === key);
+
+        if (existing &&
+            (normalize(existing.name) !== normalize(item.name) ||
+             normalize(existing.size) !== normalize(item.size) ||
+             normalize(existing.color) !== normalize(item.color))) {
+            showMessage("receiptMessage", "كود المنتج موجود لكن بياناته مختلفة. راجع الاسم والمقاس واللون.", "error");
+            return;
+        }
+    }
+
+    const RECEIPTS_KEY = "gamy_inventory_receipts_v1";
+    let savedReceipts;
+
+    try {
+        savedReceipts = JSON.parse(localStorage.getItem(RECEIPTS_KEY) || "[]");
+
+        if (!Array.isArray(savedReceipts)) {
+            throw new Error("سجل الإذونات غير صالح.");
+        }
+    } catch (error) {
+        showMessage("receiptMessage", "تعذر قراءة سجل الاستلامات. لم يتغير المخزون.", "error");
+        return;
+    }
+
+    const receipt = {
+        id: "REC-" + Date.now() + "-" + Math.random().toString(16).slice(2, 8),
+        date: new Date().toISOString(),
+        status: "draft",
+        items: entries
+    };
+
+    try {
+        savedReceipts.push(receipt);
+        localStorage.setItem(RECEIPTS_KEY, JSON.stringify(savedReceipts));
+    } catch (error) {
+        showMessage("receiptMessage", "تعذر حفظ المسودة. لم يتغير المخزون.", "error");
+        return;
+    }
+
+    receiptBody.replaceChildren();
+    addReceiptRow();
+
+    showMessage(
+        "receiptMessage",
+        "تم حفظ المسودة برقم " + receipt.id + ". لم تتم إضافة أي كمية للمخزون.",
+        "success"
+    );
+});
+
 </section>
 
 <section class="page" data-page-section="inventoryAudit">
@@ -3199,6 +3312,102 @@ saveButton.addEventListener("click", () => {
     });
 
     updateReceiptTotals();
+})();
+ 
+/* عرض سجل أذون الاستلام المحفوظة */
+(function showReceiptHistory() {
+    const RECEIPTS_KEY = "gamy_inventory_receipts_v1";
+    const historyBody = document.getElementById("receiptHistoryBody");
+    const detailsBox = document.getElementById("receiptHistoryDetails");
+
+    if (!historyBody || !detailsBox) return;
+
+    function renderReceiptHistory() {
+        let receipts = [];
+
+        try {
+            receipts = JSON.parse(localStorage.getItem(RECEIPTS_KEY) || "[]");
+            if (!Array.isArray(receipts)) receipts = [];
+        } catch (error) {
+            historyBody.innerHTML =
+                '<tr><td colspan="6">تعذر قراءة سجل الاستلامات.</td></tr>';
+            return;
+        }
+
+        historyBody.replaceChildren();
+
+        if (receipts.length === 0) {
+            const row = historyBody.insertRow();
+            const cell = row.insertCell();
+            cell.colSpan = 6;
+            cell.textContent = "لا توجد أذون استلام محفوظة حتى الآن.";
+            return;
+        }
+
+        receipts.slice().reverse().forEach(receipt => {
+            const row = historyBody.insertRow();
+            const items = Array.isArray(receipt.items) ? receipt.items : [];
+            const total = items.reduce((sum, item) => {
+                return sum + (Number(item.quantity) || 0) * (Number(item.cost) || 0);
+            }, 0);
+
+            const date = receipt.date
+                ? new Date(receipt.date).toLocaleString("ar-EG")
+                : "—";
+
+            [
+                receipt.id || "—",
+                date,
+                items.length,
+                total.toLocaleString("ar-EG", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }) + " ج.م",
+                receipt.status === "approved" ? "معتمد" : "مسودة"
+            ].forEach(value => {
+                row.insertCell().textContent = value;
+            });
+
+            const actionCell = row.insertCell();
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "secondary-btn";
+            button.textContent = "عرض الأصناف";
+
+            button.addEventListener("click", () => {
+                detailsBox.hidden = false;
+                detailsBox.replaceChildren();
+
+                const heading = document.createElement("h3");
+                heading.textContent = "إذن الاستلام: " + (receipt.id || "—");
+                detailsBox.appendChild(heading);
+
+                const list = document.createElement("ul");
+
+                items.forEach(item => {
+                    const li = document.createElement("li");
+                    li.textContent =
+                        (item.name || "صنف بدون اسم") +
+                        " | الكود: " + (item.code || "—") +
+                        " | الكمية: " + (Number(item.quantity) || 0) +
+                        " | سعر الشراء: " + (Number(item.cost) || 0) + " ج.م";
+                    list.appendChild(li);
+                });
+
+                detailsBox.appendChild(list);
+                detailsBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            });
+
+            actionCell.appendChild(button);
+        });
+    }
+
+    renderReceiptHistory();
+
+    document.getElementById("saveReceiptButton")?.addEventListener(
+        "click",
+        () => setTimeout(renderReceiptHistory, 0)
+    );
 })();
 
 </script>
