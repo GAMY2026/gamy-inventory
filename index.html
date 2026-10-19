@@ -3271,7 +3271,8 @@ const correctPassword = "Gamy2026Test";
   });
 })();
  
-/* عرض سجل أذون الاستلام المحفوظة */
+
+/* عرض سجل أذون الاستلام واعتمادها */
 (function () {
     const RECEIPTS_KEY = "gamy_inventory_receipts_v1";
     const historyBody = document.getElementById("receiptHistoryBody");
@@ -3279,12 +3280,25 @@ const correctPassword = "Gamy2026Test";
 
     if (!historyBody || !detailsBox) return;
 
+    function normalizeReceiptValue(value) {
+        return String(value == null ? "" : value)
+            .trim()
+            .toLowerCase();
+    }
+
+    function readReceipts() {
+        const data = JSON.parse(localStorage.getItem(RECEIPTS_KEY) || "[]");
+        if (!Array.isArray(data)) {
+            throw new Error("سجل الإذونات غير صالح.");
+        }
+        return data;
+    }
+
     function renderReceiptHistory() {
-        let receipts = [];
+        let receipts;
 
         try {
-            const saved = JSON.parse(localStorage.getItem(RECEIPTS_KEY) || "[]");
-            receipts = Array.isArray(saved) ? saved : [];
+            receipts = readReceipts();
         } catch (error) {
             historyBody.innerHTML =
                 '<tr><td colspan="6">تعذر قراءة سجل الاستلام.</td></tr>';
@@ -3312,7 +3326,7 @@ const correctPassword = "Gamy2026Test";
                 receipt.date ? new Date(receipt.date).toLocaleString("ar-EG") : "—",
                 String(items.length),
                 total.toLocaleString("ar-EG", { maximumFractionDigits: 2 }),
-                receipt.status === "approved" ? "تم اعتماد الاستلام" : "مسودة",
+                receipt.status === "approved" ? "تم اعتماد الاستلام" : "مسودة"
             ];
 
             values.forEach(value => {
@@ -3322,12 +3336,13 @@ const correctPassword = "Gamy2026Test";
             });
 
             const actionCell = document.createElement("td");
-            const button = document.createElement("button");
-            button.type = "button";
-            button.className = "secondary-btn";
-            button.textContent = "عرض التفاصيل";
 
-            button.addEventListener("click", () => {
+            const detailsButton = document.createElement("button");
+            detailsButton.type = "button";
+            detailsButton.className = "secondary-btn";
+            detailsButton.textContent = "عرض التفاصيل";
+
+            detailsButton.addEventListener("click", () => {
                 detailsBox.replaceChildren();
 
                 const heading = document.createElement("h3");
@@ -3349,7 +3364,171 @@ const correctPassword = "Gamy2026Test";
                 detailsBox.hidden = false;
             });
 
-            actionCell.appendChild(button);
+            actionCell.appendChild(detailsButton);
+
+            if (receipt.status !== "approved") {
+                const approveButton = document.createElement("button");
+                approveButton.type = "button";
+                approveButton.className = "primary-btn";
+                approveButton.textContent = "اعتماد الاستلام";
+                approveButton.style.marginInlineStart = "8px";
+
+                approveButton.addEventListener("click", () => {
+                    if (!receipt.id) {
+                        showMessage("receiptMessage", "الإذن لا يحتوي على رقم صالح.", "error");
+                        return;
+                    }
+
+                    let currentReceipts;
+
+                    try {
+                        currentReceipts = readReceipts();
+                    } catch (error) {
+                        showMessage("receiptMessage", "تعذر قراءة سجل الإذونات.", "error");
+                        return;
+                    }
+
+                    const currentReceipt = currentReceipts.find(
+                        item => item && item.id === receipt.id
+                    );
+
+                    if (!currentReceipt) {
+                        showMessage("receiptMessage", "الإذن غير موجود في السجل.", "error");
+                        renderReceiptHistory();
+                        return;
+                    }
+
+                    if (currentReceipt.status === "approved") {
+                        showMessage("receiptMessage", "تم اعتماد هذا الإذن من قبل.", "error");
+                        renderReceiptHistory();
+                        return;
+                    }
+
+                    const receiptItems = currentReceipt.items;
+                    if (!Array.isArray(receiptItems) || receiptItems.length === 0) {
+                        showMessage("receiptMessage", "الإذن لا يحتوي على أصناف.", "error");
+                        return;
+                    }
+
+                    const updates = [];
+                    const seenCodes = new Set();
+
+                    for (const item of receiptItems) {
+                        const code = normalizeReceiptValue(item.code);
+                        const quantity = Number(item.quantity);
+
+                        if (!code || !Number.isSafeInteger(quantity) || quantity <= 0) {
+                            showMessage("receiptMessage", "يوجد كود أو كمية غير صحيحة. لم يتغير المخزون.", "error");
+                            return;
+                        }
+
+                        if (seenCodes.has(code)) {
+                            showMessage("receiptMessage", "الإذن يحتوي على كود صنف مكرر. لم يتغير المخزون.", "error");
+                            return;
+                        }
+                        seenCodes.add(code);
+
+                        const product = products.find(
+                            p => normalizeReceiptValue(p.code) === code
+                        );
+
+                        if (!product) {
+                            showMessage(
+                                "receiptMessage",
+                                "الصنف ذو الكود " + item.code + " غير موجود بالمخزون. أضف المنتج أولًا ثم أعد المحاولة.",
+                                "error"
+                            );
+                            return;
+                        }
+
+                        if (
+                            normalizeReceiptValue(product.name) !== normalizeReceiptValue(item.name) ||
+                            normalizeReceiptValue(product.size) !== normalizeReceiptValue(item.size) ||
+                            normalizeReceiptValue(product.color) !== normalizeReceiptValue(item.color)
+                        ) {
+                            showMessage(
+                                "receiptMessage",
+                                "بيانات الصنف " + item.code + " لا تطابق المنتج الموجود. لم يتغير المخزون.",
+                                "error"
+                            );
+                            return;
+                        }
+
+                        const oldQuantity = Number(product.quantity);
+                        if (
+                            !Number.isSafeInteger(oldQuantity) ||
+                            oldQuantity < 0 ||
+                            !Number.isSafeInteger(oldQuantity + quantity)
+                        ) {
+                            showMessage("receiptMessage", "كمية المخزون غير صالحة أو أكبر من الحد المسموح.", "error");
+                            return;
+                        }
+
+                        updates.push({
+                            product,
+                            oldQuantity,
+                            newQuantity: oldQuantity + quantity
+                        });
+                    }
+
+                    let oldProductsStorage;
+                    let oldReceiptsStorage;
+
+                    try {
+                        oldProductsStorage = localStorage.getItem(PRODUCT_KEY);
+                        oldReceiptsStorage = localStorage.getItem(RECEIPTS_KEY);
+                    } catch (error) {
+                        showMessage("receiptMessage", "تعذر الوصول إلى التخزين. لم يتغير المخزون.", "error");
+                        return;
+                    }
+
+                    updates.forEach(update => {
+                        update.product.quantity = update.newQuantity;
+                    });
+
+                    currentReceipt.status = "approved";
+                    currentReceipt.approvedAt = new Date().toISOString();
+
+                    try {
+                        localStorage.setItem(PRODUCT_KEY, JSON.stringify(products));
+                        localStorage.setItem(RECEIPTS_KEY, JSON.stringify(currentReceipts));
+                    } catch (error) {
+                        updates.forEach(update => {
+                            update.product.quantity = update.oldQuantity;
+                        });
+
+                        try {
+                            if (oldProductsStorage === null) {
+                                localStorage.removeItem(PRODUCT_KEY);
+                            } else {
+                                localStorage.setItem(PRODUCT_KEY, oldProductsStorage);
+                            }
+
+                            if (oldReceiptsStorage === null) {
+                                localStorage.removeItem(RECEIPTS_KEY);
+                            } else {
+                                localStorage.setItem(RECEIPTS_KEY, oldReceiptsStorage);
+                            }
+                        } catch (rollbackError) {
+                            console.error("تعذر التراجع الكامل عن حفظ الإذن:", rollbackError);
+                        }
+
+                        showMessage("receiptMessage", "فشل الحفظ. حاول مرة أخرى وتأكد من مساحة التخزين.", "error");
+                        return;
+                    }
+
+                    renderProducts();
+                    renderReceiptHistory();
+                    showMessage(
+                        "receiptMessage",
+                        "تم اعتماد الإذن وإضافة الكميات للمخزون بنجاح.",
+                        "success"
+                    );
+                });
+
+                actionCell.appendChild(approveButton);
+            }
+
             tr.appendChild(actionCell);
             historyBody.appendChild(tr);
         });
@@ -3361,6 +3540,7 @@ const correctPassword = "Gamy2026Test";
         setTimeout(renderReceiptHistory, 0);
     });
 })();
+
 
 </script>
 </body>
