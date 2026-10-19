@@ -3355,6 +3355,98 @@ const correctPassword = "Gamy2026Test";
     }
   });
 })();
+ 
+/* عرض سجل أذون الاستلام المحفوظة */
+(function () {
+    const RECEIPTS_KEY = "gamy_inventory_receipts_v1";
+    const historyBody = document.getElementById("receiptHistoryBody");
+    const detailsBox = document.getElementById("receiptHistoryDetails");
+
+    if (!historyBody || !detailsBox) return;
+
+    function renderReceiptHistory() {
+        let receipts = [];
+
+        try {
+            const saved = JSON.parse(localStorage.getItem(RECEIPTS_KEY) || "[]");
+            receipts = Array.isArray(saved) ? saved : [];
+        } catch (error) {
+            historyBody.innerHTML =
+                '<tr><td colspan="6">تعذر قراءة سجل الاستلام.</td></tr>';
+            return;
+        }
+
+        historyBody.replaceChildren();
+
+        if (receipts.length === 0) {
+            historyBody.innerHTML =
+                '<tr><td colspan="6" class="empty-state">لا توجد أذون محفوظة حتى الآن.</td></tr>';
+            detailsBox.hidden = true;
+            detailsBox.replaceChildren();
+            return;
+        }
+
+        receipts.slice().reverse().forEach(receipt => {
+            const items = Array.isArray(receipt.items) ? receipt.items : [];
+            const total = items.reduce((sum, item) =>
+                sum + (Number(item.quantity) || 0) * (Number(item.cost) || 0), 0);
+
+            const tr = document.createElement("tr");
+            const values = [
+                receipt.id || "—",
+                receipt.date ? new Date(receipt.date).toLocaleString("ar-EG") : "—",
+                String(items.length),
+                total.toLocaleString("ar-EG", { maximumFractionDigits: 2 }),
+                receipt.status === "approved" ? "تم اعتماد الاستلام" : "مسودة",
+            ];
+
+            values.forEach(value => {
+                const td = document.createElement("td");
+                td.textContent = value;
+                tr.appendChild(td);
+            });
+
+            const actionCell = document.createElement("td");
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "secondary-btn";
+            button.textContent = "عرض التفاصيل";
+
+            button.addEventListener("click", () => {
+                detailsBox.replaceChildren();
+
+                const heading = document.createElement("h3");
+                heading.textContent = "تفاصيل الإذن " + (receipt.id || "");
+                detailsBox.appendChild(heading);
+
+                items.forEach(item => {
+                    const line = document.createElement("p");
+                    line.textContent =
+                        (item.name || "صنف") +
+                        " | الكود: " + (item.code || "—") +
+                        " | المقاس: " + (item.size || "—") +
+                        " | اللون: " + (item.color || "—") +
+                        " | الكمية: " + (Number(item.quantity) || 0) +
+                        " | التكلفة: " + (Number(item.cost) || 0);
+                    detailsBox.appendChild(line);
+                });
+
+                detailsBox.hidden = false;
+            });
+
+            actionCell.appendChild(button);
+            tr.appendChild(actionCell);
+            historyBody.appendChild(tr);
+        });
+    }
+
+    renderReceiptHistory();
+
+    document.getElementById("saveReceiptButton")?.addEventListener("click", () => {
+        setTimeout(renderReceiptHistory, 0);
+    });
+})();
+
 </script>
 </body>
 </html>
