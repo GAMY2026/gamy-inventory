@@ -718,19 +718,74 @@ body.dark-mode .gamy-settings-heading h2 {
     </div>
 
     
+
 <div class="actions">
   <button type="button" class="secondary-btn" id="addReceiptRowButton">إضافة صنف</button>
-<button type="button" class="primary-btn" id="saveReceiptButton">حفظ إذن الاستلام كمسودة</button>
+  <button type="button" class="primary-btn" id="saveReceiptButton">حفظ إذن الاستلام كمسودة</button>
+</div>
 
 <div class="sale-preview">
+  إجمالي الاستلام:
+  <strong id="receiptGrandTotal">0.00 ج.م</strong>
+</div>
 
-      إجمالي الاستلام:
-      <strong id="receiptGrandTotal">0.00 ج.م</strong>
-    </div>
+<div id="receiptMessage" class="message" role="status"></div>
+</section>
 
-    <div id="receiptMessage" class="message" role="status"></div>
-  </section>
- 
+<section class="panel">
+  <div class="panel-heading">
+    <h2 class="section-title">📋 سجل أذون الاستلام</h2>
+    <p class="description">الإذونات المحفوظة وحالتها.</p>
+  </div>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>رقم الإذن</th>
+          <th>التاريخ</th>
+          <th>عدد الأصناف</th>
+          <th>الإجمالي</th>
+          <th>الحالة</th>
+          <th>التفاصيل</th>
+        </tr>
+      </thead>
+      <tbody id="receiptHistoryBody">
+        <tr><td colspan="6" class="empty-state">لا توجد أذون محفوظة حتى الآن.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div id="receiptHistoryDetails" class="sale-preview" hidden></div>
+</section>
+
+</section>
+
+
+<section class="panel">
+  <div class="panel-heading">
+    <h2 class="section-title">📋 سجل أذون الاستلام</h2>
+    <p class="description">الإذونات المحفوظة وحالتها.</p>
+  </div>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>رقم الإذن</th>
+          <th>التاريخ</th>
+          <th>عدد الأصناف</th>
+          <th>الإجمالي</th>
+          <th>الحالة</th>
+          <th>التفاصيل</th>
+        </tr>
+      </thead>
+      <tbody id="receiptHistoryBody">
+        <tr><td colspan="6" class="empty-state">لا توجد أذون محفوظة حتى الآن.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="receiptHistoryDetails" class="sale-preview" hidden></div>
+</section>
 
 </section>
 
