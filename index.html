@@ -853,6 +853,50 @@ body.dark-mode .gamy-settings-heading h2 {
   </section>
 </section>
 
+<section class="page" data-page-section="stockMovements">
+  <div class="page-topline">
+    <h1>حركة المخزون</h1>
+    <p>تابع كميات البضاعة المستلمة من خلال أذون الاستلام المعتمدة.</p>
+  </div>
+
+  <section class="panel">
+    <div class="table-toolbar">
+      <input
+        id="stockMovementSearch"
+        class="search-input"
+        type="search"
+        placeholder="ابحث برقم الإذن أو اسم الصنف أو الكود"
+      >
+      <button
+        type="button"
+        class="secondary-btn"
+        id="refreshStockMovementsButton"
+      >
+        تحديث التقرير
+      </button>
+    </div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>تاريخ الاعتماد</th>
+            <th>رقم الإذن</th>
+            <th>اسم الصنف</th>
+            <th>الكود</th>
+            <th>المقاس</th>
+            <th>اللون</th>
+            <th>الكمية الداخلة</th>
+          </tr>
+        </thead>
+        <tbody id="stockMovementsBody"></tbody>
+      </table>
+    </div>
+
+    <div id="stockMovementsSummary" class="message" role="status"></div>
+  </section>
+</section>
+
  </main>
 </div>
 
@@ -3544,5 +3588,119 @@ const correctPassword = "Gamy2026Test";
 
 
 </script>
+
+
+<script>
+/* تقرير حركة المخزون - قراءة أذون الاستلام المعتمدة فقط */
+(function () {
+    const RECEIPTS_KEY = "gamy_inventory_receipts_v1";
+
+    const tableBody = document.getElementById("stockMovementsBody");
+    const searchInput = document.getElementById("stockMovementSearch");
+    const refreshButton = document.getElementById("refreshStockMovementsButton");
+    const summary = document.getElementById("stockMovementsSummary");
+
+    if (!tableBody || !searchInput || !refreshButton || !summary) return;
+
+    function formatDate(value) {
+        if (!value) return "—";
+
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return "—";
+
+        return date.toLocaleString("ar-EG");
+    }
+
+    function safeText(value) {
+        return String(value ?? "");
+    }
+
+    function renderStockMovements() {
+        tableBody.replaceChildren();
+
+        let receipts;
+
+        try {
+            receipts = JSON.parse(localStorage.getItem(RECEIPTS_KEY) || "[]");
+
+            if (!Array.isArray(receipts)) {
+                throw new Error("سجل الاستلامات غير صالح.");
+            }
+        } catch (error) {
+            summary.textContent = "تعذرت قراءة سجل أذون الاستلام.";
+            return;
+        }
+
+        const movements = [];
+
+        receipts.forEach(function (receipt) {
+            if (!receipt || receipt.status !== "approved") return;
+
+            const items = Array.isArray(receipt.items) ? receipt.items : [];
+
+            items.forEach(function (item) {
+                movements.push({
+                    date: receipt.approvedAt || receipt.date,
+                    receiptId: receipt.id || "—",
+                    name: item.name || "—",
+                    code: item.code || "—",
+                    size: item.size || "—",
+                    color: item.color || "—",
+                    quantity: item.actualQuantity ?? item.quantity ?? 0
+                });
+            });
+        });
+
+        const query = searchInput.value.trim().toLowerCase();
+
+        const filtered = movements.filter(function (movement) {
+            return [
+                movement.receiptId,
+                movement.name,
+                movement.code,
+                movement.size,
+                movement.color
+            ].some(function (value) {
+                return safeText(value).toLowerCase().includes(query);
+            });
+        });
+
+        filtered.forEach(function (movement) {
+            const tr = document.createElement("tr");
+
+            [
+                formatDate(movement.date),
+                movement.receiptId,
+                movement.name,
+                movement.code,
+                movement.size,
+                movement.color,
+                movement.quantity
+            ].forEach(function (value) {
+                const td = document.createElement("td");
+                td.textContent = safeText(value) || "—";
+                tr.appendChild(td);
+            });
+
+            tableBody.appendChild(tr);
+        });
+
+        const totalQuantity = filtered.reduce(function (total, movement) {
+            const quantity = Number(movement.quantity);
+            return total + (Number.isFinite(quantity) ? quantity : 0);
+        }, 0);
+
+        summary.textContent =
+            "عدد حركات الاستلام المعروضة: " + filtered.length +
+            " | إجمالي الكميات الداخلة: " + totalQuantity;
+    }
+
+    searchInput.addEventListener("input", renderStockMovements);
+    refreshButton.addEventListener("click", renderStockMovements);
+
+    renderStockMovements();
+})();
+</script>
+ 
 </body>
 </html>
