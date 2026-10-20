@@ -548,7 +548,7 @@ body.dark-mode .gamy-settings-heading h2 {
    </div>
 
    <section class="panel">
-    <div class="panel-heading"><h2 class="section-title">الوصول السريع</h2><p class="description">اختار القسم الذي تريد العمل عليه.</p></div>
+    <div class="panel-heading"><h2 class="section-title">الوصول السريع</h2><p class="description"addEventListener
     <div class="shortcut-grid">
      <button type="button" class="shortcut-button" data-page-link="products"><strong>إدارة المنتجات</strong><span>إضافة المنتجات وتعديل البيانات ومتابعة الكميات.</span></button>
      <button type="button" class="shortcut-button" data-page-link="sales"><strong>تسجيل المبيعات</strong><span>تسجيل البيع وخصم الكمية من المخزون.</span></button>
@@ -1023,7 +1023,7 @@ function updateBackupSummary() {
 
 /* التنقل بين الصفحات */
 function showPage(name, updateHash = true) {
-const allowed = ["dashboard", "products", "receipts", "sales", "history", "backup", "inventoryAudit"];
+const allowed = ["dashboard", "products", "receipts", "sales", "history", "backup", "inventoryAudit", "stockMovements"];
     const target = allowed.includes(name) ? name : "dashboard";
 
     document.querySelectorAll("[data-page-section]").forEach(section => {
