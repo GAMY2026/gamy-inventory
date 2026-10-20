@@ -3571,8 +3571,57 @@ const correctPassword = "Gamy2026Test";
                     );
                 });
 
-                actionCell.appendChild(approveButton);
-            }
+               
+actionCell.appendChild(approveButton);
+
+const deleteButton = document.createElement("button");
+deleteButton.type = "button";
+deleteButton.className = "secondary-btn";
+deleteButton.textContent = "حذف الإذن";
+deleteButton.style.marginInlineStart = "8px";
+
+deleteButton.addEventListener("click", () => {
+    if (!receipt.id) {
+        showMessage("receiptMessage", "الإذن لا يحتوي على رقم صالح.", "error");
+        return;
+    }
+
+    const confirmed = confirm(
+        "هل أنت متأكد من حذف الإذن رقم " + receipt.id + "؟\n" +
+        "لن يتم حذف المنتج أو تغيير كميته في المخزون."
+    );
+
+    if (!confirmed) return;
+
+    let currentReceipts;
+
+    try {
+        currentReceipts = readReceipts();
+
+        const index = currentReceipts.findIndex(
+            item => String(item.id) === String(receipt.id)
+        );
+
+        if (index === -1) {
+            showMessage("receiptMessage", "الإذن غير موجود في السجل.", "error");
+            return;
+        }
+
+        currentReceipts.splice(index, 1);
+        localStorage.setItem(
+            "gamy_inventory_receipts_v1",
+            JSON.stringify(currentReceipts)
+        );
+
+        showMessage("receiptMessage", "تم حذف الإذن من السجل.", "success");
+        renderReceiptHistory();
+    } catch (error) {
+        showMessage("receiptMessage", "تعذر حذف الإذن. لم يتم تأكيد نجاح الحذف.", "error");
+    }
+});
+
+actionCell.appendChild(deleteButton);
+
 
             tr.appendChild(actionCell);
             historyBody.appendChild(tr);
