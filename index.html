@@ -486,77 +486,102 @@ body.dark-mode .gamy-settings-heading h2 {
   min-width: 125px;
 }
 
-/* GAMY INVENTORY - Navy & Gold Sidebar */
-.app-layout{
-  grid-template-columns:minmax(0,1fr) 245px;
+
+/* GAMY INVENTORY - Professional Right Sidebar */
+.app-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 245px;
+  direction: ltr;
+  align-items: start;
 }
 
-.sidebar{
-  grid-column:2;
-  grid-row:1;
-  background:#101b2b;
-  border:1px solid #c5a35b;
-  border-radius:14px;
-  padding:15px 12px;
-  color:#fff;
-  box-shadow:0 8px 25px #101b2b20;
+.sidebar {
+  grid-column: 2;
+  grid-row: 1;
+  direction: rtl;
+  text-align: right;
+  background: #172334;
+  border: 1px solid #38b2ac;
+  border-radius: 12px;
+  padding: 14px 10px;
+  color: #f1f5f9;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.12);
 }
 
-.app-content{
-  grid-column:1;
-  grid-row:1;
+.app-content {
+  grid-column: 1;
+  grid-row: 1;
+  direction: rtl;
 }
 
-.sidebar-heading{
-  color:#d9bc76;
-  border-bottom:1px solid #344052;
+.sidebar-heading {
+  color: #5eead4;
+  border-bottom: 1px solid #334155;
+  padding-bottom: 12px;
+  margin-bottom: 10px;
 }
 
-.nav-item{
-  color:#dce3ed;
-  border-radius:9px;
-  padding:12px 11px;
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
-.nav-item:hover{
-  background:#26344a;
-  color:#f0d28a;
+.nav-item {
+  width: 100%;
+  text-align: right;
+  color: #e2e8f0;
+  border-radius: 7px;
+  padding: 11px 12px;
+  border: 1px solid transparent;
+  transition: background 0.2s, color 0.2s;
 }
 
-.nav-item.active{
-  background:#2b3545;
-  border-color:#c5a35b;
-  color:#f0d28a;
+.nav-item:hover {
+  background: #263b4f;
+  color: #5eead4;
 }
 
-.sidebar-toggle{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:9px;
-  width:100%;
-  min-height:42px;
-  margin-bottom:13px;
-  border:1px solid #c5a35b;
-  border-radius:9px;
-  background:#1d2a3d;
-  color:#f0d28a;
-  font-weight:700;
+.nav-item.active {
+  background: #203f4a;
+  border-color: #38b2ac;
+  color: #5eead4;
 }
 
-@media(max-width:800px){
-  .app-layout{
-    grid-template-columns:minmax(0,1fr);
+.sidebar-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: 100%;
+  min-height: 42px;
+  margin-bottom: 13px;
+  border: 1px solid #38b2ac;
+  border-radius: 8px;
+  background: #203344;
+  color: #5eead4;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+@media (max-width: 800px) {
+  .app-layout {
+    grid-template-columns: minmax(0, 1fr);
+    direction: rtl;
   }
-  .sidebar,.app-content{
-    grid-column:1;
-    grid-row:auto;
+
+  .sidebar,
+  .app-content {
+    grid-column: 1;
+    grid-row: auto;
   }
-  .sidebar{
-    position:relative;
-    top:auto;
+
+  .sidebar {
+    position: relative;
+    top: auto;
   }
 }
+
 
 </style>
 </head>
