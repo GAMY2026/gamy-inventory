@@ -986,7 +986,29 @@ body.dark-mode .gamy-settings-heading h2 {
     <div id="stockMovementsSummary" class="message" role="status"></div>
   </section>
 </section>
+<section class="page" data-page-section="settings">
+  <div class="page-topline">
+    <h1>⚙️ إعدادات النظام</h1>
+    <p>إدارة إعدادات GAMY INVENTORY.</p>
+  </div>
 
+  <section class="panel">
+    <h2 class="section-title">إعدادات المتجر</h2>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="settingsStoreName">اسم المتجر</label>
+        <input id="settingsStoreName" type="text" placeholder="GAMY INVENTORY">
+      </div>
+    </div>
+
+    <button type="button" class="primary-btn" id="saveSettingsButton">
+      حفظ الإعدادات
+    </button>
+
+    <div id="settingsMessage" class="message" role="status"></div>
+  </section>
+</section>
  </main>
 </div>
 
@@ -1113,7 +1135,7 @@ function updateBackupSummary() {
 
 /* التنقل بين الصفحات */
 function showPage(name, updateHash = true) {
-const allowed = ["dashboard", "products", "receipts", "sales", "history", "backup", "inventoryAudit", "stockMovements"];
+const allowed = ["dashboard", "products", "receipts", "sales", "history", "backup", "inventoryAudit", "stockMovements", "settings"];
     const target = allowed.includes(name) ? name : "dashboard";
 
     document.querySelectorAll("[data-page-section]").forEach(section => {
@@ -1157,7 +1179,51 @@ document.querySelectorAll("[data-page-link]").forEach(button => {
 window.addEventListener("hashchange", () => {
     showPage(location.hash.slice(1), false);
 });
+/* إعدادات GAMY INVENTORY */
+const SETTINGS_KEY = "gamy_inventory_settings_v1";
 
+function loadSettings() {
+    let settings = {};
+
+    try {
+        settings = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}");
+    } catch (error) {
+        console.warn("تعذر تحميل الإعدادات:", error);
+    }
+
+    const storeNameInput = document.getElementById("settingsStoreName");
+
+    if (storeNameInput) {
+        storeNameInput.value = settings.storeName || "GAMY INVENTORY";
+    }
+}
+
+const saveSettingsButton = document.getElementById("saveSettingsButton");
+
+if (saveSettingsButton) {
+    saveSettingsButton.addEventListener("click", function () {
+        const storeNameInput = document.getElementById("settingsStoreName");
+        const message = document.getElementById("settingsMessage");
+
+        const settings = {
+            storeName: storeNameInput ? storeNameInput.value.trim() : ""
+        };
+
+        try {
+            localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+
+            if (message) {
+                message.textContent = "تم حفظ الإعدادات بنجاح.";
+            }
+        } catch (error) {
+            if (message) {
+                message.textContent = "تعذر حفظ الإعدادات.";
+            }
+        }
+    });
+}
+
+loadSettings();
 /* إغلاق قوائم المنتجات */
 function closeMenus() {
     document.querySelectorAll(".actions-dropdown").forEach(menu => menu.hidden = true);
