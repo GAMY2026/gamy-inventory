@@ -1860,6 +1860,7 @@ function getPercentChange(current, previous) {
     }) + "% مقارنة بالشهر السابق";
 }
 
+
 function renderReports() {
     const report = getReportsSnapshot();
 
@@ -1868,23 +1869,93 @@ function renderReports() {
     const stockCost = $("reportsStockCost");
     const salesCount = $("reportsSalesCount");
 
-    if (productCount) productCount.textContent = report.productCount.toLocaleString("ar-EG");
-    if (totalUnits) totalUnits.textContent = report.units.toLocaleString("ar-EG");
-    if (stockCost) stockCost.textContent = formatMoney(report.stockCost);
-    if (salesCount) salesCount.textContent = report.salesTotal.toLocaleString("ar-EG") + " ج.م";
+    if (productCount) {
+        productCount.textContent = report.productCount.toLocaleString("ar-EG");
+    }
+
+    if (totalUnits) {
+        totalUnits.textContent = report.units.toLocaleString("ar-EG");
+    }
+
+    if (stockCost) {
+        stockCost.textContent = formatMoney(report.stockCost);
+    }
+
+    if (salesCount) {
+        salesCount.textContent = formatMoney(report.salesTotal);
+    }
+
+    const cards = [
+        { id: "reportsProductCount", key: "productCount", value: report.productCount },
+        { id: "reportsTotalUnits", key: "units", value: report.units },
+        { id: "reportsStockCost", key: "stockCost", value: report.stockCost },
+        { id: "reportsSalesCount", key: "salesTotal", value: report.salesTotal }
+    ];
+
+    let snapshots = [];
+
+    try {
+        snapshots = JSON.parse(
+            localStorage.getItem(REPORTS_SNAPSHOT_KEY) || "[]"
+        );
+
+        if (!Array.isArray(snapshots)) snapshots = [];
+    } catch (error) {
+        snapshots = [];
+    }
+
+    const previousSnapshot = snapshots.find(
+        item => item && item.month === report.previousMonth
+    );
+
+    cards.forEach(card => {
+        const valueElement = $(card.id);
+        if (!valueElement) return;
+
+        let indicator = document.getElementById(card.id + "Change");
+
+        if (!indicator) {
+            indicator = document.createElement("div");
+            indicator.id = card.id + "Change";
+            indicator.style.marginTop = "8px";
+            indicator.style.fontSize = "13px";
+            indicator.style.fontWeight = "600";
+            valueElement.insertAdjacentElement("afterend", indicator);
+        }
+
+        if (card.key === "salesTotal") {
+            indicator.textContent =
+                "الشهر السابق: " +
+                formatMoney(report.previousSalesTotal) +
+                " | " +
+                getPercentChange(
+                    report.salesTotal,
+                    report.previousSalesTotal
+                );
+        } else if (previousSnapshot &&
+                   Number.isFinite(Number(previousSnapshot[card.key]))) {
+            const previousValue = Number(previousSnapshot[card.key]);
+
+            indicator.textContent = getPercentChange(
+                card.value,
+                previousValue
+            );
+        } else {
+            indicator.textContent = "لا تتوفر بيانات الشهر السابق";
+        }
+
+        indicator.style.color =
+            indicator.textContent.startsWith("+") ? "#169B74" :
+            indicator.textContent.startsWith("-") ? "#D64545" :
+            "var(--muted, #777)";
+    });
 
     showMessage(
         "reportsMessage",
-        "المبيعات هذا الشهر: " + formatMoney(report.salesTotal) +
-        " | الشهر السابق: " + formatMoney(report.previousSalesTotal) +
-        " | التغير: " + getPercentChange(report.salesTotal, report.previousSalesTotal),
+        "مبيعات الشهر الحالي: " + formatMoney(report.salesTotal) +
+        " | مبيعات الشهر السابق: " + formatMoney(report.previousSalesTotal),
         "info"
     );
-}
-
-const refreshReportsButton = $("refreshReportsButton");
-if (refreshReportsButton) {
-    refreshReportsButton.addEventListener("click", renderReports);
 }
 
 /* التنقل بين الصفحات */
