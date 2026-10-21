@@ -1546,9 +1546,55 @@ body.dark-mode {
   </section>
 </section>
 
+<section class="page" data-page-section="reports">
+  <div class="page-topline">
+    <h1>التقارير والإحصائيات</h1>
+    <p>ملخص عام للمخزون والمبيعات وقيمة البضاعة.</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card">
+      <h3>عدد المنتجات</h3>
+      <p id="reportsProductCount">0</p>
+    </div>
+
+    <div class="stat-card">
+      <h3>إجمالي الوحدات بالمخزن</h3>
+      <p id="reportsTotalUnits">0</p>
+    </div>
+
+    <div class="stat-card">
+      <h3>قيمة المخزون بسعر الشراء</h3>
+      <p id="reportsStockCost">0 ج.م</p>
+    </div>
+
+    <div class="stat-card">
+      <h3>عدد عمليات البيع</h3>
+      <p id="reportsSalesCount">0</p>
+    </div>
+  </div>
+
+  <section class="panel">
+    <div class="panel-heading">
+      <h2 class="section-title">ملخص التقرير</h2>
+      <p class="description">
+        إحصائيات محسوبة من بيانات المنتجات والمبيعات المسجلة.
+      </p>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="primary-btn" id="refreshReportsButton">
+        تحديث الإحصائيات
+      </button>
+    </div>
+
+    <div id="reportsMessage" class="message" role="status"></div>
+  </section>
+</section>
+
 <section class="page" data-page-section="settings">
   <div class="page-topline">
-    <h1>⚙️ إعدادات النظام</h1>
+    <h1> إعدادات النظام</h1>
     <p>خصّص GAMY INVENTORY حسب تفضيلاتك.</p>
   </div>
 
