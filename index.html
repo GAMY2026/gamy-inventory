@@ -490,20 +490,6 @@ body.dark-mode .gamy-settings-heading h2 {
 </head>
 
 <body>
- 
-<!-- GAMY INVENTORY - Login Screen -->
-<div id="loginScreen" style="position:fixed;inset:0;z-index:100000;background:#073b2d;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;font-family:Arial,sans-serif;direction:rtl">
-  <form id="loginForm" style="width:100%;max-width:380px;background:#fffdf6;padding:30px;border-radius:20px;box-sizing:border-box;box-shadow:0 15px 45px #0005">
-    <div style="text-align:center;font-size:27px;font-weight:bold;color:#07513c">GAMY <span style="color:#c9a84e">INVENTORY</span></div>
-    <p style="text-align:center;color:#555;margin:12px 0 25px">سجّل الدخول إلى لوحة التحكم</p>
-    <label for="loginUsername" style="display:block;margin:12px 0 7px">اسم المستخدم</label>
-    <input id="loginUsername" autocomplete="username" required placeholder="Username" style="width:100%;padding:13px;box-sizing:border-box;border:1px solid #ccc;border-radius:9px;font-size:16px">
-    <label for="loginPassword" style="display:block;margin:16px 0 7px">كلمة المرور</label>
-    <input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Password" style="width:100%;padding:13px;box-sizing:border-box;border:1px solid #ccc;border-radius:9px;font-size:16px">
-    <p id="loginError" style="display:none;color:#b42318;font-size:14px">اسم المستخدم أو كلمة المرور غير صحيحة.</p>
-    <button type="submit" style="width:100%;margin-top:20px;padding:14px;border:0;border-radius:9px;background:#0b6045;color:white;font-size:17px;font-weight:bold;cursor:pointer">تسجيل الدخول</button>
-  </form>
-</div>
 
 <header class="topbar">
  <div class="topbar-inner">
@@ -3275,48 +3261,8 @@ saveButton.addEventListener("click", () => {
 })();
 
 </script>
- 
 <script>
-/* GAMY INVENTORY - Basic Login */
-(function () {
-  const form = document.getElementById("loginForm");
-  const screen = document.getElementById("loginScreen");
-  const username = document.getElementById("loginUsername");
-  const password = document.getElementById("loginPassword");
-  const error = document.getElementById("loginError");
-
-  if (!form || !screen) return;
-
-  // اسم المستخدم
-  const correctUsername = "admin";
-
-  // غيّر القيمة دي بنفسك لكلمة مرور تجريبية غير مستخدمة في أي حساب آخر
-const correctPassword = "Gamy2026Test";
-
-  if (sessionStorage.getItem("gamyInventoryLoggedIn") === "yes") {
-    screen.style.display = "none";
-  }
-
-  form.addEventListener("submit", function (event) {
-    event.preventDefault();
-
-    if (
-      username.value.trim() === correctUsername &&
-      password.value === correctPassword
-    ) {
-      sessionStorage.setItem("gamyInventoryLoggedIn", "yes");
-      screen.style.display = "none";
-      error.style.display = "none";
-      password.value = "";
-    } else {
-      error.style.display = "block";
-      password.value = "";
-      password.focus();
-    }
-  });
-})();
  
-
 /* عرض سجل أذون الاستلام واعتمادها */
 (function () {
     const RECEIPTS_KEY = "gamy_inventory_receipts_v1";
