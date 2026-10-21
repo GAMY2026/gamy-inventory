@@ -3215,7 +3215,8 @@ showPage(location.hash.slice(1) || "dashboard", false);
     </section>
   `;
 
-  document.querySelector(".topbar").insertAdjacentElement("afterend", settingsWrap);
+  document.querySelector("#mainSidebar .sidebar-nav")
+  .appendChild(settingsWrap);
 
   const settingsTrigger = settingsWrap.querySelector(".gamy-settings-trigger");
   const settingsPanel = settingsWrap.querySelector(".gamy-settings-panel");
