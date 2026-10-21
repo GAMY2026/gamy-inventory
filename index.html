@@ -1569,7 +1569,7 @@ body.dark-mode {
     </div>
 
     <div class="stat-card">
-      <h3>عدد عمليات البيع</h3>
+   <h3>إجمالي المبيعات الشهرية</h3>
       <p id="reportsSalesCount">0</p>
     </div>
   </div>
@@ -1803,6 +1803,90 @@ function updateBackupSummary() {
     $("backupSalesCount").textContent = sales.length.toLocaleString("ar-EG");
 }
 
+/* ---------- تقارير وإحصائيات GAMY INVENTORY ---------- */
+
+const REPORTS_SNAPSHOT_KEY = "gamy_inventory_monthly_snapshots_v1";
+
+function getMonthKey(date) {
+    const d = new Date(date);
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+}
+
+function getMonthSales(monthKey) {
+    return sales.filter(s => {
+        const date = new Date(s.createdAt);
+        return !Number.isNaN(date.getTime()) && getMonthKey(date) === monthKey;
+    });
+}
+
+function getReportsSnapshot() {
+    const units = products.reduce((sum, p) => sum + Number(p.quantity || 0), 0);
+    const stockCost = products.reduce(
+        (sum, p) => sum + Number(p.quantity || 0) * Number(p.purchasePrice || 0),
+        0
+    );
+
+    const now = new Date();
+    const currentMonth = getMonthKey(now);
+    const previousDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const previousMonth = getMonthKey(previousDate);
+
+    const currentSales = getMonthSales(currentMonth);
+    const previousSales = getMonthSales(previousMonth);
+
+    return {
+        currentMonth,
+        previousMonth,
+        productCount: products.length,
+        units,
+        stockCost,
+        salesTotal: currentSales.reduce((sum, s) => sum + Number(s.total || 0), 0),
+        previousSalesTotal: previousSales.reduce((sum, s) => sum + Number(s.total || 0), 0),
+        salesCount: currentSales.length,
+        previousSalesCount: previousSales.length,
+        profit: currentSales.reduce((sum, s) => sum + Number(s.profit || 0), 0)
+    };
+}
+
+function getPercentChange(current, previous) {
+    if (previous === 0) {
+        return current === 0 ? "لا يوجد تغيير" : "لا تتوفر مقارنة سابقة";
+    }
+
+    const change = ((current - previous) / Math.abs(previous)) * 100;
+    const sign = change > 0 ? "+" : "";
+    return sign + change.toLocaleString("ar-EG", {
+        maximumFractionDigits: 1
+    }) + "% مقارنة بالشهر السابق";
+}
+
+function renderReports() {
+    const report = getReportsSnapshot();
+
+    const productCount = $("reportsProductCount");
+    const totalUnits = $("reportsTotalUnits");
+    const stockCost = $("reportsStockCost");
+    const salesCount = $("reportsSalesCount");
+
+    if (productCount) productCount.textContent = report.productCount.toLocaleString("ar-EG");
+    if (totalUnits) totalUnits.textContent = report.units.toLocaleString("ar-EG");
+    if (stockCost) stockCost.textContent = formatMoney(report.stockCost);
+    if (salesCount) salesCount.textContent = report.salesTotal.toLocaleString("ar-EG") + " ج.م";
+
+    showMessage(
+        "reportsMessage",
+        "المبيعات هذا الشهر: " + formatMoney(report.salesTotal) +
+        " | الشهر السابق: " + formatMoney(report.previousSalesTotal) +
+        " | التغير: " + getPercentChange(report.salesTotal, report.previousSalesTotal),
+        "info"
+    );
+}
+
+const refreshReportsButton = $("refreshReportsButton");
+if (refreshReportsButton) {
+    refreshReportsButton.addEventListener("click", renderReports);
+}
+
 /* التنقل بين الصفحات */
 function showPage(name, updateHash = true) {
 
@@ -1853,7 +1937,7 @@ const allowed = [
     renderSales();
     updateSalePreview();
     updateBackupSummary();
-
+if (target === "reports") renderReports();
     window.scrollTo(0, 0);
 }
 
