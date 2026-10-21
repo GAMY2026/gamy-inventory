@@ -1052,6 +1052,29 @@ body.dark-mode {
   }
 }
 
+/* إصلاح اختفاء محتويات القائمة عند إغلاقها */
+#mainSidebar.collapsed .sidebar-nav {
+  overflow: hidden;
+}
+
+#mainSidebar.collapsed .sidebar-nav a,
+#mainSidebar.collapsed .sidebar-nav button {
+  white-space: nowrap;
+}
+
+#mainSidebar.collapsed .toggle-label {
+  display: none;
+}
+
+#mainSidebar.collapsed .gamy-settings-button-label {
+  display: none;
+}
+
+#mainSidebar.collapsed .gamy-settings-trigger {
+  justify-content: center;
+  padding-inline: 8px;
+}
+
 </style>
 </head>
 
