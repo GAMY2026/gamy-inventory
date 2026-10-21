@@ -1075,6 +1075,36 @@ body.dark-mode {
   padding-inline: 8px;
 }
 
+/* ضبط زر الإعدادات داخل القائمة الجانبية */
+#mainSidebar .gamy-settings-wrap {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+#mainSidebar .gamy-settings-trigger {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+#mainSidebar .gamy-settings-button-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#mainSidebar.collapsed .gamy-settings-button-label {
+  display: none;
+}
+
+#mainSidebar.collapsed .gamy-settings-trigger {
+  justify-content: center;
+  padding-inline: 8px;
+}
+
 </style>
 </head>
 
