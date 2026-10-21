@@ -4317,5 +4317,42 @@ actionCell.appendChild(deleteButton);
 })();
 </script>
  
+<script>
+/* التحكم في فتح وقفل القائمة الجانبية */
+(function () {
+    const layout = document.querySelector(".app-layout");
+    const toggle = document.getElementById("sidebarToggle");
+
+    if (!layout || !toggle) return;
+
+    const KEY = "gamy_sidebar_collapsed";
+
+    function setSidebarState(collapsed) {
+        layout.classList.toggle("sidebar-collapsed", collapsed);
+        toggle.setAttribute("aria-expanded", String(!collapsed));
+        toggle.setAttribute(
+            "aria-label",
+            collapsed ? "فتح القائمة الجانبية" : "طي القائمة الجانبية"
+        );
+
+        try {
+            localStorage.setItem(KEY, String(collapsed));
+        } catch (error) {}
+    }
+
+    let collapsed = false;
+
+    try {
+        collapsed = localStorage.getItem(KEY) === "true";
+    } catch (error) {}
+
+    setSidebarState(collapsed);
+
+    toggle.addEventListener("click", function () {
+        setSidebarState(!layout.classList.contains("sidebar-collapsed"));
+    });
+})();
+</script>
+
 </body>
 </html>
