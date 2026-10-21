@@ -221,6 +221,78 @@ footer{margin-top:35px;padding:21px 15px;text-align:center;background:white;bord
  .actions button{flex:1}
 }
 
+/* ===== GAMY: طي وفتح القائمة الجانبية ===== */
+
+.app-layout {
+  transition: grid-template-columns 0.3s ease;
+}
+
+.sidebar {
+  min-width: 0;
+  transition: padding 0.3s ease;
+}
+
+.sidebar-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 42px;
+  cursor: pointer;
+  border: 1px solid #c9a04a;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #17283c, #0b1727);
+  color: #ffda8a;
+  font-weight: 700;
+}
+
+.sidebar-toggle:hover {
+  background: #26364a;
+}
+
+.app-layout.sidebar-collapsed {
+  grid-template-columns: 76px minmax(0, 1fr);
+}
+
+.sidebar-collapsed .sidebar {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.sidebar-collapsed .sidebar-heading,
+.sidebar-collapsed .toggle-label {
+  display: none;
+}
+
+.sidebar-collapsed .sidebar-toggle {
+  padding: 8px 0;
+  font-size: 20px;
+}
+
+.sidebar-collapsed .nav-item {
+  font-size: 0;
+  min-width: 0;
+  width: 100%;
+  text-align: center;
+  padding: 13px 4px;
+}
+
+@media(max-width:760px) {
+  .app-layout.sidebar-collapsed {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidebar-collapsed .sidebar-nav {
+    display: none;
+  }
+
+  .sidebar-collapsed .sidebar {
+    width: 100%;
+  }
+}
+
 
 /* ===== GAMY INVENTORY: SETTINGS & RGB SMOKE ===== */
 :root {
