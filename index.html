@@ -1759,7 +1759,26 @@ function updateBackupSummary() {
 
 /* التنقل بين الصفحات */
 function showPage(name, updateHash = true) {
-const allowed = ["dashboard", "products", "receipts", "sales", "history", "backup", "inventoryAudit", "stockMovements", "settings"];
+
+const allowed = [
+    "dashboard",
+    "products",
+    "receipts",
+    "sales",
+    "history",
+    "backup",
+    "inventoryAudit",
+    "stockMovements",
+    "settings",
+    "reports",
+    "customersSuppliers",
+    "stockAlerts",
+    "exportExcel",
+    "expensesProfits",
+    "userManagement",
+    "help"
+];
+
     const target = allowed.includes(name) ? name : "dashboard";
 
     document.querySelectorAll("[data-page-section]").forEach(section => {
