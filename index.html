@@ -1105,6 +1105,51 @@ body.dark-mode {
   padding-inline: 8px;
 }
 
+/* القائمة الجانبية عند الإغلاق */
+#mainSidebar.collapsed {
+  width: 64px;
+  min-width: 64px;
+  overflow: hidden;
+  padding-inline: 6px;
+  align-items: center;
+}
+
+/* إخفاء نصوص وروابط القائمة عند الإغلاق */
+#mainSidebar.collapsed .toggle-label,
+#mainSidebar.collapsed .nav-item span:not(.nav-icon),
+#mainSidebar.collapsed .gamy-settings-button-label {
+  display: none !important;
+}
+
+/* إخفاء زر الإعدادات بالكامل عند الإغلاق */
+#mainSidebar.collapsed .gamy-settings-wrap {
+  display: none !important;
+}
+
+/* منع ظهور أي لوحة إعدادات صغيرة */
+#mainSidebar.collapsed .gamy-settings-panel {
+  display: none !important;
+}
+
+/* تنسيق زر القائمة */
+#mainSidebar.collapsed .sidebar-toggle {
+  width: 44px;
+  min-width: 44px;
+  justify-content: center;
+  padding: 12px 0;
+  margin-inline: auto;
+}
+
+/* تنسيق أيقونات الصفحات */
+#mainSidebar.collapsed .nav-item {
+  width: 44px;
+  min-width: 44px;
+  justify-content: center;
+  padding-inline: 0;
+  margin-inline: auto;
+  overflow: hidden;
+}
+
 </style>
 </head>
 
