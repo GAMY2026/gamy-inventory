@@ -986,29 +986,94 @@ body.dark-mode .gamy-settings-heading h2 {
     <div id="stockMovementsSummary" class="message" role="status"></div>
   </section>
 </section>
+
 <section class="page" data-page-section="settings">
   <div class="page-topline">
     <h1>⚙️ إعدادات النظام</h1>
-    <p>إدارة إعدادات GAMY INVENTORY.</p>
+    <p>خصّص GAMY INVENTORY حسب تفضيلاتك.</p>
   </div>
 
   <section class="panel">
-    <h2 class="section-title">إعدادات المتجر</h2>
+    <h2 class="section-title">🌐 اللغة والمظهر</h2>
 
     <div class="form-grid">
+      <div class="form-group">
+        <label for="settingsLanguage">لغة الموقع</label>
+        <select id="settingsLanguage">
+          <option value="ar">العربية</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="settingsTheme">مظهر الموقع</label>
+        <select id="settingsTheme">
+          <option value="light"> نهاري</option>
+          <option value="dark"> ليلي</option>
+          <option value="smoky"> دخاني</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="settingsAccent">اللون الأساسي</label>
+        <select id="settingsAccent">
+          <option value="teal">تركواز</option>
+          <option value="gold">ذهبي</option>
+          <option value="blue">أزرق</option>
+          <option value="purple">بنفسجي</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="settingsFontSize">حجم الخط</label>
+        <select id="settingsFontSize">
+          <option value="small">صغير</option>
+          <option value="medium" selected>متوسط</option>
+          <option value="large">كبير</option>
+        </select>
+      </div>
+
       <div class="form-group">
         <label for="settingsStoreName">اسم المتجر</label>
         <input id="settingsStoreName" type="text" placeholder="GAMY INVENTORY">
       </div>
     </div>
+  </section>
 
-    <button type="button" class="primary-btn" id="saveSettingsButton">
+  <section class="panel">
+    <h2 class="section-title"> التحكم والتفضيلات</h2>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="settingsMouseEffect">مؤثرات الماوس</label>
+        <select id="settingsMouseEffect">
+          <option value="on">تشغيل</option>
+          <option value="off">إيقاف</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="settingsDeleteConfirm">تأكيد الحذف</label>
+        <select id="settingsDeleteConfirm">
+          <option value="on">تأكيد قبل الحذف</option>
+          <option value="off">الحذف مباشرة</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
+      <button type="button" class="primary-btn" id="saveSettingsButton">
       حفظ الإعدادات
-    </button>
+      </button>
+
+      <button type="button" class="secondary-btn" id="resetSettingsButton">
+     استعادة الإعدادات الافتراضية
+      </button>
+    </div>
 
     <div id="settingsMessage" class="message" role="status"></div>
   </section>
-</section>
+
  </main>
 </div>
 
