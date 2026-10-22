@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GAMY INVENTORY | إدارة المخازن</title>
  
-<style>
+<style>[
 :root{
  --green:#153e35;--green2:#205648;--gold:#c5a35b;
  --bg:#f5f7f6;--white:#fff;--text:#24332c;
@@ -2434,7 +2434,10 @@ if (!saveProducts()) {
 recordStockSnapshot("إضافة كمية: " + p.name + " (+" + amount + " قطعة)");
 
 closeStockModal();
-
+renderProducts();
+showMessage("formMessage", "تمت إضافة " + amount + " قطعة إلى المخزون.", "success");
+});
+ 
 /* حذف المنتج */
 function deleteProduct(id) {
     const p = findProduct(id);
@@ -4793,6 +4796,18 @@ actionCell.appendChild(deleteButton);
     });
 })();
 </script>
-
+<script>
+document.querySelectorAll(".nav-item[data-page]").forEach(function (b) {
+  var p = b.dataset.page;
+  if (!document.querySelector('[data-page-section="' + p + '"]')) {
+    var s = document.createElement("section");
+    s.className = "page";
+    s.dataset.pageSection = p;
+    s.innerHTML = '<div class="page-topline"><h1></h1><p>هذه الصفحة قيد الإعداد وسيتم تفعيلها قريبًا.</p></div>';
+    s.querySelector("h1").textContent = b.dataset.title;
+    document.querySelector(".app-content").appendChild(s);
+  }
+});
+</script>
 </body>
 </html>
