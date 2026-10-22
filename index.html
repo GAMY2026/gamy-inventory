@@ -1149,10 +1149,115 @@ body.dark-mode {
   margin-inline: auto;
   overflow: hidden;
 }
+/* تصميم مؤشرات أداء لوحة التحكم */
+.dashboard-analytics {
+    margin-top: 20px;
+}
 
-</style>
+.dashboard-charts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 20px;
+}
+
+.chart-card {
+    min-width: 0;
+    padding: 20px;
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: 18px;
+    text-align: center;
+    background: var(--card, #fff);
+}
+
+.chart-card h3 {
+    margin: 0 0 20px;
+    font-size: 16px;
+}
+
+.circle-chart {
+    --chart-percent: 0%;
+    --chart-color: #16a34a;
+    width: 150px;
+    height: 150px;
+    max-width: 100%;
+    aspect-ratio: 1;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: conic-gradient(
+        var(--chart-color) var(--chart-percent),
+        #e8edf0 0
+    );
+    position: relative;
+}
+
+.circle-chart::before {
+    content: "";
+    position: absolute;
+    inset: 11px;
+    border-radius: 50%;
+    background: var(--card, #fff);
+}
+
+.warning-chart {
+    --chart-color: #dc2626;
+}
+
+.circle-chart-center {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.circle-chart-center strong {
+    font-size: 28px;
+    line-height: 1.2;
+}
+
+.circle-chart-center span {
+    font-size: 12px;
+    color: var(--muted, #777);
+}
+
+.chart-caption {
+    margin: 10px 0 0;
+    color: var(--muted, #777);
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.sales-bars {
+    min-height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 900px) {
+    .dashboard-charts {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .sales-chart-card {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 520px) {
+    .dashboard-charts {
+        grid-template-columns: 1fr;
+    }
+
+    .sales-chart-card {
+        grid-column: auto;
+    }
+</style
 </head>
-
 <body>
 
 <header class="topbar">
@@ -2239,10 +2344,11 @@ function renderProducts() {
             body.appendChild(tr);
         });
     }
-
     renderDashboardSales();
+    renderDashboardAnalytics();
     updateBackupSummary();
 }
+  
 
 $("searchInput").addEventListener("input", renderProducts);
 
@@ -2535,6 +2641,133 @@ function renderDashboardSales() {
     });
 }
 
+function renderDashboardAnalytics() {
+    const totalProducts = products.length;
+
+    const lowStock = products.filter(p =>
+        Number(p.quantity || 0) <= 5
+    ).length;
+
+    const healthy = totalProducts - lowStock;
+
+    const healthyPercent = totalProducts
+        ? Math.round((healthy / totalProducts) * 100)
+        : 0;
+
+    const lowPercent = totalProducts
+        ? Math.round((lowStock / totalProducts) * 100)
+        : 0;
+
+    const stockChart = $("stockHealthChart");
+    const lowChart = $("lowStockChart");
+
+    if (stockChart) {
+        stockChart.style.setProperty(
+            "--chart-percent",
+            healthyPercent + "%"
+        );
+    }
+
+    if (lowChart) {
+        lowChart.style.setProperty(
+            "--chart-percent",
+            lowPercent + "%"
+        );
+    }
+
+    if ($("stockHealthPercent")) {
+        $("stockHealthPercent").textContent = healthyPercent + "%";
+    }
+
+    if ($("lowStockPercent")) {
+        $("lowStockPercent").textContent = lowPercent + "%";
+    }
+
+    if ($("stockHealthCaption")) {
+        $("stockHealthCaption").textContent =
+            healthy + " من " + totalProducts + " أنواع منتجات مخزونها أكثر من 5 قطع";
+    }
+
+    if ($("lowStockCaption")) {
+        $("lowStockCaption").textContent =
+            lowStock + " من " + totalProducts + " أنواع منتجات مخزونها 5 قطع أو أقل";
+    }
+
+    const chart = $("dashboardSalesChart");
+    if (!chart) return;
+
+    chart.replaceChildren();
+
+    const days = [];
+
+    for (let i = 6; i >= 0; i--) {
+        const date = new Date();
+        date.setHours(0, 0, 0, 0);
+        date.setDate(date.getDate() - i);
+
+        const key =
+            date.getFullYear() + "-" +
+            String(date.getMonth() + 1).padStart(2, "0") + "-" +
+            String(date.getDate()).padStart(2, "0");
+
+        const total = sales.reduce((sum, sale) => {
+            const saleDate = new Date(sale.createdAt);
+
+            if (Number.isNaN(saleDate.getTime())) return sum;
+
+            const saleKey =
+                saleDate.getFullYear() + "-" +
+                String(saleDate.getMonth() + 1).padStart(2, "0") + "-" +
+                String(saleDate.getDate()).padStart(2, "0");
+
+            return sum + (saleKey === key ? Number(sale.total || 0) : 0);
+        }, 0);
+
+        days.push({
+            label: date.toLocaleDateString("ar-EG", { weekday: "short" }),
+            total
+        });
+    }
+
+    const maxTotal = Math.max(...days.map(day => day.total), 1);
+
+    chart.style.display = "grid";
+    chart.style.gridTemplateColumns = "repeat(7, minmax(0, 1fr))";
+    chart.style.alignItems = "end";
+    chart.style.gap = "8px";
+    chart.style.width = "100%";
+
+    days.forEach(day => {
+        const column = document.createElement("div");
+        column.style.display = "flex";
+        column.style.flexDirection = "column";
+        column.style.alignItems = "center";
+        column.style.justifyContent = "end";
+        column.style.gap = "6px";
+        column.style.minWidth = "0";
+        column.style.height = "150px";
+
+        const value = document.createElement("span");
+        value.textContent = Math.round(day.total).toLocaleString("ar-EG");
+        value.style.fontSize = "10px";
+        value.style.overflowWrap = "anywhere";
+
+        const bar = document.createElement("div");
+        bar.style.width = "min(100%, 24px)";
+        bar.style.height = Math.max(4, (day.total / maxTotal) * 95) + "px";
+        bar.style.background = "#16a34a";
+        bar.style.borderRadius = "6px 6px 0 0";
+        bar.title = day.label + ": " + formatMoney(day.total);
+
+        const label = document.createElement("span");
+        label.textContent = day.label;
+        label.style.fontSize = "11px";
+
+        column.append(value, bar, label);
+        chart.appendChild(column);
+    });
+}
+
 function renderSales() {
     const body = $("salesTableBody");
     body.replaceChildren();
@@ -2553,8 +2786,8 @@ function renderSales() {
     $("todaySalesCount").textContent = today.length.toLocaleString("ar-EG");
 
     const filtered = [...sales].filter(s =>
-        normalize(s.productName).includes(term) ||
-        normalize(s.productCode).includes(term)
+      normalize(s.productName).includes(term) ||
+normalize(s.productCode).includes(term)
     ).sort((a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
@@ -2583,6 +2816,7 @@ function renderSales() {
     }
 
     renderDashboardSales();
+    renderDashboardAnalytics();
     updateBackupSummary();
 }
 
