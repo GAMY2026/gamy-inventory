@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GAMY INVENTORY | إدارة المخازن</title>
  
-<style>[
+<style>
 :root{
  --green:#153e35;--green2:#205648;--gold:#c5a35b;
  --bg:#f5f7f6;--white:#fff;--text:#24332c;
@@ -1180,7 +1180,6 @@ body.dark-mode {
    <button type="button" class="nav-item" data-page="backup" data-title="النسخ الاحتياطي">النسخ الاحتياطي</button>
 <button type="button" class="nav-item" data-page="inventoryAudit" data-title="جرد المخزن">جرد المخزن</button>
   <button type="button" class="nav-item" data-page="stockMovements" data-title="حركة المخزون">حركة المخزون</button>
-   <button type="button" class="nav-item" data-page="stockHistory" data-title="سجل المخزون">سجل المخزون</button>
 <button type="button" class="nav-item" data-page="reports" data-title="التقارير والإحصائيات">التقارير والإحصائيات</button>
 <button type="button" class="nav-item" data-page="customersSuppliers" data-title="العملاء والموردون">العملاء والموردون</button>
 <button type="button" class="nav-item" data-page="stockAlerts" data-title="تنبيهات المخزون">تنبيهات المخزون</button>
@@ -1705,14 +1704,13 @@ body.dark-mode {
 /* الحفاظ على مفاتيح التخزين القديمة */
 const PRODUCT_KEY = "gamy_inventory_products_v1";
 const SALES_KEY = "gamy_inventory_sales_v1";
-const STOCK_HISTORY_KEY = "gamy_inventory_stock_history_v1";
-
 const $ = id => document.getElementById(id);
 
 let products = [];
 let sales = [];
 let editingProductId = null;
 let stockProductId = null;
+
 function readStorageArray(key) {
     try {
         const raw = localStorage.getItem(key);
@@ -1804,47 +1802,7 @@ function updateBackupSummary() {
     $("backupProductsCount").textContent = products.length.toLocaleString("ar-EG");
     $("backupSalesCount").textContent = sales.length.toLocaleString("ar-EG");
 }
-/* ---------- سجل المخزون ---------- */
 
-function getStockHistory() {
-    return readStorageArray(STOCK_HISTORY_KEY);
-}
-
-function saveStockHistory(history) {
-    try {
-        localStorage.setItem(
-            STOCK_HISTORY_KEY,
-            JSON.stringify(history)
-        );
-        return true;
-    } catch (error) {
-        console.error("Stock history save error:", error);
-        return false;
-    }
-}
-
-function recordStockSnapshot(reason = "حفظ المخزون") {
-    const history = getStockHistory();
-
-    const snapshot = {
-        id: Date.now().toString() + Math.random().toString(16).slice(2),
-        createdAt: new Date().toISOString(),
-        reason: reason,
-        productCount: products.length,
-        totalUnits: products.reduce(
-            (sum, product) => sum + Number(product.quantity || 0),
-            0
-        ),
-        products: JSON.parse(JSON.stringify(products))
-    };
-
-    history.unshift(snapshot);
-
-    // الاحتفاظ بآخر 200 نسخة فقط
-    const limitedHistory = history.slice(0, 200);
-
-    return saveStockHistory(limitedHistory);
-}
 /* ---------- تقارير وإحصائيات GAMY INVENTORY ---------- */
 
 const REPORTS_SNAPSHOT_KEY = "gamy_inventory_monthly_snapshots_v1";
@@ -2012,7 +1970,6 @@ const allowed = [
     "backup",
     "inventoryAudit",
     "stockMovements",
-    "stockHistory",
     "settings",
     "reports",
     "customersSuppliers",
@@ -2343,12 +2300,11 @@ $("productForm").addEventListener("submit", event => {
         const previous = products[index];
         products[index] = { ...previous, ...values };
 
-      if (!saveProducts()) {
-    products[index] = previous;
-    return;
-}
+        if (!saveProducts()) {
+            products[index] = previous;
+            return;
+        }
 
-recordStockSnapshot("تعديل بيانات منتج");
         clearProductForm();
         showMessage("formMessage", "تم حفظ تعديلات المنتج بنجاح.", "success");
     } else {
@@ -2359,12 +2315,10 @@ recordStockSnapshot("تعديل بيانات منتج");
 
         products.push(newProduct);
 
-       if (!saveProducts()) {
-    products.pop();
-    return;
-}
-
-recordStockSnapshot("إضافة منتج جديد");
+        if (!saveProducts()) {
+            products.pop();
+            return;
+        }
 
         clearProductForm();
         showMessage("formMessage", "تم حفظ المنتج بنجاح.", "success");
@@ -2423,18 +2377,19 @@ $("stockForm").addEventListener("submit", event => {
         return;
     }
 
-   const previousQuantity = p.quantity;
-p.quantity += amount;
+    const previousQuantity = p.quantity;
+    p.quantity += amount;
 
-if (!saveProducts()) {
-    p.quantity = previousQuantity;
-    return;
-}
+    if (!saveProducts()) {
+        p.quantity = previousQuantity;
+        return;
+    }
 
-recordStockSnapshot("إضافة كمية: " + p.name + " (+" + amount + " قطعة)");
+    closeStockModal();
+    renderProducts();
+    showMessage("formMessage", "تمت إضافة " + amount + " قطعة إلى المخزون.", "success");
+});
 
-closeStockModal();
- 
 /* حذف المنتج */
 function deleteProduct(id) {
     const p = findProduct(id);
@@ -4756,9 +4711,43 @@ actionCell.appendChild(deleteButton);
     renderStockMovements();
 })();
 </script>
+ 
+<script>
+/* التحكم في فتح وقفل القائمة الجانبية */
+(function () {
+    const layout = document.querySelector(".app-layout");
+    const toggle = document.getElementById("sidebarToggle");
 
-  }
-});
+    if (!layout || !toggle) return;
+
+    const KEY = "gamy_sidebar_collapsed";
+
+    function setSidebarState(collapsed) {
+        layout.classList.toggle("sidebar-collapsed", collapsed);
+        toggle.setAttribute("aria-expanded", String(!collapsed));
+        toggle.setAttribute(
+            "aria-label",
+            collapsed ? "فتح القائمة الجانبية" : "طي القائمة الجانبية"
+        );
+
+        try {
+            localStorage.setItem(KEY, String(collapsed));
+        } catch (error) {}
+    }
+
+    let collapsed = false;
+
+    try {
+        collapsed = localStorage.getItem(KEY) === "true";
+    } catch (error) {}
+
+    setSidebarState(collapsed);
+
+    toggle.addEventListener("click", function () {
+        setSidebarState(!layout.classList.contains("sidebar-collapsed"));
+    });
+})();
 </script>
+
 </body>
 </html>
