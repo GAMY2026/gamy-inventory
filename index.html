@@ -1205,6 +1205,45 @@ body.dark-mode {
     <div class="stat-card"><div class="stat-label">مبيعات اليوم</div><div class="stat-value" id="dashSalesToday">0 ج.م</div><div class="stat-caption">إجمالي البيع اليوم</div></div>
     <div class="stat-card"><div class="stat-label">ربح اليوم التقديري</div><div class="stat-value" id="dashProfitToday">0 ج.م</div><div class="stat-caption">قبل مصاريف التشغيل</div></div>
    </div>
+   <!-- رسوم ومؤشرات لوحة التحكم -->
+   <section class="panel dashboard-analytics">
+    <div class="panel-heading">
+     <h2 class="section-title">مؤشرات أداء المخزن</h2>
+     <p class="description">متابعة حالة المخزون والمبيعات بالنسب المئوية.</p>
+    </div>
+
+    <div class="dashboard-charts">
+     <div class="chart-card">
+      <h3>حالة المخزون</h3>
+      <div class="circle-chart" id="stockHealthChart" role="img" aria-label="نسبة حالة المخزون">
+       <div class="circle-chart-center">
+        <strong id="stockHealthPercent">0%</strong>
+        <span>مخزون سليم</span>
+       </div>
+      </div>
+      <p class="chart-caption" id="stockHealthCaption">بانتظار بيانات المخزون</p>
+     </div>
+
+     <div class="chart-card">
+      <h3>المخزون المنخفض</h3>
+      <div class="circle-chart warning-chart" id="lowStockChart" role="img" aria-label="نسبة المخزون المنخفض">
+       <div class="circle-chart-center">
+        <strong id="lowStockPercent">0%</strong>
+        <span>مخزون منخفض</span>
+       </div>
+      </div>
+      <p class="chart-caption" id="lowStockCaption">المنتجات التي كميتها 5 قطع أو أقل</p>
+     </div>
+
+     <div class="chart-card sales-chart-card">
+      <h3>المبيعات اليومية</h3>
+      <div class="sales-bars" id="dashboardSalesChart">
+       <p class="chart-caption">سيظهر الرسم بعد ربطه ببيانات المبيعات.</p>
+      </div>
+      <p class="chart-caption">مقارنة المبيعات خلال آخر 7 أيام</p>
+     </div>
+    </div>
+   </section>
 
    <section class="panel">
     <div class="table-toolbar"><h2 class="section-title">أحدث المبيعات</h2><button type="button" class="secondary-btn" data-page-link="history">عرض سجل المبيعات</button></div>
