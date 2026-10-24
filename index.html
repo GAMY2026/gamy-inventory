@@ -2163,11 +2163,14 @@ document.querySelectorAll(".nav-item[data-page]").forEach(button => {
 
 const refreshReportsButton = $("refreshReportsButton");
 
+
 if (refreshReportsButton) {
     refreshReportsButton.addEventListener("click", function () {
+        alert("زر تحديث التقارير يستجيب");
         renderReports();
     });
 }
+
 
 document.querySelectorAll("[data-page-link]").forEach(button => {
     button.addEventListener("click", () => showPage(button.dataset.pageLink));
