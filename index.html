@@ -4935,6 +4935,34 @@ actionCell.appendChild(deleteButton);
             });
         });
 
+ // إضافة المبيعات إلى حركة المخزون للعرض فقط
+let savedSales = [];
+
+try {
+    savedSales = JSON.parse(localStorage.getItem(SALES_KEY) || "[]");
+
+    if (!Array.isArray(savedSales)) {
+        savedSales = [];
+    }
+} catch (error) {
+    console.error("تعذر قراءة سجل المبيعات:", error);
+}
+
+savedSales.forEach(function (sale) {
+    if (!sale || !sale.id) return;
+
+    movements.push({
+        date: sale.createdAt,
+        receiptId: sale.id,
+        name: sale.productName || "—",
+        code: sale.productCode || "—",
+        size: "—",
+        color: "—",
+        quantity: -Math.abs(Number(sale.quantity) || 0),
+        type: "بيع"
+    });
+});
+
         const query = searchInput.value.trim().toLowerCase();
 
         const filtered = movements.filter(function (movement) {
