@@ -2161,6 +2161,14 @@ document.querySelectorAll(".nav-item[data-page]").forEach(button => {
     button.addEventListener("click", () => showPage(button.dataset.page));
 });
 
+const refreshReportsButton = $("refreshReportsButton");
+
+if (refreshReportsButton) {
+    refreshReportsButton.addEventListener("click", function () {
+        renderReports();
+    });
+}
+
 document.querySelectorAll("[data-page-link]").forEach(button => {
     button.addEventListener("click", () => showPage(button.dataset.pageLink));
 });
