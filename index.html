@@ -1783,6 +1783,21 @@ body.dark-mode {
         </div>
       </div>
 
+<div class="form-group" id="supplierGoodsGroup" hidden>
+  <label for="contactGoodsType">نوع المنتج</label>
+  <select id="contactGoodsType">
+    <option value="">اختر نوع المنتج</option>
+    <option value="جينز">جينز</option>
+    <option value="تشيرت">تشيرت</option>
+    <option value="قميص">قميص</option>
+    <option value="بولو">بولو</option>
+    <option value="سويت بانتس">سويت بانتس</option>
+    <option value="شورت قطن">شورت قطن</option>
+    <option value="شورت جينز">شورت جينز</option>
+    <option value="كوتشات">كوتشات</option>
+  </select>
+</div>
+
       <div class="actions">
         <button class="primary-btn" type="submit">حفظ البيانات</button>
         <button class="secondary-btn" type="button" id="cancelContactEdit" hidden>إلغاء التعديل</button>
@@ -1805,6 +1820,7 @@ body.dark-mode {
             <th>النوع</th>
             <th>الاسم</th>
             <th>الهاتف</th>
+<th>نوع المنتج</th>
             <th>العنوان</th>
             <th>الإجراءات</th>
           </tr>
@@ -5152,6 +5168,8 @@ savedSales.forEach(function (sale) {
     const nameInput = document.getElementById("contactName");
     const phoneInput = document.getElementById("contactPhone");
     const addressInput = document.getElementById("contactAddress");
+ const goodsTypeInput = document.getElementById("contactGoodsType");
+ const goodsTypeGroup = document.getElementById("supplierGoodsGroup");
     const searchInput = document.getElementById("contactsSearch");
     const tableBody = document.getElementById("contactsTableBody");
     const customerCount = document.getElementById("customersCount");
@@ -5159,7 +5177,18 @@ savedSales.forEach(function (sale) {
     const message = document.getElementById("contactsMessage");
     const emptyMessage = document.getElementById("contactsEmptyMessage");
     const cancelButton = document.getElementById("cancelContactEdit");
+function updateGoodsTypeVisibility() {
+    const isSupplier = typeInput.value === "supplier";
 
+    goodsTypeGroup.hidden = !isSupplier;
+    goodsTypeInput.required = isSupplier;
+
+    if (!isSupplier) {
+        goodsTypeInput.value = "";
+    }
+}
+
+typeInput.addEventListener("change", updateGoodsTypeVisibility);
     if (!form || !tableBody) return;
 
     let contacts = [];
@@ -5197,6 +5226,7 @@ savedSales.forEach(function (sale) {
 
     function resetForm() {
         form.reset();
+     updateGoodsTypeVisibility();
         editingId = null;
         form.querySelector('button[type="submit"]').textContent = "حفظ البيانات";
         cancelButton.hidden = true;
@@ -5216,13 +5246,14 @@ savedSales.forEach(function (sale) {
 
         filtered.forEach(contact => {
             const row = document.createElement("tr");
-
-            [
-                contact.type === "customer" ? "عميل" : "مورد",
-                contact.name,
-                contact.phone || "—",
-                contact.address || "—"
-            ].forEach(value => {
+[
+    contact.type === "customer" ? "عميل" : "مورد",
+    contact.name,
+    contact.type === "supplier" ? (contact.goodsType || "—") : "—",
+    contact.phone || "—",
+    contact.address || "—"
+].forEach(value => {
+           
                 const cell = document.createElement("td");
                 cell.textContent = value;
                 row.appendChild(cell);
@@ -5240,6 +5271,8 @@ savedSales.forEach(function (sale) {
                 nameInput.value = contact.name;
                 phoneInput.value = contact.phone || "";
                 addressInput.value = contact.address || "";
+             goodsTypeInput.value = contact.goodsType || "";
+updateGoodsTypeVisibility();
                 form.querySelector('button[type="submit"]').textContent =
                     "حفظ التعديلات";
                 cancelButton.hidden = false;
@@ -5294,12 +5327,15 @@ savedSales.forEach(function (sale) {
         }
 
         const oldContacts = contacts;
-        const contactData = {
-            type: typeInput.value,
-            name,
-            phone: phoneInput.value.trim(),
-            address: addressInput.value.trim()
-        };
+       const contactData = {
+    type: typeInput.value,
+    name,
+    phone: phoneInput.value.trim(),
+    address: addressInput.value.trim(),
+    goodsType: typeInput.value === "supplier"
+        ? goodsTypeInput.value
+        : ""
+};
 
         if (editingId) {
             contacts = contacts.map(item =>
