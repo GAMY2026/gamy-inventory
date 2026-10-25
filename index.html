@@ -1257,7 +1257,8 @@ body.dark-mode {
     .sales-chart-card {
         grid-column: auto;
     }
-</style
+}
+</style>
 </head>
 <body>
 
@@ -1736,7 +1737,6 @@ body.dark-mode {
     <div id="reportsMessage" class="message" role="status"></div>
   </section>
 </section>
-
 <section class="page" data-page-section="customersSuppliers">
   <div class="page-topline">
     <h1>العملاء والموردون</h1>
@@ -1745,21 +1745,24 @@ body.dark-mode {
 
   <div class="stats">
     <div class="stat-card">
-      <h3>إجمالي العملاء</h3>
-      <p id="customersCount">0</p>
+      <div class="stat-label">إجمالي العملاء</div>
+      <div class="stat-value" id="customersCount">0</div>
     </div>
     <div class="stat-card">
-      <h3>إجمالي الموردين</h3>
-      <p id="suppliersCount">0</p>
+      <div class="stat-label">إجمالي الموردين</div>
+      <div class="stat-value" id="suppliersCount">0</div>
     </div>
   </div>
 
   <section class="panel">
-    <h2 class="section-title">إضافة عميل أو مورد</h2>
+    <div class="panel-heading">
+      <h2 class="section-title">إضافة عميل أو مورد</h2>
+      <p class="description">اختار نوع التعامل واكتب البيانات واحفظها.</p>
+    </div>
 
     <form id="customerSupplierForm">
       <div class="form-grid">
-        <div class="form-group">
+        <div class="field">
           <label for="contactType">نوع التعامل</label>
           <select id="contactType" required>
             <option value="customer">عميل</option>
@@ -1767,15 +1770,12 @@ body.dark-mode {
           </select>
         </div>
 
-        <div class="form-group">
-          <label for="contactName">الاسم</label>
-       
-        <div class="form-group">
+        <div class="field">
           <label for="contactName">الاسم</label>
           <input id="contactName" type="text" required placeholder="الاسم بالكامل">
         </div>
 
-        <div class="form-group" id="supplierGoodsGroup" hidden>
+        <div class="field" id="supplierGoodsGroup" hidden>
           <label for="contactGoodsType">نوع المنتج</label>
           <select id="contactGoodsType">
             <option value="">اختر نوع المنتج</option>
@@ -1790,32 +1790,16 @@ body.dark-mode {
           </select>
         </div>
 
-        <div class="form-group">
+        <div class="field">
           <label for="contactPhone">رقم الهاتف</label>
           <input id="contactPhone" type="tel" placeholder="رقم الهاتف">
         </div>
 
-        <div class="form-group">
+        <div class="field">
           <label for="contactAddress">العنوان</label>
           <input id="contactAddress" type="text" placeholder="العنوان">
         </div>
       </div>
-
-
-<div class="form-group" id="supplierGoodsGroup" hidden>
-  <label for="contactGoodsType">نوع المنتج</label>
-  <select id="contactGoodsType">
-    <option value="">اختر نوع المنتج</option>
-    <option value="جينز">جينز</option>
-    <option value="تشيرت">تشيرت</option>
-    <option value="قميص">قميص</option>
-    <option value="بولو">بولو</option>
-    <option value="سويت بانتس">سويت بانتس</option>
-    <option value="شورت قطن">شورت قطن</option>
-    <option value="شورت جينز">شورت جينز</option>
-    <option value="كوتشات">كوتشات</option>
-  </select>
-</div>
 
       <div class="actions">
         <button class="primary-btn" type="submit">حفظ البيانات</button>
@@ -1827,32 +1811,30 @@ body.dark-mode {
   </section>
 
   <section class="panel">
-    <div class="panel-heading">
+    <div class="table-toolbar">
       <h2 class="section-title">سجل العملاء والموردين</h2>
-      <input id="contactsSearch" type="search" placeholder="ابحث بالاسم أو الهاتف أو العنوان">
+      <input id="contactsSearch" class="search-input" type="search" placeholder="ابحث بالاسم أو الهاتف أو العنوان">
     </div>
 
     <div class="table-wrapper">
       <table>
         <thead>
           <tr>
- 
- <th>النوع</th>
-<th>الاسم</th>
-<th>الهاتف</th>
-<th>نوع المنتج</th>
-<th>العنوان</th>
-<th>الإجراءات</th>
- 
-        
+            <th>النوع</th>
+            <th>الاسم</th>
+            <th>الهاتف</th>
+            <th>نوع المنتج</th>
+            <th>العنوان</th>
+            <th>الإجراءات</th>
           </tr>
         </thead>
         <tbody id="contactsTableBody"></tbody>
       </table>
     </div>
-    <div id="contactsEmptyMessage" class="message" role="status">لا توجد بيانات مسجلة حتى الآن.</div>
+    <div id="contactsEmptyMessage" class="empty-state">لا توجد بيانات مسجلة حتى الآن.</div>
   </section>
 </section>
+
 
 <section class="page" data-page-section="settings">
   <div class="page-topline">
@@ -5230,12 +5212,11 @@ typeInput.addEventListener("change", updateGoodsTypeVisibility);
             showMessage("تعذر قراءة بيانات العملاء والموردين.", true);
         }
     }
-
-    function showMessage(text, isError) {
-        message.textContent = text;
-        message.style.color = isError ? "#dc2626" : "#16805d";
-    }
-
+function showMessage(text, isError) {
+    message.textContent = text;
+    message.className = "message " + (isError ? "error" : "success");
+}
+   
     function saveContacts() {
         try {
             localStorage.setItem(CONTACTS_KEY, JSON.stringify(contacts));
