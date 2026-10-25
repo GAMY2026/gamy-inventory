@@ -1769,7 +1769,25 @@ body.dark-mode {
 
         <div class="form-group">
           <label for="contactName">الاسم</label>
+       
+        <div class="form-group">
+          <label for="contactName">الاسم</label>
           <input id="contactName" type="text" required placeholder="الاسم بالكامل">
+        </div>
+
+        <div class="form-group" id="supplierGoodsGroup" hidden>
+          <label for="contactGoodsType">نوع المنتج</label>
+          <select id="contactGoodsType">
+            <option value="">اختر نوع المنتج</option>
+            <option value="جينز">جينز</option>
+            <option value="تشيرت">تشيرت</option>
+            <option value="قميص">قميص</option>
+            <option value="بولو">بولو</option>
+            <option value="سويت بانتس">سويت بانتس</option>
+            <option value="شورت قطن">شورت قطن</option>
+            <option value="شورت جينز">شورت جينز</option>
+            <option value="كوتشات">كوتشات</option>
+          </select>
         </div>
 
         <div class="form-group">
@@ -1782,6 +1800,7 @@ body.dark-mode {
           <input id="contactAddress" type="text" placeholder="العنوان">
         </div>
       </div>
+
 
 <div class="form-group" id="supplierGoodsGroup" hidden>
   <label for="contactGoodsType">نوع المنتج</label>
