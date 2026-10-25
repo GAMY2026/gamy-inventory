@@ -8,1260 +8,225 @@
  
 <style>
 :root{
- --green:#153e35;--green2:#205648;--gold:#c5a35b;
- --bg:#f5f7f6;--white:#fff;--text:#24332c;
- --muted:#84918b;--border:#e4eae6;--red:#b83232
+  --green:#d9b76e;--green2:#f0cf83;--gold:#d9b76e;
+  --bg:#07111f;--white:#0d1b2b;--text:#edf3fb;
+  --muted:#9aaec3;--border:#24384d;--red:#ff6b78;
+  --page-bg:#07111f;--panel-bg:#0d1b2b;--field-bg:#091625;--soft-bg:#132438;
+  --gamy-gold:#e6bd68;--gamy-gold-light:#ffe0a0
 }
 *{box-sizing:border-box;margin:0;padding:0}
 [hidden]{display:none!important}
-body{font-family:"Segoe UI",Tahoma,Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.7}
+body{
+  font-family:"Segoe UI",Tahoma,Arial,sans-serif;font-size:14px;line-height:1.7;color:var(--text);min-height:100vh;
+  background:radial-gradient(ellipse at 85% 0%,#17283d 0%,transparent 40%),linear-gradient(145deg,#07111f,#091523 55%,#0b1726)
+}
 button,input,select{font:inherit}
 button{cursor:pointer}
 button:disabled{opacity:.6;cursor:not-allowed}
-
-.topbar{background:var(--green);color:white;border-bottom:3px solid var(--gold)}
+ 
+/* الهيدر */
+.topbar{background:linear-gradient(110deg,#07111f,#122239 60%,#081321);color:#fff;border-bottom:1px solid var(--gamy-gold);box-shadow:0 5px 28px #0003}
 .topbar-inner{width:92%;max-width:1500px;min-height:85px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;padding:16px 0}
-.brand{font-size:25px;font-weight:800;letter-spacing:1px}
-.brand span{color:#dfc27f}
-.brand-subtitle{color:#cfddd6;font-size:12px;margin-top:4px}
-.header-label{border:1px solid #527166;padding:7px 13px;border-radius:7px;font-size:12px}
-
-.app-layout{width:92%;max-width:1500px;margin:25px auto 35px;display:grid;grid-template-columns:225px minmax(0,1fr);gap:20px;align-items:start}
-.sidebar{background:white;border:1px solid var(--border);border-radius:12px;padding:15px 11px;position:sticky;top:15px;box-shadow:0 4px 15px #19322808}
-.sidebar-heading{color:#99a49e;font-size:11px;font-weight:750;padding:5px 10px 12px;border-bottom:1px solid #edf1ee;margin-bottom:9px}
-.sidebar-nav{display:flex;flex-direction:column;gap:5px}
-.nav-item{width:100%;text-align:right;padding:11px;border:1px solid transparent;border-radius:8px;background:transparent;color:#5d6c63;font-size:13px;font-weight:650}
-.nav-item:hover{background:#f5f8f6;color:var(--green)}
-.nav-item.active{background:#eaf2ed;border-color:#dce9e0;color:var(--green);font-weight:750}
-
+.brand{font-size:25px;font-weight:800;letter-spacing:2px;color:#fff}
+.brand span{color:var(--gamy-gold-light)}
+.brand-subtitle{color:#a8b8ca;font-size:12px;margin-top:4px}
+.header-label{border:1px solid #8b7040;color:var(--gamy-gold-light);background:#142237;padding:7px 13px;border-radius:7px;font-size:12px}
+ 
+/* التخطيط والقائمة الجانبية */
+.app-layout{width:92%;max-width:1500px;margin:25px auto 35px;display:grid;grid-template-columns:225px minmax(0,1fr);gap:22px;align-items:start;transition:grid-template-columns .3s ease}
+.sidebar{background:linear-gradient(180deg,#101e30,#0a1524);border:1px solid #293b50;border-radius:15px;box-shadow:0 12px 35px #0003;padding:17px 12px;position:sticky;top:15px;min-width:0;transition:padding .3s ease}
+.sidebar-nav{display:flex;flex-direction:column;gap:7px;margin-top:10px}
+.nav-item{width:100%;text-align:right;padding:12px;border:1px solid transparent;border-radius:9px;background:transparent;color:#c5d1df;font-size:13px;font-weight:650;transition:background .2s,color .2s,border-color .2s,transform .2s}
+.nav-item:hover{background:#1a2b40;color:var(--gamy-gold-light);border-color:#34485d;transform:translateX(-2px)}
+.nav-item.active{background:linear-gradient(100deg,#3a3020,#242a31);border-color:#9c7b42;color:#ffe0a0;font-weight:750;box-shadow:inset -3px 0 0 var(--gamy-gold)}
+.sidebar-toggle{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:42px;border:1px solid #c9a04a;border-radius:10px;background:linear-gradient(135deg,#17283c,#0b1727);color:#ffda8a;font-weight:700}
+.sidebar-toggle:hover{background:#26364a}
+.app-layout.sidebar-collapsed{grid-template-columns:76px minmax(0,1fr)}
+.sidebar-collapsed .sidebar{padding-left:8px;padding-right:8px}
+.sidebar-collapsed .toggle-label{display:none}
+.sidebar-collapsed .sidebar-toggle{padding:8px 0;font-size:20px}
+.sidebar-collapsed .nav-item{font-size:0;min-width:0;width:100%;text-align:center;padding:13px 4px}
+.sidebar-collapsed .gamy-settings-wrap{display:none!important}
+ 
+/* المحتوى */
 .app-content{min-width:0}
 .page{display:none}
 .page.active{display:block}
 .welcome{margin-bottom:25px}
-.welcome h1,.page-topline h1{color:var(--green);font-size:27px;line-height:1.4;margin-bottom:6px}
-.welcome p,.description,.page-topline p{color:var(--muted);font-size:13px}
+.welcome h1,.page-topline h1{color:#f4f7fc;font-size:27px;line-height:1.4;margin-bottom:6px;letter-spacing:-.3px}
+.welcome p,.description,.page-topline p{color:#a8b8ca;font-size:13px}
 .page-topline{margin-bottom:22px}
-.section-title{color:var(--green);font-size:18px;font-weight:750;margin-bottom:16px}
-
-
-/* بطاقات إحصائيات لوحة التحكم - GAMY INVENTORY */
-.stats {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-  margin-bottom: 25px;
-}
-
-.stat-card {
-  background: #101c32;
-  border: 1px solid rgba(201, 168, 78, 0.24);
-  border-radius: 14px;
-  box-shadow: 0 6px 22px rgba(8, 19, 38, 0.12);
-}
-.stat-card {
-  position: relative;
-  padding: 21px;
-  min-width: 0;
-  overflow: hidden;
-  transition: transform 0.2s ease, border-color 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.stat-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 5px;
-  height: 100%;
-  background: linear-gradient(180deg, #e5ca7a, #a98232);
-}
-
-.stat-card:hover {
-  transform: translateY(-3px);
-  border-color: rgba(229, 202, 122, 0.65);
-  box-shadow: 0 10px 28px rgba(8, 19, 38, 0.2);
-}
-
-.stat-label {
-  color: #d7dce5;
-  font-size: 13px;
-  font-weight: 650;
-  margin-bottom: 10px;
-}
-
-.stat-value {
-  color: #e5ca7a;
-  font-size: 27px;
-  font-weight: 800;
-  overflow-wrap: anywhere;
-  line-height: 1.5;
-  font-variant-numeric: tabular-nums;
-}
-
-.stat-caption {
-  color: #aab5c7;
-  font-size: 11px;
-  margin-top: 8px;
-  line-height: 1.7;
-}
-
-.panel {
-  padding: 23px;
-  margin-bottom: 22px;
-  min-width: 0;
-}
-
-.panel-heading {
-  padding-bottom: 16px;
-  margin-bottom: 19px;
-  border-bottom: 1px solid rgba(201, 168, 78, 0.22);
-}
-
-.panel-heading .section-title {
-  margin-bottom: 4px;
-}
-
-
-.form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px}
+.section-title{color:var(--gamy-gold-light);font-size:18px;font-weight:750;margin-bottom:16px}
+.product-name{color:var(--gamy-gold-light);font-weight:750}
+ 
+/* الكروت واللوحات */
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:25px}
+.stat-card,.panel{background:linear-gradient(145deg,#102034,#0b1726);border:1px solid #253a50;border-radius:14px;box-shadow:0 9px 28px #0002;min-width:0;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
+.stat-card{position:relative;padding:21px;overflow:hidden}
+.stat-card::before{content:"";position:absolute;top:0;right:0;width:5px;height:100%;background:linear-gradient(180deg,#e5ca7a,#a98232)}
+.stat-card:hover{transform:translateY(-3px);border-color:rgba(229,202,122,.65);box-shadow:0 10px 28px rgba(8,19,38,.3)}
+.panel{padding:23px;margin-bottom:22px}
+.panel:hover{border-color:#5a4b32}
+.stat-label{color:#d7dce5;font-size:13px;font-weight:650;margin-bottom:10px}
+.stat-value{color:#e5ca7a;font-size:27px;font-weight:800;overflow-wrap:anywhere;line-height:1.5;font-variant-numeric:tabular-nums}
+.stat-caption{color:#aab5c7;font-size:11px;margin-top:8px;line-height:1.7}
+.panel-heading{padding-bottom:16px;margin-bottom:19px;border-bottom:1px solid rgba(201,168,78,.22)}
+.panel-heading .section-title{margin-bottom:4px}
+ 
+/* النماذج */
+.form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
 .field{display:flex;flex-direction:column;gap:7px;min-width:0}
-.field label{color:#425248;font-size:12px;font-weight:700}
-.field input,.field select,.search-input{width:100%;height:43px;padding:0 11px;border:1px solid #dfe6e2;border-radius:7px;color:var(--text);background:white;outline:none;font-size:13px}
-.field input:focus,.field select:focus,.search-input:focus{border-color:var(--green2);box-shadow:0 0 0 3px #20564814}
-.field input[readonly]{background:#f5f7f6}
+.field label{color:#c4d1df;font-size:12px;font-weight:700}
+.field input,.field select,.search-input,.gamy-setting-control{width:100%;height:43px;padding:0 11px;border:1px solid #30445a;border-radius:9px;color:#edf3fb;background:#091625;outline:none;font-size:13px}
+.field input::placeholder,.search-input::placeholder{color:#71869c}
+.field input:focus,.field select:focus,.search-input:focus{border-color:var(--gamy-gold);box-shadow:0 0 0 3px #d9b76e20}
+.field input[readonly]{background:#132237;color:#a9bbce}
 .actions{display:flex;align-items:center;flex-wrap:wrap;gap:9px;margin-top:20px}
-.primary-btn,.secondary-btn,.danger-btn{padding:10px 16px;border-radius:7px;font-size:13px;font-weight:700;min-height:41px}
-.primary-btn{background:var(--green);color:white;border:1px solid var(--green)}
-.primary-btn:hover{background:var(--green2)}
-.secondary-btn{background:white;color:#4c5e53;border:1px solid #dfe6e2}
-.secondary-btn:hover{background:#f3f7f4}
-.danger-btn{background:white;color:var(--red);border:1px solid #eed6d6}
-
+.primary-btn,.secondary-btn,.danger-btn{padding:10px 16px;border-radius:9px;font-size:13px;font-weight:700;min-height:41px}
+.primary-btn{background:linear-gradient(135deg,#e6c477,#b68c43);border:1px solid #e6c477;color:#101725;box-shadow:0 5px 15px #d9b76e1c;transition:transform .2s}
+.primary-btn:hover{background:linear-gradient(135deg,#f5d994,#d0a653);transform:translateY(-1px)}
+.secondary-btn,.danger-btn{background:#132237;color:#e1eaf4;border:1px solid #35485c}
+.secondary-btn:hover{background:#1a2d43;border-color:#8b7040}
+.danger-btn{color:#ff9aa3;border-color:#75404a}
+ 
 .message{display:none;margin-top:14px;padding:11px 13px;border-radius:7px;font-size:12px;overflow-wrap:anywhere}
-.message.success{display:block;background:#edf8f1;color:#17613b;border:1px solid #d4eddd}
-.message.error{display:block;background:#fff1f1;color:#a42626;border:1px solid #f1d3d3}
-.message.info{display:block;background:#f0f5f9;color:#36546b;border:1px solid #dae7ef}
-
-.shortcut-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.shortcut-button{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-height:95px;padding:16px;text-align:right;border:1px solid var(--border);border-radius:9px;background:#fbfcfb;color:var(--green)}
-.shortcut-button:hover{background:#f1f6f2;border-color:#ccdbd0}
-.shortcut-button strong{font-size:13px}
-.shortcut-button span{color:var(--muted);font-size:11px;line-height:1.8}
-
+.message.success{display:block;background:#102d29;color:#8de0bf;border:1px solid #285d50}
+.message.error{display:block;background:#351d27;color:#ffb2ba;border:1px solid #75404a}
+.message.info{display:block;background:#13283a;color:#b9d9f2;border:1px solid #31516c}
+ 
+/* الجداول */
 .table-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:17px}
 .table-toolbar .section-title{margin-bottom:0}
 .search-input{width:300px;max-width:100%}
-.table-wrapper{width:100%;overflow-x:auto;border:1px solid var(--border);border-radius:8px}
-table{width:100%;min-width:850px;border-collapse:collapse;text-align:right}
-thead{background:#f1f6f2}
-th{padding:13px 11px;color:#506558;font-size:11px;font-weight:750;white-space:nowrap;border-bottom:1px solid var(--border)}
-td{padding:12px 11px;border-bottom:1px solid #edf1ee;color:#44534a;font-size:12px;white-space:nowrap}
+.table-wrapper{width:100%;overflow-x:auto;border:1px solid #293d52;border-radius:10px}
+table{width:100%;min-width:850px;border-collapse:collapse;text-align:right;color:#e4edf7}
+thead{background:#17283c}
+th{padding:13px 11px;color:#f0d69a;font-size:11px;font-weight:750;white-space:nowrap;border-bottom:1px solid #34465a}
+td{padding:12px 11px;border-bottom:1px solid #203247;color:#c9d6e4;font-size:12px;white-space:nowrap}
 tbody tr:last-child td{border-bottom:none}
-tbody tr:hover{background:#fafcfb}
-.product-name{color:var(--green);font-weight:750}
-.code-text{direction:ltr;text-align:left;display:inline-block;color:#748178}
-.empty-state{text-align:center;padding:30px 12px;color:#98a39d;white-space:normal}
+tbody tr:hover{background:#15263a}
+.code-text{direction:ltr;text-align:left;display:inline-block;color:#9fb2c7}
+.empty-state{text-align:center;padding:30px 12px;color:#94a8bd;white-space:normal}
 .table-footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:9px;margin-top:12px;color:var(--muted);font-size:11px}
-
+ 
 .action-cell{position:relative}
 .action-menu-wrap{position:relative}
-.dots-button{width:36px;height:34px;border:1px solid #e2e8e4;border-radius:7px;background:white;color:var(--green);font-size:24px;line-height:1}
-.actions-dropdown{position:absolute;z-index:25;top:39px;left:0;width:165px;padding:5px;border:1px solid #e1e7e3;border-radius:8px;background:white;box-shadow:0 10px 28px #12281e20}
-.actions-dropdown button{display:block;width:100%;padding:9px 10px;text-align:right;border:0;border-radius:5px;background:white;color:#35473c;font-size:12px}
-.actions-dropdown button:hover{background:#f0f5f1}
-.actions-dropdown .menu-delete{color:var(--red)}
-
+.dots-button{width:36px;height:34px;border:1px solid #30445a;border-radius:7px;background:#132237;color:#e5edf7;font-size:24px;line-height:1}
+.actions-dropdown{position:absolute;z-index:25;top:39px;left:0;width:165px;padding:5px;border:1px solid #30445a;border-radius:8px;background:#132237;box-shadow:0 10px 28px #12281e20}
+.actions-dropdown button{display:block;width:100%;padding:9px 10px;text-align:right;border:0;border-radius:5px;background:#132237;color:#e5edf7;font-size:12px}
+.actions-dropdown button:hover{background:#20344b}
+.actions-dropdown .menu-delete{color:#ff8792}
+ 
 .sale-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:20px}
-.sale-stat{border:1px solid var(--border);background:#f8faf8;border-radius:8px;padding:14px;min-width:0}
-.sale-stat-label{font-size:11px;color:var(--muted);margin-bottom:5px}
-.sale-stat-value{font-size:19px;font-weight:750;color:var(--green);overflow-wrap:anywhere}
-.sale-preview{margin-top:17px;padding:14px;background:#f5f8f6;border:1px solid #e1e9e3;border-radius:8px;color:#52645a;font-size:12px;line-height:2}
-
-.backup-note{padding:14px 15px;border:1px solid #eadfbe;background:#fffaf0;border-radius:8px;color:#765f32;font-size:12px;line-height:1.9;margin-top:15px}
+.sale-stat,.backup-summary div{border:1px solid #2b4056;background:#112136;border-radius:8px;padding:14px;min-width:0;color:#c7d5e4}
+.sale-stat-label,.backup-summary span{font-size:11px;color:#9db0c4;margin-bottom:5px;display:block}
+.sale-stat-value,.backup-summary strong{font-size:19px;font-weight:750;color:var(--gamy-gold-light);overflow-wrap:anywhere}
+.sale-preview{margin-top:17px;padding:14px;background:#112136;border:1px solid #2b4056;border-radius:8px;color:#c7d5e4;font-size:12px;line-height:2}
+.backup-note{padding:14px 15px;border:1px solid #705a31;background:#282318;border-radius:8px;color:#f0d69a;font-size:12px;line-height:1.9;margin-top:15px}
 .backup-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:18px}
-.backup-summary div{padding:15px;background:#f6f9f7;border:1px solid var(--border);border-radius:8px}
-.backup-summary span{display:block;color:var(--muted);font-size:11px}
-.backup-summary strong{display:block;color:var(--green);font-size:22px;margin-top:5px}
-
-.modal-overlay{position:fixed;inset:0;z-index:100;background:#0c1e177a;display:grid;place-items:center;padding:18px}
-.modal{width:100%;max-width:440px;background:white;border:1px solid var(--border);border-radius:13px;padding:23px;box-shadow:0 20px 70px #0003}
-.modal h2{font-size:20px;color:var(--green);margin-bottom:7px}
-.modal p{font-size:12px;color:var(--muted);margin-bottom:19px}
+.backup-summary strong{display:block;font-size:22px;margin-top:5px}
+ 
+/* النافذة المنبثقة */
+.modal-overlay{position:fixed;inset:0;z-index:100;background:#020711c9;backdrop-filter:blur(5px);display:grid;place-items:center;padding:18px}
+.modal{width:100%;max-width:440px;background:#0d1b2b;border:1px solid #34475b;border-radius:13px;padding:23px;box-shadow:0 20px 70px #0003}
+.modal h2{font-size:20px;color:var(--gamy-gold-light);margin-bottom:7px}
+.modal p{font-size:12px;color:#a8b8ca;margin-bottom:19px}
 .modal .field{margin-bottom:13px}
 .modal-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px}
 .modal-actions button{flex:1}
-
-footer{margin-top:35px;padding:21px 15px;text-align:center;background:white;border-top:1px solid var(--border);color:#8b968f;font-size:11px}
-
+ 
+footer{margin-top:35px;padding:21px 15px;text-align:center;background:#091523;border-top:1px solid #293b50;color:#92a6ba;font-size:11px}
+ 
+/* الرسوم البيانية */
+.dashboard-analytics{margin-top:20px}
+.dashboard-charts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:20px}
+.chart-card{min-width:0;padding:20px;border:1px solid #253a50;border-radius:18px;text-align:center;background:linear-gradient(145deg,#102034,#0b1726)}
+.chart-card h3{margin:0 0 20px;font-size:16px;font-weight:700;color:#ffe0a0}
+.circle-chart{--chart-percent:75%;--chart-color:#16a34a;width:150px;height:150px;max-width:100%;aspect-ratio:1;margin:0 auto 16px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--chart-color) var(--chart-percent),#24384d 0);position:relative}
+.circle-chart::before{content:"";position:absolute;inset:11px;border-radius:50%;background:#0d1b2b}
+.warning-chart{--chart-color:#dc2626}
+.circle-chart-center{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:5px}
+.circle-chart-center strong{font-size:28px;line-height:1.2;color:#ffe0a0}
+.circle-chart-center span{font-size:12px;color:#a9bbce}
+.chart-caption{margin:10px 0 0;color:var(--muted);font-size:13px;line-height:1.7}
+.sales-bars{min-height:150px;display:flex;align-items:center;justify-content:center}
+.sales-bars span{color:#c9d6e4}
+ 
+/* الإعدادات والدخان */
+.gamy-settings-wrap{width:100%;min-width:0;position:relative;z-index:100;margin-top:4px}
+.gamy-settings-trigger{display:inline-flex;align-items:center;justify-content:center;gap:9px;width:100%;max-width:100%;min-height:43px;padding:9px 17px;color:#ffe0a0;background:linear-gradient(135deg,#17283d,#0b1726);border:1px solid var(--gamy-gold);border-radius:10px;font-size:13px;font-weight:800;overflow:hidden;transition:transform .2s,box-shadow .2s}
+.gamy-settings-trigger:hover{transform:translateY(-2px);box-shadow:0 8px 22px #0006}
+.gamy-settings-button-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gamy-settings-panel{position:absolute;bottom:51px;right:0;width:min(340px,86vw);padding:19px;background:#0d1b2b;color:var(--text);border:1px solid #34475b;border-radius:15px;box-shadow:0 18px 55px #0006;animation:settingsAppear .18s ease-out}
+@keyframes settingsAppear{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.gamy-settings-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;padding-bottom:13px;margin-bottom:12px;border-bottom:1px solid var(--border)}
+.gamy-settings-heading h2{color:var(--gamy-gold-light);font-size:18px}
+.gamy-settings-close{width:32px;height:32px;border:1px solid var(--border);border-radius:8px;background:#17283d;color:#fff;font-size:20px}
+.gamy-setting-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid var(--border)}
+.gamy-setting-info{display:flex;flex-direction:column;gap:3px}
+.gamy-setting-info strong{font-size:13px;color:#e5edf7}
+.gamy-setting-info small{font-size:11px;color:var(--muted)}
+.gamy-setting-control{flex-shrink:0;width:auto;height:auto;min-height:37px;max-width:145px;padding:7px 10px;font-size:12px}
+.gamy-setting-control:focus-visible,.gamy-settings-trigger:focus-visible,.gamy-settings-close:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.gamy-smoke-switch{min-width:93px;border:1px solid #c5a35b80;border-radius:8px;padding:8px 10px;background:#172d30;color:#a9ead1;font-size:12px;font-weight:800}
+.gamy-smoke-switch.is-off{background:#f6eeee;color:#a83232;border-color:#a8323240}
+.gamy-smoke-strength-wrap{padding-top:13px}
+.gamy-smoke-strength-wrap label{display:block;margin-bottom:7px;color:#e5edf7;font-size:12px;font-weight:700}
+.gamy-smoke-strength-wrap input{width:100%;accent-color:var(--green2);cursor:pointer}
+.gamy-smoke-levels{display:flex;justify-content:space-between;color:var(--muted);font-size:10px}
+#smokeCanvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9998}
+ 
+/* استلامات البضاعة */
+[data-page-section="receipts"] input{min-height:46px;padding:10px 12px;font-size:16px;width:100%}
+[data-page-section="receipts"] table th,[data-page-section="receipts"] table td{padding:12px 10px}
+[data-page-section="receipts"] .receipt-name,[data-page-section="receipts"] .receipt-code{min-width:150px}
+[data-page-section="receipts"] .receipt-size,[data-page-section="receipts"] .receipt-color{min-width:110px}
+[data-page-section="receipts"] .receipt-quantity,[data-page-section="receipts"] .receipt-cost{min-width:125px}
+ 
 @media(max-width:1100px){
- .app-layout{grid-template-columns:200px minmax(0,1fr);gap:14px}
- .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
- .form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .app-layout{grid-template-columns:200px minmax(0,1fr);gap:14px}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:900px){
+  .dashboard-charts{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .sales-chart-card{grid-column:1/-1}
 }
 @media(max-width:760px){
- .app-layout{width:94%;display:flex;flex-direction:column;gap:14px;margin-top:17px}
- .sidebar{position:static;width:100%;padding:10px}
- .sidebar-heading{padding-bottom:8px;margin-bottom:7px}
- .sidebar-nav{flex-direction:row;overflow-x:auto;gap:6px;padding-bottom:3px}
- .nav-item{width:auto;min-width:max-content;padding:9px 12px;text-align:center}
- .sale-summary{grid-template-columns:1fr}
+  .app-layout,.app-layout.sidebar-collapsed{width:94%;display:flex;flex-direction:column;gap:14px;margin-top:17px}
+  .sidebar{position:static;width:100%;padding:10px;background:#0d1b2b}
+  .sidebar-nav{flex-direction:row;overflow-x:auto;gap:6px;padding-bottom:3px;scrollbar-width:thin;scrollbar-color:#8b7040 #0d1b2b}
+  .nav-item{width:auto;min-width:max-content;padding:9px 12px;text-align:center}
+  .nav-item.active{box-shadow:inset 0 -2px 0 var(--gamy-gold)}
+  .sidebar-collapsed .sidebar-nav{display:none}
+  .sale-summary{grid-template-columns:1fr}
+  .gamy-settings-panel{bottom:auto;top:51px}
 }
 @media(max-width:600px){
- .topbar-inner{width:92%}
- .brand{font-size:21px}
- .welcome h1,.page-topline h1{font-size:22px}
- .panel{padding:16px}
- .form-grid{grid-template-columns:1fr}
- .stats{gap:10px}
- .stat-card{padding:13px}
- .stat-value{font-size:21px}
- .table-toolbar{align-items:stretch}
- .search-input{width:100%}
- .backup-summary{grid-template-columns:1fr}
- .actions button{flex:1}
-}
-
-/* ===== GAMY: طي وفتح القائمة الجانبية ===== */
-
-.app-layout {
-  transition: grid-template-columns 0.3s ease;
-}
-
-.sidebar {
-  min-width: 0;
-  transition: padding 0.3s ease;
-}
-
-.sidebar-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  min-height: 42px;
-  cursor: pointer;
-  border: 1px solid #c9a04a;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #17283c, #0b1727);
-  color: #ffda8a;
-  font-weight: 700;
-}
-
-.sidebar-toggle:hover {
-  background: #26364a;
-}
-
-.app-layout.sidebar-collapsed {
-  grid-template-columns: 76px minmax(0, 1fr);
-}
-
-.sidebar-collapsed .sidebar {
-  padding-left: 8px;
-  padding-right: 8px;
-}
-
-.sidebar-collapsed .sidebar-heading,
-.sidebar-collapsed .toggle-label {
-  display: none;
-}
-
-.sidebar-collapsed .sidebar-toggle {
-  padding: 8px 0;
-  font-size: 20px;
-}
-
-.sidebar-collapsed .nav-item {
-  font-size: 0;
-  min-width: 0;
-  width: 100%;
-  text-align: center;
-  padding: 13px 4px;
-}
-
-@media(max-width:760px) {
-  .app-layout.sidebar-collapsed {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .sidebar-collapsed .sidebar-nav {
-    display: none;
-  }
-
-  .sidebar-collapsed .sidebar {
-    width: 100%;
-  }
-}
-
-
-/* ===== GAMY INVENTORY: SETTINGS & RGB SMOKE ===== */
-:root {
-  --page-bg: var(--bg);
-  --panel-bg: #fff;
-  --field-bg: #fff;
-  --soft-bg: #f5f8f6;
-}
-
-body {
-  background: var(--page-bg);
-  transition: background .25s, color .25s;
-}
-
-.panel, .stat-card, .sidebar, .modal, footer {
-  transition: background .25s, color .25s, border-color .25s;
-}
-
-/* زر الإعدادات الوحيد */
-.gamy-settings-wrap {
-  width: 92%;
-  max-width: 1500px;
-  margin: 12px auto 0;
-  position: relative;
-  z-index: 100;
-  display: flex;
-  justify-content: flex-start;
-}
-
-.gamy-settings-trigger {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  min-height: 43px;
-  padding: 9px 17px;
-  color: #fff;
-  background: linear-gradient(135deg, #205648, #153e35);
-  border: 1px solid #c5a35b;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 800;
-  box-shadow: 0 5px 16px #153e351c;
-  transition: transform .2s, box-shadow .2s;
-}
-
-.gamy-settings-trigger:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 22px #153e3530;
-}
-
-.gamy-settings-trigger .settings-icon {
-  font-size: 18px;
-}
-
-/* لوحة الإعدادات المنسدلة */
-.gamy-settings-panel {
-  position: absolute;
-  top: 51px;
-  right: 0;
-  width: min(360px, 100%);
-  padding: 19px;
-  background: var(--panel-bg);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 15px;
-  box-shadow: 0 18px 55px #10251c25;
-  animation: settingsAppear .18s ease-out;
-}
-
-@keyframes settingsAppear {
-  from { opacity: 0; transform: translateY(-7px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.gamy-settings-heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  padding-bottom: 13px;
-  margin-bottom: 12px;
-  border-bottom: 1px solid var(--border);
-}
-
-.gamy-settings-heading h2 {
-  color: var(--green);
-  font-size: 18px;
-}
-
-.gamy-settings-close {
-  width: 32px;
-  height: 32px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--soft-bg);
-  color: var(--text);
-  font-size: 20px;
-}
-
-.gamy-setting-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 13px 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.gamy-setting-info {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.gamy-setting-info strong {
-  font-size: 13px;
-  color: var(--text);
-}
-
-.gamy-setting-info small {
-  font-size: 11px;
-  color: var(--muted);
-}
-
-.gamy-setting-control {
-  flex-shrink: 0;
-  min-height: 37px;
-  max-width: 145px;
-  padding: 7px 10px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--field-bg);
-  color: var(--text);
-  font: inherit;
-  font-size: 12px;
-}
-
-.gamy-setting-control:focus-visible,
-.gamy-settings-trigger:focus-visible,
-.gamy-settings-close:focus-visible {
-  outline: 2px solid var(--gold);
-  outline-offset: 3px;
-}
-
-.gamy-smoke-switch {
-  min-width: 93px;
-  border: 1px solid #c5a35b80;
-  border-radius: 8px;
-  padding: 8px 10px;
-  background: #edf4ef;
-  color: #205648;
-  font-size: 12px;
-  font-weight: 800;
-}
-
-.gamy-smoke-switch.is-off {
-  background: #f6eeee;
-  color: #a83232;
-  border-color: #a8323240;
-}
-
-.gamy-smoke-strength-wrap {
-  padding-top: 13px;
-}
-
-.gamy-smoke-strength-wrap label {
-  display: block;
-  margin-bottom: 7px;
-  color: var(--text);
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.gamy-smoke-strength-wrap input {
-  width: 100%;
-  accent-color: var(--green2);
-  cursor: pointer;
-}
-
-.gamy-smoke-levels {
-  display: flex;
-  justify-content: space-between;
-  color: var(--muted);
-  font-size: 10px;
-}
-
-body.dark-mode {
-  --bg: #101713;
-  --white: #18221c;
-  --text: #e5eee8;
---muted: #596b61;
-  --border: #304138;
-  --green: #8fc3a6;
-  --green2: #5c9b7c;
-  --panel-bg: #18221c;
-  --field-bg: #202d25;
-  --soft-bg: #202d25;
-}
-
-body.dark-mode .sidebar,
-body.dark-mode .panel,
-body.dark-mode .stat-card,
-body.dark-mode .modal,
-body.dark-mode footer {
-  background: var(--panel-bg);
-  color: var(--text);
-  border-color: var(--border);
-}
-
-body.dark-mode .field label,
-body.dark-mode td,
-body.dark-mode th,
-body.dark-mode .nav-item,
-body.dark-mode .shortcut-button,
-body.dark-mode .sale-preview {
-  color: var(--text);
-}
-
-body.dark-mode .field input,
-body.dark-mode .field select,
-body.dark-mode .search-input,
-body.dark-mode .dots-button,
-body.dark-mode .actions-dropdown,
-body.dark-mode .actions-dropdown button,
-body.dark-mode .secondary-btn {
-  background: #202d25;
-  color: var(--text);
-  border-color: var(--border);
-}
-
-body.dark-mode thead,
-body.dark-mode .sale-stat,
-body.dark-mode .sale-preview,
-body.dark-mode .shortcut-button,
-body.dark-mode .backup-summary div {
-  background: #202d25;
-  border-color: var(--border);
-}
-
-body.dark-mode .nav-item.active {
-  background: #263e30;
-  border-color: #42644e;
-  color: #d6f1df;
-}
-
-body.dark-mode .topbar {
-  background: #0b2118;
-}
-
-body.dark-mode .table-wrapper {
-  border-color: var(--border);
-}
-
-body.dark-mode td {
-  border-bottom-color: var(--border);
-}
-
-body.dark-mode .product-name,
-body.dark-mode .stat-value,
-body.dark-mode .section-title,
-body.dark-mode .welcome h1,
-body.dark-mode .page-topline h1,
-body.dark-mode .modal h2 {
-  color: #a8d9bb;
-}
-
-/* لوحة الإعدادات في الوضع الليلي */
-body.dark-mode .gamy-settings-panel {
-  background: #18221c;
-  border-color: #304138;
-}
-
-body.dark-mode .gamy-settings-heading h2 {
-  color: #a8d9bb;
-}
-
-/* طبقة تأثير الدخان */
-#smokeCanvas {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 9998;
-}
-
-@media (max-width: 600px) {
-  .gamy-settings-wrap {
-    width: 94%;
-  }
-
-  .gamy-settings-panel {
-    width: 100%;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .gamy-settings-panel {
-    animation: none;
-  }
-}
-
-/* تكبير مربعات الكتابة في استلامات البضاعة */
-[data-page-section="receipts"] input {
-  min-height: 46px;
-  padding: 10px 12px;
-  font-size: 16px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-[data-page-section="receipts"] table th,
-[data-page-section="receipts"] table td {
-  padding: 12px 10px;
-}
-
-[data-page-section="receipts"] .table-wrapper {
-  overflow-x: auto;
-}
-
-[data-page-section="receipts"] .receipt-name,
-[data-page-section="receipts"] .receipt-code {
-  min-width: 150px;
-}
-
-[data-page-section="receipts"] .receipt-size,
-[data-page-section="receipts"] .receipt-color {
-  min-width: 110px;
-}
-
-[data-page-section="receipts"] .receipt-quantity,
-[data-page-section="receipts"] .receipt-cost {
-  min-width: 125px;
-}
-
-/* ===== GAMY INVENTORY - ROYAL NAVY & GOLD ===== */
-
-:root {
-  --green: #d9b76e;
-  --green2: #f0cf83;
-  --gold: #d9b76e;
-  --bg: #07111f;
-  --white: #0d1b2b;
-  --text: #edf3fb;
-  --muted: #9aaec3;
-  --border: #24384d;
-  --red: #ff6b78;
-  --page-bg: #07111f;
-  --panel-bg: #0d1b2b;
-  --field-bg: #091625;
-  --soft-bg: #132438;
-  --gamy-gold: #e6bd68;
-  --gamy-gold-light: #ffe0a0;
-}
-
-body {
-  background:
-    radial-gradient(ellipse at 85% 0%, #17283d 0%, transparent 40%),
-    linear-gradient(145deg, #07111f, #091523 55%, #0b1726);
-  color: var(--text);
-  min-height: 100vh;
-}
-
-.topbar {
-  background: linear-gradient(110deg, #07111f, #122239 60%, #081321);
-  color: #fff;
-  border-bottom: 1px solid var(--gamy-gold);
-  box-shadow: 0 5px 28px #0003;
-}
-
-.brand {
-  color: #fff;
-  letter-spacing: 2px;
-}
-
-.brand span {
-  color: var(--gamy-gold-light);
-}
-
-.brand-subtitle,
-.welcome p,
-.description,
-.page-topline p {
-  color: #a8b8ca;
-}
-
-.header-label {
-  border-color: #8b7040;
-  color: var(--gamy-gold-light);
-  background: #142237;
-}
-
-.app-layout {
-  gap: 22px;
-}
-
-.sidebar {
-  background: linear-gradient(180deg, #101e30, #0a1524);
-  border: 1px solid #293b50;
-  border-radius: 15px;
-  box-shadow: 0 12px 35px #0003;
-  padding: 17px 12px;
-}
-
-.sidebar-heading {
-  color: var(--gamy-gold);
-  border-bottom-color: #2a3a4c;
-}
-
-.sidebar-nav {
-  gap: 7px;
-}
-
-.nav-item {
-  color: #c5d1df;
-  border-radius: 9px;
-  padding: 12px;
-  transition: background .2s, color .2s, border-color .2s,
-    transform .2s;
-}
-
-.nav-item:hover {
-  background: #1a2b40;
-  color: var(--gamy-gold-light);
-  border-color: #34485d;
-  transform: translateX(-2px);
-}
-
-.nav-item.active {
-  background: linear-gradient(100deg, #3a3020, #242a31);
-  border-color: #9c7b42;
-  color: #ffe0a0;
-  box-shadow: inset -3px 0 0 var(--gamy-gold);
-}
-
-.welcome h1,
-.page-topline h1 {
-  color: #f4f7fc;
-  letter-spacing: -.3px;
-}
-
-.section-title,
-.product-name {
-  color: var(--gamy-gold-light);
-}
-
-.stat-card,
-.panel {
-  background: linear-gradient(145deg, #102034, #0b1726);
-  border: 1px solid #253a50;
-  border-radius: 14px;
-  box-shadow: 0 9px 28px #0002;
-  transition: transform .2s, border-color .2s, box-shadow .2s;
-}
-
-.stat-card {
-  position: relative;
-  overflow: hidden;
-}
-
-.stat-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--gamy-gold), transparent);
-  opacity: .8;
-}
-
-.stat-card:hover,
-.panel:hover {
-  border-color: #5a4b32;
-  box-shadow: 0 12px 32px #0003;
-}
-
-.stat-label {
-  color: #a9bbce;
-}
-
-.stat-value,
-.backup-summary strong,
-.sale-stat-value {
-  color: var(--gamy-gold-light);
-}
-
-.stat-caption {
-  color: #8ea3b8;
-}
-
-.panel-heading {
-  border-bottom-color: #283b50;
-}
-
-.form-grid {
-  gap: 18px;
-}
-
-.field label {
-  color: #c4d1df;
-}
-
-.field input,
-.field select,
-.search-input,
-.gamy-setting-control {
-  background: #091625;
-  color: #edf3fb;
-  border-color: #30445a;
-  border-radius: 9px;
-}
-
-.field input::placeholder,
-.search-input::placeholder {
-  color: #71869c;
-}
-
-.field input:focus,
-.field select:focus,
-.search-input:focus {
-  border-color: var(--gamy-gold);
-  box-shadow: 0 0 0 3px #d9b76e20;
-}
-
-.field input[readonly] {
-  background: #132237;
-  color: #a9bbce;
-}
-
-.primary-btn {
-  background: linear-gradient(135deg, #e6c477, #b68c43);
-  border-color: #e6c477;
-  color: #101725;
-  border-radius: 9px;
-  box-shadow: 0 5px 15px #d9b76e1c;
-  transition: transform .2s, filter .2s;
-}
-
-.primary-btn:hover {
-  background: linear-gradient(135deg, #f5d994, #d0a653);
-  color: #101725;
-  transform: translateY(-1px);
-}
-
-.secondary-btn,
-.danger-btn {
-  background: #132237;
-  color: #e1eaf4;
-  border-color: #35485c;
-  border-radius: 9px;
-}
-
-.secondary-btn:hover {
-  background: #1a2d43;
-  border-color: #8b7040;
-}
-
-.danger-btn {
-  color: #ff9aa3;
-  border-color: #75404a;
-}
-
-.shortcut-button {
-  background: #101f32;
-  color: #f0d69a;
-  border-color: #2b4056;
-  border-radius: 11px;
-}
-
-.shortcut-button:hover {
-  background: #172a40;
-  border-color: #b18a49;
-}
-
-.shortcut-button span {
-  color: #a4b5c7;
-}
-
-.table-wrapper {
-  border-color: #293d52;
-  border-radius: 10px;
-}
-
-table {
-  color: #e4edf7;
-}
-
-thead {
-  background: #17283c;
-}
-
-th {
-  color: #f0d69a;
-  border-bottom-color: #34465a;
-}
-
-td {
-  color: #c9d6e4;
-  border-bottom-color: #203247;
-}
-
-tbody tr:hover {
-  background: #15263a;
-}
-
-.code-text {
-  color: #9fb2c7;
-}
-
-.empty-state {
-  color: #94a8bd;
-}
-
-.dots-button,
-.actions-dropdown,
-.actions-dropdown button {
-  background: #132237;
-  color: #e5edf7;
-  border-color: #30445a;
-}
-
-.actions-dropdown button:hover {
-  background: #20344b;
-}
-
-.actions-dropdown .menu-delete {
-  color: #ff8792;
-}
-
-.sale-stat,
-.sale-preview,
-.backup-summary div {
-  background: #112136;
-  border-color: #2b4056;
-  color: #c7d5e4;
-}
-
-.sale-stat-label,
-.backup-summary span {
-  color: #9db0c4;
-}
-
-.backup-note {
-  background: #282318;
-  border-color: #705a31;
-  color: #f0d69a;
-}
-
-.message.success {
-  background: #102d29;
-  color: #8de0bf;
-  border-color: #285d50;
-}
-
-.message.error {
-  background: #351d27;
-  color: #ffb2ba;
-  border-color: #75404a;
-}
-
-.message.info {
-  background: #13283a;
-  color: #b9d9f2;
-  border-color: #31516c;
-}
-
-.modal {
-  background: #0d1b2b;
-  border-color: #34475b;
-}
-
-.modal h2 {
-  color: var(--gamy-gold-light);
-}
-
-.modal p {
-  color: #a8b8ca;
-}
-
-.modal-overlay {
-  background: #020711c9;
-  backdrop-filter: blur(5px);
-}
-
-footer {
-  background: #091523;
-  border-top-color: #293b50;
-  color: #92a6ba;
-}
-
-.gamy-settings-trigger {
-  background: linear-gradient(135deg, #17283d, #0b1726);
-  color: #ffe0a0;
-  border-color: var(--gamy-gold);
-}
-
-.gamy-settings-panel {
-  background: #0d1b2b;
-  border-color: #34475b;
-  box-shadow: 0 18px 55px #0006;
-}
-
-.gamy-settings-heading h2 {
-  color: var(--gamy-gold-light);
-}
-
-.gamy-settings-close {
-  background: #17283d;
-  color: #fff;
-}
-
-.gamy-setting-info strong,
-.gamy-smoke-strength-wrap label {
-  color: #e5edf7;
-}
-
-.gamy-smoke-switch {
-  background: #172d30;
-  color: #a9ead1;
-}
-
-body.dark-mode {
-  --bg: #07111f;
-  --white: #0d1b2b;
-  --text: #edf3fb;
-  --muted: #9aaec3;
-  --border: #24384d;
-  --green: #d9b76e;
-  --green2: #f0cf83;
-  --panel-bg: #0d1b2b;
-  --field-bg: #091625;
-  --soft-bg: #132438;
-}
-
-@media (max-width: 760px) {
-  .sidebar {
-    background: #0d1b2b;
-  }
-
-  .sidebar-nav {
-    scrollbar-width: thin;
-    scrollbar-color: #8b7040 #0d1b2b;
-  }
-
-  .nav-item.active {
-    box-shadow: inset 0 -2px 0 var(--gamy-gold);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    transition-duration: .01ms !important;
-    animation-duration: .01ms !important;
-  }
-}
-
-/* إصلاح اختفاء محتويات القائمة عند إغلاقها */
-#mainSidebar.collapsed .sidebar-nav {
-  overflow: hidden;
-}
-
-#mainSidebar.collapsed .sidebar-nav a,
-#mainSidebar.collapsed .sidebar-nav button {
-  white-space: nowrap;
-}
-
-#mainSidebar.collapsed .toggle-label {
-  display: none;
-}
-
-#mainSidebar.collapsed .gamy-settings-button-label {
-  display: none;
-}
-
-#mainSidebar.collapsed .gamy-settings-trigger {
-  justify-content: center;
-  padding-inline: 8px;
-}
-
-/* ضبط زر الإعدادات داخل القائمة الجانبية */
-#mainSidebar .gamy-settings-wrap {
-  width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
-}
-
-#mainSidebar .gamy-settings-trigger {
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
-  overflow: hidden;
-}
-
-#mainSidebar .gamy-settings-button-label {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-#mainSidebar.collapsed .gamy-settings-button-label {
-  display: none;
-}
-
-#mainSidebar.collapsed .gamy-settings-trigger {
-  justify-content: center;
-  padding-inline: 8px;
-}
-
-/* القائمة الجانبية عند الإغلاق */
-#mainSidebar.collapsed {
-  width: 64px;
-  min-width: 64px;
-  overflow: hidden;
-  padding-inline: 6px;
-  align-items: center;
-}
-
-/* إخفاء نصوص وروابط القائمة عند الإغلاق */
-#mainSidebar.collapsed .toggle-label,
-#mainSidebar.collapsed .nav-item span:not(.nav-icon),
-#mainSidebar.collapsed .gamy-settings-button-label {
-  display: none !important;
-}
-
-/* إخفاء زر الإعدادات بالكامل عند الإغلاق */
-#mainSidebar.collapsed .gamy-settings-wrap {
-  display: none !important;
-}
-
-/* منع ظهور أي لوحة إعدادات صغيرة */
-#mainSidebar.collapsed .gamy-settings-panel {
-  display: none !important;
-}
-
-/* تنسيق زر القائمة */
-#mainSidebar.collapsed .sidebar-toggle {
-  width: 44px;
-  min-width: 44px;
-  justify-content: center;
-  padding: 12px 0;
-  margin-inline: auto;
-}
-
-/* تنسيق أيقونات الصفحات */
-#mainSidebar.collapsed .nav-item {
-  width: 44px;
-  min-width: 44px;
-  justify-content: center;
-  padding-inline: 0;
-  margin-inline: auto;
-  overflow: hidden;
-}
-/* تصميم مؤشرات أداء لوحة التحكم */
-.dashboard-analytics {
-    margin-top: 20px;
-}
-
-.dashboard-charts {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 18px;
-    margin-top: 20px;
-}
-
-.chart-card {
-    min-width: 0;
-    padding: 20px;
-    border: 1px solid var(--border, #e5e7eb);
-    border-radius: 18px;
-    text-align: center;
-   background: var(--card, #ffffff);
-.chart-card h3 {
-    margin: 0 0 20px;
-    font-size: 16px;
-    color: #111827 !important;
-    font-weight: 700;
-}
-}
-.circle-chart {
- --chart-percent: 75%;
-    --chart-color: #16a34a;
-    width: 150px;
-    height: 150px;
-    max-width: 100%;
-    aspect-ratio: 1;
-    margin: 0 auto 16px;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    background: conic-gradient(
-        var(--chart-color) var(--chart-percent),
-        #e8edf0 0
-    );
-    position: relative;
-}
-
-.circle-chart::before {
-    content: "";
-    position: absolute;
-    inset: 11px;
-    border-radius: 50%;
-    background: var(--card, #fff);
-}
-
-.warning-chart {
-    --chart-color: #dc2626;
-}
-
-.circle-chart-center {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-}
-
-.circle-chart-center strong {
-    font-size: 28px;
-    line-height: 1.2;
-    color: #111827 !important;
-}
-
-.circle-chart-center span {
-    font-size: 12px;
-    color: #4b5563;
-}
-
-.chart-caption {
-    margin: 10px 0 0;
-    color: var(--muted, #777);
-    font-size: 13px;
-    line-height: 1.7;
-}
-
-.sales-bars {
-    min-height: 150px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-@media (max-width: 900px) {
-    .dashboard-charts {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .sales-chart-card {
-        grid-column: 1 / -1;
-    }
-}
-
-@media (max-width: 520px) {
-    .dashboard-charts {
-        grid-template-columns: 1fr;
-    }
-
-    .sales-chart-card {
-        grid-column: auto;
-    }
+  .topbar-inner{width:92%}
+  .brand{font-size:21px}
+  .welcome h1,.page-topline h1{font-size:22px}
+  .panel{padding:16px}
+  .form-grid{grid-template-columns:1fr}
+  .stats{gap:10px}
+  .stat-card{padding:13px}
+  .stat-value{font-size:21px}
+  .table-toolbar{align-items:stretch}
+  .search-input{width:100%}
+  .backup-summary{grid-template-columns:1fr}
+  .actions button{flex:1}
+}
+@media(max-width:520px){
+  .dashboard-charts{grid-template-columns:1fr}
+  .sales-chart-card{grid-column:auto}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}
 }
 </style>
 </head>
 <body>
-
+ 
 <header class="topbar">
  <div class="topbar-inner">
   <div>
@@ -1271,7 +236,7 @@ body.dark-mode {
   <div class="header-label">لوحة التحكم</div>
  </div>
 </header>
-
+ 
 <div class="app-layout">
 <aside class="sidebar" id="mainSidebar">
   <button type="button" class="sidebar-toggle" id="sidebarToggle" aria-label="فتح أو إغلاق القائمة" aria-expanded="true">
@@ -1285,19 +250,14 @@ body.dark-mode {
    <button type="button" class="nav-item" data-page="sales" data-title="تسجيل المبيعات">تسجيل المبيعات</button>
    <button type="button" class="nav-item" data-page="history" data-title="سجل المبيعات">سجل المبيعات</button>
    <button type="button" class="nav-item" data-page="backup" data-title="النسخ الاحتياطي">النسخ الاحتياطي</button>
-<button type="button" class="nav-item" data-page="inventoryAudit" data-title="جرد المخزن">جرد المخزن</button>
-  <button type="button" class="nav-item" data-page="stockMovements" data-title="حركة المخزون">حركة المخزون</button>
-<button type="button" class="nav-item" data-page="reports" data-title="التقارير والإحصائيات">التقارير والإحصائيات</button>
-<button type="button" class="nav-item" data-page="customersSuppliers" data-title="العملاء والموردون">العملاء والموردون</button>
-<button type="button" class="nav-item" data-page="stockAlerts" data-title="تنبيهات المخزون">تنبيهات المخزون</button>
-<button type="button" class="nav-item" data-page="exportExcel" data-title="تصدير Excel">تصدير Excel</button>
-<button type="button" class="nav-item" data-page="expensesProfits" data-title="المصروفات والأرباح">المصروفات والأرباح</button>
-<button type="button" class="nav-item" data-page="userManagement" data-title="إدارة المستخدمين">إدارة المستخدمين</button>
-<button type="button" class="nav-item" data-page="help" data-title="المساعدة حول النظام">المساعدة حول النظام</button>
+   <button type="button" class="nav-item" data-page="inventoryAudit" data-title="جرد المخزن">جرد المخزن</button>
+   <button type="button" class="nav-item" data-page="stockMovements" data-title="حركة المخزون">حركة المخزون</button>
+   <button type="button" class="nav-item" data-page="reports" data-title="التقارير والإحصائيات">التقارير والإحصائيات</button>
+   <button type="button" class="nav-item" data-page="customersSuppliers" data-title="العملاء والموردون">العملاء والموردون</button>
   </nav>
 </aside>
-   <main class="app-content">
-
+<main class="app-content">
+ 
   <section class="page active" data-page-section="dashboard">
    <section class="welcome">
     <h1>إدارة المخازن والمبيعات</h1>
@@ -1312,46 +272,35 @@ body.dark-mode {
     <div class="stat-card"><div class="stat-label">مبيعات اليوم</div><div class="stat-value" id="dashSalesToday">0 ج.م</div><div class="stat-caption">إجمالي البيع اليوم</div></div>
     <div class="stat-card"><div class="stat-label">ربح اليوم التقديري</div><div class="stat-value" id="dashProfitToday">0 ج.م</div><div class="stat-caption">قبل مصاريف التشغيل</div></div>
    </div>
-   <!-- رسوم ومؤشرات لوحة التحكم -->
+ 
    <section class="panel dashboard-analytics">
     <div class="panel-heading">
      <h2 class="section-title">مؤشرات أداء المخزن</h2>
      <p class="description">متابعة حالة المخزون والمبيعات بالنسب المئوية.</p>
     </div>
-
     <div class="dashboard-charts">
      <div class="chart-card">
       <h3>حالة المخزون</h3>
       <div class="circle-chart" id="stockHealthChart" role="img" aria-label="نسبة حالة المخزون">
-       <div class="circle-chart-center">
-        <strong id="stockHealthPercent">0%</strong>
-        <span>مخزون سليم</span>
-       </div>
+       <div class="circle-chart-center"><strong id="stockHealthPercent">0%</strong><span>مخزون سليم</span></div>
       </div>
       <p class="chart-caption" id="stockHealthCaption">بانتظار بيانات المخزون</p>
      </div>
-
      <div class="chart-card">
       <h3>المخزون المنخفض</h3>
       <div class="circle-chart warning-chart" id="lowStockChart" role="img" aria-label="نسبة المخزون المنخفض">
-       <div class="circle-chart-center">
-        <strong id="lowStockPercent">0%</strong>
-        <span>مخزون منخفض</span>
-       </div>
+       <div class="circle-chart-center"><strong id="lowStockPercent">0%</strong><span>مخزون منخفض</span></div>
       </div>
       <p class="chart-caption" id="lowStockCaption">المنتجات التي كميتها 5 قطع أو أقل</p>
      </div>
-
      <div class="chart-card sales-chart-card">
       <h3>المبيعات اليومية</h3>
-      <div class="sales-bars" id="dashboardSalesChart">
-       <p class="chart-caption">سيظهر الرسم بعد ربطه ببيانات المبيعات.</p>
-      </div>
+      <div class="sales-bars" id="dashboardSalesChart"><p class="chart-caption">سيظهر الرسم بعد ربطه ببيانات المبيعات.</p></div>
       <p class="chart-caption">مقارنة المبيعات خلال آخر 7 أيام</p>
      </div>
     </div>
    </section>
-
+ 
    <section class="panel">
     <div class="table-toolbar"><h2 class="section-title">أحدث المبيعات</h2><button type="button" class="secondary-btn" data-page-link="history">عرض سجل المبيعات</button></div>
     <div class="table-wrapper">
@@ -1359,7 +308,7 @@ body.dark-mode {
     </div>
    </section>
   </section>
-
+ 
   <section class="page" data-page-section="products">
    <div class="page-topline"><h1>إدارة المنتجات</h1><p>إضافة المنتجات وتعديل البيانات وإدارة كميات المخزون.</p></div>
    <section class="panel" id="productFormPanel">
@@ -1401,7 +350,7 @@ body.dark-mode {
      <div id="formMessage" class="message" role="status"></div>
     </form>
    </section>
-
+ 
    <section class="panel">
     <div class="table-toolbar"><h2 class="section-title">قائمة المنتجات</h2><input id="searchInput" class="search-input" type="search" placeholder="بحث بالاسم أو الكود أو اللون"></div>
     <div class="table-wrapper">
@@ -1410,7 +359,7 @@ body.dark-mode {
     <div class="table-footer"><span id="tableCount">عدد المنتجات: 0</span><span>كل المبالغ بالجنيه المصري</span></div>
    </section>
   </section>
-
+ 
   <section class="page" data-page-section="sales">
    <div class="page-topline"><h1>تسجيل المبيعات</h1><p>سجّل البيع وراجع الإجمالي والربح المتوقع.</p></div>
    <section class="panel">
@@ -1435,7 +384,7 @@ body.dark-mode {
     </form>
    </section>
   </section>
-
+ 
   <section class="page" data-page-section="history">
    <div class="page-topline"><h1>سجل المبيعات</h1><p>راجع عمليات البيع السابقة وإجمالي كل عملية.</p></div>
    <section class="panel">
@@ -1446,7 +395,7 @@ body.dark-mode {
     <div class="table-footer"><span id="salesTableCount">عدد عمليات البيع: 0</span><span>الربح قبل مصاريف التشغيل</span></div>
    </section>
   </section>
-
+ 
   <section class="page" data-page-section="backup">
    <div class="page-topline"><h1>النسخ الاحتياطي</h1><p>نزّل تقرير Excel منظمًا أو احفظ نسخة لاستعادة البيانات لاحقًا.</p></div>
    <section class="panel">
@@ -1471,461 +420,252 @@ body.dark-mode {
     <div id="importMessage" class="message" role="status"></div>
    </section>
   </section>
-
-<section class="page" data-page-section="receipts">
-  <div class="page-topline">
+ 
+  <section class="page" data-page-section="receipts">
+   <div class="page-topline">
     <h1>استلامات البضاعة</h1>
     <p>تسجيل الأصناف والكميات وتكلفة القطع الواردة للمخزن.</p>
-  </div>
-
-  <section class="panel">
+   </div>
+ 
+   <section class="panel">
     <div class="panel-heading">
-      <h2 class="section-title">الأصناف المستلمة</h2>
-      <p class="description">أدخل بيانات كل صنف، والإجمالي سيُحسب تلقائيًا.</p>
+     <h2 class="section-title">الأصناف المستلمة</h2>
+     <p class="description">أدخل بيانات كل صنف، والإجمالي سيُحسب تلقائيًا.</p>
     </div>
-
     <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th>الصنف</th>
-            <th>كود المنتج</th>
-            <th>المقاس</th>
-            <th>اللون</th>
-            <th>الكمية</th>
-            <th>تكلفة القطعة</th>
-            <th>الإجمالي</th>
-            <th>حذف</th>
-          </tr>
-        </thead>
-        <tbody id="receiptTableBody">
-          <tr>
-            <td><input type="text" class="receipt-name" placeholder="اسم الصنف"></td>
-            <td><input type="text" class="receipt-code" placeholder="الكود"></td>
-            <td><input type="text" class="receipt-size" placeholder="المقاس"></td>
-            <td><input type="text" class="receipt-color" placeholder="اللون"></td>
-            <td><input type="number" class="receipt-quantity" min="1" step="1" value="1"></td>
-            <td><input type="number" class="receipt-cost" min="0" step="0.01" placeholder="0"></td>
-            <td class="receipt-total">0.00 ج.م</td>
-            <td><button type="button" class="secondary-btn receipt-delete">حذف</button></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    
-
-<div class="actions">
-  <button type="button" class="secondary-btn" id="addReceiptRowButton">إضافة صنف</button>
-  <button type="button" class="primary-btn" id="saveReceiptButton">حفظ إذن الاستلام كمسودة</button>
-</div>
-
-<div class="sale-preview">
-  إجمالي الاستلام:
-  <strong id="receiptGrandTotal">0.00 ج.م</strong>
-</div>
-
-<div id="receiptMessage" class="message" role="status"></div>
-</section>
-
-<section class="panel">
-  <div class="panel-heading">
-    <h2 class="section-title">📋 سجل أذون الاستلام</h2>
-    <p class="description">الإذونات المحفوظة وحالتها.</p>
-  </div>
-  <div class="table-wrapper">
-    <table>
+     <table>
       <thead>
-        <tr>
-          <th>رقم الإذن</th>
-          <th>التاريخ</th>
-          <th>عدد الأصناف</th>
-          <th>الإجمالي</th>
-          <th>الحالة</th>
-          <th>التفاصيل</th>
-        </tr>
+       <tr><th>الصنف</th><th>كود المنتج</th><th>المقاس</th><th>اللون</th><th>الكمية</th><th>تكلفة القطعة</th><th>الإجمالي</th><th>حذف</th></tr>
+      </thead>
+      <tbody id="receiptTableBody">
+       <tr>
+        <td><input type="text" class="receipt-name" placeholder="اسم الصنف"></td>
+        <td><input type="text" class="receipt-code" placeholder="الكود"></td>
+        <td><input type="text" class="receipt-size" placeholder="المقاس"></td>
+        <td><input type="text" class="receipt-color" placeholder="اللون"></td>
+        <td><input type="number" class="receipt-quantity" min="1" step="1" value="1"></td>
+        <td><input type="number" class="receipt-cost" min="0" step="0.01" placeholder="0"></td>
+        <td class="receipt-total">0.00 ج.م</td>
+        <td><button type="button" class="secondary-btn receipt-delete">حذف</button></td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+ 
+    <div class="actions">
+     <button type="button" class="secondary-btn" id="addReceiptRowButton">إضافة صنف</button>
+     <button type="button" class="primary-btn" id="saveReceiptButton">حفظ إذن الاستلام كمسودة</button>
+    </div>
+    <div class="sale-preview">إجمالي الاستلام: <strong id="receiptGrandTotal">0.00 ج.م</strong></div>
+    <div id="receiptMessage" class="message" role="status"></div>
+   </section>
+ 
+   <section class="panel">
+    <div class="panel-heading">
+     <h2 class="section-title">📋 سجل أذون الاستلام</h2>
+     <p class="description">الإذونات المحفوظة وحالتها.</p>
+    </div>
+    <div class="table-wrapper">
+     <table>
+      <thead>
+       <tr><th>رقم الإذن</th><th>التاريخ</th><th>عدد الأصناف</th><th>الإجمالي</th><th>الحالة</th><th>التفاصيل</th></tr>
       </thead>
       <tbody id="receiptHistoryBody">
-        <tr><td colspan="6" class="empty-state">لا توجد أذون محفوظة حتى الآن.</td></tr>
+       <tr><td colspan="6" class="empty-state">لا توجد أذون محفوظة حتى الآن.</td></tr>
       </tbody>
-    </table>
-  </div>
-  <div id="receiptHistoryDetails" class="sale-preview" hidden></div>
-
-</section>
-
-</section>
-
-<section class="page" data-page-section="inventoryAudit">
-  <div class="page-topline">
-   
-<h1>جرد المخزن</h1>
+     </table>
+    </div>
+    <div id="receiptHistoryDetails" class="sale-preview" hidden></div>
+   </section>
+  </section>
+ 
+  <section class="page" data-page-section="inventoryAudit">
+   <div class="page-topline">
+    <h1>جرد المخزن</h1>
     <p>قارن الكميات الفعلية بالكميات المسجلة واكتشف العجز والزيادة.</p>
-  </div>
-
-  <div class="stats">
-    <div class="stat-card">
-      <div class="stat-label">المنتجات التي تم جردها</div>
-      <div class="stat-value" id="auditCounted">0</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">عدد المنتجات التي بها عجز</div>
-      <div class="stat-value" id="auditShortage">0</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">عدد المنتجات التي بها زيادة</div>
-      <div class="stat-value" id="auditSurplus">0</div>
-    </div>
-  </div>
-
-  <section class="panel">
+   </div>
+ 
+   <div class="stats">
+    <div class="stat-card"><div class="stat-label">المنتجات التي تم جردها</div><div class="stat-value" id="auditCounted">0</div></div>
+    <div class="stat-card"><div class="stat-label">عدد المنتجات التي بها عجز</div><div class="stat-value" id="auditShortage">0</div></div>
+    <div class="stat-card"><div class="stat-label">عدد المنتجات التي بها زيادة</div><div class="stat-value" id="auditSurplus">0</div></div>
+   </div>
+ 
+   <section class="panel">
     <div class="panel-heading">
-      <h2 class="section-title">تسجيل الجرد الفعلي</h2>
-      <p class="description">
-        اكتب العدد الذي وجدته فعليًا أمام كل منتج. اترك الخانة فارغة للمنتجات التي لم تجردها.
-      </p>
+     <h2 class="section-title">تسجيل الجرد الفعلي</h2>
+     <p class="description">اكتب العدد الذي وجدته فعليًا أمام كل منتج. اترك الخانة فارغة للمنتجات التي لم تجردها.</p>
     </div>
-
     <div class="table-toolbar">
-      <input id="auditSearch" class="search-input"
-        type="search" placeholder="ابحث باسم المنتج أو الكود أو اللون">
-      <button type="button" class="secondary-btn" id="auditFillCurrent">
-        نسخ الكميات المسجلة
-      </button>
+     <input id="auditSearch" class="search-input" type="search" placeholder="ابحث باسم المنتج أو الكود أو اللون">
+     <button type="button" class="secondary-btn" id="auditFillCurrent">نسخ الكميات المسجلة</button>
     </div>
-
     <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th>اسم المنتج</th>
-            <th>الكود</th>
-            <th>اللون</th>
-            <th>الكمية المسجلة</th>
-            <th>الكمية الفعلية</th>
-            <th>الفرق</th>
-            <th>الحالة</th>
-          </tr>
-        </thead>
-        <tbody id="auditTableBody"></tbody>
-      </table>
+     <table>
+      <thead>
+       <tr><th>اسم المنتج</th><th>الكود</th><th>اللون</th><th>الكمية المسجلة</th><th>الكمية الفعلية</th><th>الفرق</th><th>الحالة</th></tr>
+      </thead>
+      <tbody id="auditTableBody"></tbody>
+     </table>
     </div>
-
     <div class="actions">
-      <button type="button" class="primary-btn" id="saveAuditButton">
-        حفظ نتيجة الجرد
-      </button>
-      <button type="button" class="secondary-btn" id="clearAuditButton">
-        مسح الكميات المدخلة
-      </button>
-      <button type="button" class="primary-btn" id="exportAuditExcelButton">
-        تنزيل تقرير الجرد Excel
-      </button>
+     <button type="button" class="primary-btn" id="saveAuditButton">حفظ نتيجة الجرد</button>
+     <button type="button" class="secondary-btn" id="clearAuditButton">مسح الكميات المدخلة</button>
+     <button type="button" class="primary-btn" id="exportAuditExcelButton">تنزيل تقرير الجرد Excel</button>
     </div>
-
     <div id="auditMessage" class="message" role="status"></div>
-  </section>
-
-  <section class="panel">
+   </section>
+ 
+   <section class="panel">
     <div class="panel-heading">
-      <h2 class="section-title">سجل الجرد السابق</h2>
-      <p class="description">النتائج المحفوظة، بالتاريخ وعدد المنتجات والعجز والزيادة.</p>
+     <h2 class="section-title">سجل الجرد السابق</h2>
+     <p class="description">النتائج المحفوظة، بالتاريخ وعدد المنتجات والعجز والزيادة.</p>
     </div>
     <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th>تاريخ الجرد</th>
-            <th>عدد المنتجات المجردة</th>
-            <th>منتجات بها عجز</th>
-            <th>منتجات بها زيادة</th>
-            <th>منتجات مطابقة</th>
-          </tr>
-        </thead>
-        <tbody id="auditHistoryBody"></tbody>
-      </table>
+     <table>
+      <thead>
+       <tr><th>تاريخ الجرد</th><th>عدد المنتجات المجردة</th><th>منتجات بها عجز</th><th>منتجات بها زيادة</th><th>منتجات مطابقة</th></tr>
+      </thead>
+      <tbody id="auditHistoryBody"></tbody>
+     </table>
     </div>
+   </section>
   </section>
-</section>
-
-<section class="page" data-page-section="stockMovements">
-  <div class="page-topline">
+ 
+  <section class="page" data-page-section="stockMovements">
+   <div class="page-topline">
     <h1>حركة المخزون</h1>
-    <p>تابع كميات البضاعة المستلمة من خلال أذون الاستلام المعتمدة.</p>
-  </div>
-
-  <section class="panel">
+    <p>تابع الاستلامات المعتمدة وعمليات البيع، الأحدث أولًا.</p>
+   </div>
+ 
+   <section class="panel">
     <div class="table-toolbar">
-      <input
-        id="stockMovementSearch"
-        class="search-input"
-        type="search"
-        placeholder="ابحث برقم الإذن أو اسم الصنف أو الكود"
-      >
-      <button
-        type="button"
-        class="secondary-btn"
-        id="refreshStockMovementsButton"
-      >
-        تحديث التقرير
-      </button>
+     <input id="stockMovementSearch" class="search-input" type="search" placeholder="ابحث برقم الإذن أو اسم الصنف أو الكود">
+     <button type="button" class="secondary-btn" id="refreshStockMovementsButton">تحديث التقرير</button>
     </div>
-
     <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th>تاريخ الاعتماد</th>
-            <th>رقم الإذن</th>
-            <th>اسم الصنف</th>
-            <th>الكود</th>
-            <th>المقاس</th>
-            <th>اللون</th>
-            <th>الكمية الداخلة</th>
-          </tr>
-        </thead>
-        <tbody id="stockMovementsBody"></tbody>
-      </table>
+     <table>
+      <thead>
+       <tr><th>التاريخ</th><th>رقم العملية</th><th>النوع</th><th>اسم الصنف</th><th>الكود</th><th>المقاس</th><th>اللون</th><th>الكمية</th></tr>
+      </thead>
+      <tbody id="stockMovementsBody"></tbody>
+     </table>
     </div>
-
     <div id="stockMovementsSummary" class="message" role="status"></div>
+   </section>
   </section>
-</section>
-
-<section class="page" data-page-section="reports">
-  <div class="page-topline">
+ 
+  <section class="page" data-page-section="reports">
+   <div class="page-topline">
     <h1>التقارير والإحصائيات</h1>
     <p>ملخص عام للمخزون والمبيعات وقيمة البضاعة.</p>
-  </div>
-
-  <div class="stats">
-    <div class="stat-card">
-      <h3>عدد المنتجات</h3>
-      <p id="reportsProductCount">0</p>
-    </div>
-
-    <div class="stat-card">
-      <h3>إجمالي الوحدات بالمخزن</h3>
-      <p id="reportsTotalUnits">0</p>
-    </div>
-
-    <div class="stat-card">
-      <h3>قيمة المخزون بسعر الشراء</h3>
-      <p id="reportsStockCost">0 ج.م</p>
-    </div>
-
-    <div class="stat-card">
-   <h3>إجمالي المبيعات الشهرية</h3>
-      <p id="reportsSalesCount">0</p>
-    </div>
-  </div>
-
-  <section class="panel">
+   </div>
+ 
+   <div class="stats">
+    <div class="stat-card"><div class="stat-label">عدد المنتجات</div><div class="stat-value" id="reportsProductCount">0</div></div>
+    <div class="stat-card"><div class="stat-label">إجمالي الوحدات بالمخزن</div><div class="stat-value" id="reportsTotalUnits">0</div></div>
+    <div class="stat-card"><div class="stat-label">قيمة المخزون بسعر الشراء</div><div class="stat-value" id="reportsStockCost">0 ج.م</div></div>
+    <div class="stat-card"><div class="stat-label">إجمالي المبيعات الشهرية</div><div class="stat-value" id="reportsSalesCount">0 ج.م</div></div>
+   </div>
+ 
+   <section class="panel">
     <div class="panel-heading">
-      <h2 class="section-title">ملخص التقرير</h2>
-      <p class="description">
-        إحصائيات محسوبة من بيانات المنتجات والمبيعات المسجلة.
-      </p>
+     <h2 class="section-title">ملخص التقرير</h2>
+     <p class="description">إحصائيات محسوبة من بيانات المنتجات والمبيعات المسجلة.</p>
     </div>
-
     <div class="actions">
-      <button type="button" class="primary-btn" id="refreshReportsButton">
-        تحديث الإحصائيات
-      </button>
+     <button type="button" class="primary-btn" id="refreshReportsButton">تحديث الإحصائيات</button>
     </div>
-
     <div id="reportsMessage" class="message" role="status"></div>
+   </section>
   </section>
-</section>
-<section class="page" data-page-section="customersSuppliers">
-  <div class="page-topline">
+ 
+  <section class="page" data-page-section="customersSuppliers">
+   <div class="page-topline">
     <h1>العملاء والموردون</h1>
     <p>إدارة بيانات العملاء والموردين وحفظها داخل النظام.</p>
-  </div>
-
-  <div class="stats">
-    <div class="stat-card">
-      <div class="stat-label">إجمالي العملاء</div>
-      <div class="stat-value" id="customersCount">0</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">إجمالي الموردين</div>
-      <div class="stat-value" id="suppliersCount">0</div>
-    </div>
-  </div>
-
-  <section class="panel">
+   </div>
+ 
+   <div class="stats">
+    <div class="stat-card"><div class="stat-label">إجمالي العملاء</div><div class="stat-value" id="customersCount">0</div></div>
+    <div class="stat-card"><div class="stat-label">إجمالي الموردين</div><div class="stat-value" id="suppliersCount">0</div></div>
+   </div>
+ 
+   <section class="panel">
     <div class="panel-heading">
-      <h2 class="section-title">إضافة عميل أو مورد</h2>
-      <p class="description">اختار نوع التعامل واكتب البيانات واحفظها.</p>
+     <h2 class="section-title">إضافة عميل أو مورد</h2>
+     <p class="description">اختار نوع التعامل واكتب البيانات واحفظها.</p>
     </div>
-
-    <form id="customerSupplierForm">
-      <div class="form-grid">
-        <div class="field">
-          <label for="contactType">نوع التعامل</label>
-          <select id="contactType" required>
-            <option value="customer">عميل</option>
-            <option value="supplier">مورد</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="contactName">الاسم</label>
-          <input id="contactName" type="text" required placeholder="الاسم بالكامل">
-        </div>
-
-        <div class="field" id="supplierGoodsGroup" hidden>
-          <label for="contactGoodsType">نوع المنتج</label>
-          <select id="contactGoodsType">
-            <option value="">اختر نوع المنتج</option>
-            <option value="جينز">جينز</option>
-            <option value="تشيرت">تشيرت</option>
-            <option value="قميص">قميص</option>
-            <option value="بولو">بولو</option>
-            <option value="سويت بانتس">سويت بانتس</option>
-            <option value="شورت قطن">شورت قطن</option>
-            <option value="شورت جينز">شورت جينز</option>
-            <option value="كوتشات">كوتشات</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="contactPhone">رقم الهاتف</label>
-          <input id="contactPhone" type="tel" placeholder="رقم الهاتف">
-        </div>
-
-        <div class="field">
-          <label for="contactAddress">العنوان</label>
-          <input id="contactAddress" type="text" placeholder="العنوان">
-        </div>
+ 
+    <form id="customerSupplierForm" novalidate>
+     <div class="form-grid">
+      <div class="field">
+       <label for="contactType">نوع التعامل</label>
+       <select id="contactType" required>
+        <option value="customer">عميل</option>
+        <option value="supplier">مورد</option>
+       </select>
       </div>
-
-      <div class="actions">
-        <button class="primary-btn" type="submit">حفظ البيانات</button>
-        <button class="secondary-btn" type="button" id="cancelContactEdit" hidden>إلغاء التعديل</button>
+ 
+      <div class="field">
+       <label for="contactName">الاسم</label>
+       <input id="contactName" type="text" required placeholder="الاسم بالكامل">
       </div>
-
-      <div id="contactsMessage" class="message" role="status"></div>
+ 
+      <div class="field" id="supplierGoodsGroup" hidden>
+       <label for="contactGoodsType">نوع المنتج</label>
+       <select id="contactGoodsType">
+        <option value="">اختر نوع المنتج</option>
+        <option value="جينز">جينز</option>
+        <option value="تشيرت">تشيرت</option>
+        <option value="قميص">قميص</option>
+        <option value="بولو">بولو</option>
+        <option value="سويت بانتس">سويت بانتس</option>
+        <option value="شورت قطن">شورت قطن</option>
+        <option value="شورت جينز">شورت جينز</option>
+        <option value="كوتشات">كوتشات</option>
+       </select>
+      </div>
+ 
+      <div class="field">
+       <label for="contactPhone">رقم الهاتف</label>
+       <input id="contactPhone" type="tel" placeholder="رقم الهاتف">
+      </div>
+ 
+      <div class="field">
+       <label for="contactAddress">العنوان</label>
+       <input id="contactAddress" type="text" placeholder="العنوان">
+      </div>
+     </div>
+ 
+     <div class="actions">
+      <button class="primary-btn" type="submit">حفظ البيانات</button>
+      <button class="secondary-btn" type="button" id="cancelContactEdit" hidden>إلغاء التعديل</button>
+     </div>
+     <div id="contactsMessage" class="message" role="status"></div>
     </form>
-  </section>
-
-  <section class="panel">
+   </section>
+ 
+   <section class="panel">
     <div class="table-toolbar">
-      <h2 class="section-title">سجل العملاء والموردين</h2>
-      <input id="contactsSearch" class="search-input" type="search" placeholder="ابحث بالاسم أو الهاتف أو العنوان">
+     <h2 class="section-title">سجل العملاء والموردين</h2>
+     <input id="contactsSearch" class="search-input" type="search" placeholder="ابحث بالاسم أو الهاتف أو العنوان">
     </div>
-
     <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th>النوع</th>
-            <th>الاسم</th>
-            <th>الهاتف</th>
-            <th>نوع المنتج</th>
-            <th>العنوان</th>
-            <th>الإجراءات</th>
-          </tr>
-        </thead>
-        <tbody id="contactsTableBody"></tbody>
-      </table>
+     <table>
+      <thead>
+       <tr><th>النوع</th><th>الاسم</th><th>الهاتف</th><th>نوع المنتج</th><th>العنوان</th><th>الإجراءات</th></tr>
+      </thead>
+      <tbody id="contactsTableBody"></tbody>
+     </table>
     </div>
     <div id="contactsEmptyMessage" class="empty-state">لا توجد بيانات مسجلة حتى الآن.</div>
+   </section>
   </section>
-</section>
-
-
-<section class="page" data-page-section="settings">
-  <div class="page-topline">
-    <h1> إعدادات النظام</h1>
-    <p>خصّص GAMY INVENTORY حسب تفضيلاتك.</p>
-  </div>
-
-  <section class="panel">
-    <h2 class="section-title">🌐 اللغة والمظهر</h2>
-
-    <div class="form-grid">
-      <div class="form-group">
-        <label for="settingsLanguage">لغة الموقع</label>
-        <select id="settingsLanguage">
-          <option value="ar">العربية</option>
-          <option value="en">English</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="settingsTheme">مظهر الموقع</label>
-        <select id="settingsTheme">
-          <option value="light"> نهاري</option>
-          <option value="dark"> ليلي</option>
-          <option value="smoky"> دخاني</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="settingsAccent">اللون الأساسي</label>
-        <select id="settingsAccent">
-          <option value="teal">تركواز</option>
-          <option value="gold">ذهبي</option>
-          <option value="blue">أزرق</option>
-          <option value="purple">بنفسجي</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="settingsFontSize">حجم الخط</label>
-        <select id="settingsFontSize">
-          <option value="small">صغير</option>
-          <option value="medium" selected>متوسط</option>
-          <option value="large">كبير</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="settingsStoreName">اسم المتجر</label>
-        <input id="settingsStoreName" type="text" placeholder="GAMY INVENTORY">
-      </div>
-    </div>
-  </section>
-
-  <section class="panel">
-    <h2 class="section-title"> التحكم والتفضيلات</h2>
-
-    <div class="form-grid">
-      <div class="form-group">
-        <label for="settingsMouseEffect">مؤثرات الماوس</label>
-        <select id="settingsMouseEffect">
-          <option value="on">تشغيل</option>
-          <option value="off">إيقاف</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="settingsDeleteConfirm">تأكيد الحذف</label>
-        <select id="settingsDeleteConfirm">
-          <option value="on">تأكيد قبل الحذف</option>
-          <option value="off">الحذف مباشرة</option>
-        </select>
-      </div>
-    </div>
-
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
-      <button type="button" class="primary-btn" id="saveSettingsButton">
-      حفظ الإعدادات
-      </button>
-
-      <button type="button" class="secondary-btn" id="resetSettingsButton">
-     استعادة الإعدادات الافتراضية
-      </button>
-    </div>
-
-    <div id="settingsMessage" class="message" role="status"></div>
-  </section>
-
- </main>
+ 
+</main>
 </div>
-
+ 
 <div id="stockModal" class="modal-overlay" hidden>
  <section class="modal" role="dialog" aria-modal="true" aria-labelledby="stockModalTitle">
   <h2 id="stockModalTitle">إضافة كمية جديدة</h2>
@@ -1939,22 +679,22 @@ body.dark-mode {
   </form>
  </section>
 </div>
-
+ 
 <footer>GAMY INVENTORY © 2026 | نظام إدارة المخازن والمبيعات</footer>
-
+ 
 <script>
 "use strict";
-
+ 
 /* الحفاظ على مفاتيح التخزين القديمة */
 const PRODUCT_KEY = "gamy_inventory_products_v1";
 const SALES_KEY = "gamy_inventory_sales_v1";
 const $ = id => document.getElementById(id);
-
+ 
 let products = [];
 let sales = [];
 let editingProductId = null;
 let stockProductId = null;
-
+ 
 function readStorageArray(key) {
     try {
         const raw = localStorage.getItem(key);
@@ -1965,7 +705,7 @@ function readStorageArray(key) {
         return [];
     }
 }
-
+ 
 products = readStorageArray(PRODUCT_KEY)
     .filter(p => p && typeof p === "object")
     .map((p, i) => ({
@@ -1980,10 +720,10 @@ products = readStorageArray(PRODUCT_KEY)
         salePrice: Math.max(0, Number(p.salePrice) || 0),
         quantity: Math.max(0, Number(p.quantity) || 0)
     }));
-
+ 
 sales = readStorageArray(SALES_KEY)
     .filter(s => s && typeof s === "object" && s.id && s.createdAt);
-
+ 
 function formatMoney(value) {
     return new Intl.NumberFormat("ar-EG", {
         style: "currency",
@@ -1991,29 +731,29 @@ function formatMoney(value) {
         maximumFractionDigits: 2
     }).format(Number(value) || 0);
 }
-
+ 
 function normalize(value) {
     return String(value || "").trim().toLocaleLowerCase();
 }
-
+ 
 function findProduct(id) {
     return products.find(p => String(p.id) === String(id));
 }
-
+ 
 function showMessage(id, text, type = "info") {
     const el = $(id);
     if (!el) return;
     el.textContent = text;
     el.className = "message " + type;
 }
-
+ 
 function clearMessage(id) {
     const el = $(id);
     if (!el) return;
     el.textContent = "";
     el.className = "message";
 }
-
+ 
 function saveProducts() {
     try {
         localStorage.setItem(PRODUCT_KEY, JSON.stringify(products));
@@ -2024,14 +764,14 @@ function saveProducts() {
         return false;
     }
 }
-
+ 
 function createCell(value, className = "") {
     const td = document.createElement("td");
     td.textContent = value == null ? "" : String(value);
     if (className) td.className = className;
     return td;
 }
-
+ 
 function emptyRow(body, columns, message) {
     const tr = document.createElement("tr");
     const td = document.createElement("td");
@@ -2041,43 +781,42 @@ function emptyRow(body, columns, message) {
     tr.appendChild(td);
     body.appendChild(tr);
 }
-
+ 
 function updateBackupSummary() {
     $("backupProductsCount").textContent = products.length.toLocaleString("ar-EG");
     $("backupSalesCount").textContent = sales.length.toLocaleString("ar-EG");
 }
-
-/* ---------- تقارير وإحصائيات GAMY INVENTORY ---------- */
-
+ 
+/* ---------- تقارير وإحصائيات ---------- */
+ 
 const REPORTS_SNAPSHOT_KEY = "gamy_inventory_monthly_snapshots_v1";
-
+ 
 function getMonthKey(date) {
     const d = new Date(date);
     return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
 }
-
+ 
 function getMonthSales(monthKey) {
     return sales.filter(s => {
         const date = new Date(s.createdAt);
         return !Number.isNaN(date.getTime()) && getMonthKey(date) === monthKey;
     });
 }
-
+ 
 function getReportsSnapshot() {
     const units = products.reduce((sum, p) => sum + Number(p.quantity || 0), 0);
     const stockCost = products.reduce(
-        (sum, p) => sum + Number(p.quantity || 0) * Number(p.purchasePrice || 0),
-        0
+        (sum, p) => sum + Number(p.quantity || 0) * Number(p.purchasePrice || 0), 0
     );
-
+ 
     const now = new Date();
     const currentMonth = getMonthKey(now);
     const previousDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
     const previousMonth = getMonthKey(previousDate);
-
+ 
     const currentSales = getMonthSales(currentMonth);
     const previousSales = getMonthSales(previousMonth);
-
+ 
     return {
         currentMonth,
         previousMonth,
@@ -2091,73 +830,58 @@ function getReportsSnapshot() {
         profit: currentSales.reduce((sum, s) => sum + Number(s.profit || 0), 0)
     };
 }
-
+ 
 function getPercentChange(current, previous) {
     if (previous === 0) {
         return current === 0 ? "لا يوجد تغيير" : "لا تتوفر مقارنة سابقة";
     }
-
+ 
     const change = ((current - previous) / Math.abs(previous)) * 100;
     const sign = change > 0 ? "+" : "";
     return sign + change.toLocaleString("ar-EG", {
         maximumFractionDigits: 1
     }) + "% مقارنة بالشهر السابق";
 }
-
-
+ 
 function renderReports() {
     const report = getReportsSnapshot();
-console.log("بيانات التقرير عند التحديث:", JSON.stringify(report, null, 2));
+ 
     const productCount = $("reportsProductCount");
     const totalUnits = $("reportsTotalUnits");
     const stockCost = $("reportsStockCost");
     const salesCount = $("reportsSalesCount");
-
-    if (productCount) {
-        productCount.textContent = report.productCount.toLocaleString("ar-EG");
-    }
-
-    if (totalUnits) {
-        totalUnits.textContent = report.units.toLocaleString("ar-EG");
-    }
-
-    if (stockCost) {
-        stockCost.textContent = formatMoney(report.stockCost);
-    }
-
-    if (salesCount) {
-        salesCount.textContent = formatMoney(report.salesTotal);
-    }
-
+ 
+    if (productCount) productCount.textContent = report.productCount.toLocaleString("ar-EG");
+    if (totalUnits) totalUnits.textContent = report.units.toLocaleString("ar-EG");
+    if (stockCost) stockCost.textContent = formatMoney(report.stockCost);
+    if (salesCount) salesCount.textContent = formatMoney(report.salesTotal);
+ 
     const cards = [
         { id: "reportsProductCount", key: "productCount", value: report.productCount },
         { id: "reportsTotalUnits", key: "units", value: report.units },
         { id: "reportsStockCost", key: "stockCost", value: report.stockCost },
         { id: "reportsSalesCount", key: "salesTotal", value: report.salesTotal }
     ];
-
+ 
     let snapshots = [];
-
+ 
     try {
-        snapshots = JSON.parse(
-            localStorage.getItem(REPORTS_SNAPSHOT_KEY) || "[]"
-        );
-
+        snapshots = JSON.parse(localStorage.getItem(REPORTS_SNAPSHOT_KEY) || "[]");
         if (!Array.isArray(snapshots)) snapshots = [];
     } catch (error) {
         snapshots = [];
     }
-
+ 
     const previousSnapshot = snapshots.find(
         item => item && item.month === report.previousMonth
     );
-
+ 
     cards.forEach(card => {
         const valueElement = $(card.id);
         if (!valueElement) return;
-
+ 
         let indicator = document.getElementById(card.id + "Change");
-
+ 
         if (!indicator) {
             indicator = document.createElement("div");
             indicator.id = card.id + "Change";
@@ -2166,34 +890,27 @@ console.log("بيانات التقرير عند التحديث:", JSON.stringify
             indicator.style.fontWeight = "600";
             valueElement.insertAdjacentElement("afterend", indicator);
         }
-
+ 
         if (card.key === "salesTotal") {
             indicator.textContent =
-                "الشهر السابق: " +
-                formatMoney(report.previousSalesTotal) +
-                " | " +
-                getPercentChange(
-                    report.salesTotal,
-                    report.previousSalesTotal
-                );
+                "الشهر السابق: " + formatMoney(report.previousSalesTotal) +
+                " | " + getPercentChange(report.salesTotal, report.previousSalesTotal);
         } else if (previousSnapshot &&
                    Number.isFinite(Number(previousSnapshot[card.key]))) {
-            const previousValue = Number(previousSnapshot[card.key]);
-
             indicator.textContent = getPercentChange(
                 card.value,
-                previousValue
+                Number(previousSnapshot[card.key])
             );
         } else {
             indicator.textContent = "لا تتوفر بيانات الشهر السابق";
         }
-
+ 
         indicator.style.color =
             indicator.textContent.startsWith("+") ? "#169B74" :
             indicator.textContent.startsWith("-") ? "#D64545" :
             "var(--muted, #777)";
     });
-
+ 
     showMessage(
         "reportsMessage",
         "مبيعات الشهر الحالي: " + formatMoney(report.salesTotal) +
@@ -2201,45 +918,30 @@ console.log("بيانات التقرير عند التحديث:", JSON.stringify
         "info"
     );
 }
-
+ 
 /* التنقل بين الصفحات */
 function showPage(name, updateHash = true) {
-
-const allowed = [
-    "dashboard",
-    "products",
-    "receipts",
-    "sales",
-    "history",
-    "backup",
-    "inventoryAudit",
-    "stockMovements",
-    "settings",
-    "reports",
-    "customersSuppliers",
-    "stockAlerts",
-    "exportExcel",
-    "expensesProfits",
-    "userManagement",
-    "help"
-];
-
+    const allowed = [
+        "dashboard", "products", "receipts", "sales", "history", "backup",
+        "inventoryAudit", "stockMovements", "reports", "customersSuppliers"
+    ];
+ 
     const target = allowed.includes(name) ? name : "dashboard";
-
+ 
     document.querySelectorAll("[data-page-section]").forEach(section => {
         section.classList.toggle("active", section.dataset.pageSection === target);
     });
-
+ 
     document.querySelectorAll(".nav-item[data-page]").forEach(button => {
         const active = button.dataset.page === target;
         button.classList.toggle("active", active);
         button.setAttribute("aria-current", active ? "page" : "false");
     });
-
+ 
     const activeButton = document.querySelector('.nav-item[data-page="' + target + '"]');
     const label = document.querySelector(".header-label");
     if (label && activeButton) label.textContent = activeButton.dataset.title;
-
+ 
     if (updateHash && location.hash !== "#" + target) {
         try {
             location.hash = target;
@@ -2247,82 +949,32 @@ const allowed = [
             console.warn("Hash navigation unavailable:", error);
         }
     }
-
+ 
     renderProducts();
     renderSales();
     updateSalePreview();
     updateBackupSummary();
-if (target === "reports") renderReports();
+    if (target === "reports") renderReports();
     window.scrollTo(0, 0);
 }
-
+ 
 document.querySelectorAll(".nav-item[data-page]").forEach(button => {
     button.addEventListener("click", () => showPage(button.dataset.page));
 });
-
+ 
 const refreshReportsButton = $("refreshReportsButton");
-
-
 if (refreshReportsButton) {
-    refreshReportsButton.addEventListener("click", function () {
-        alert("زر تحديث التقارير يستجيب");
-        renderReports();
-    });
+    refreshReportsButton.addEventListener("click", renderReports);
 }
-
-
+ 
 document.querySelectorAll("[data-page-link]").forEach(button => {
     button.addEventListener("click", () => showPage(button.dataset.pageLink));
 });
-
+ 
 window.addEventListener("hashchange", () => {
     showPage(location.hash.slice(1), false);
 });
-/* إعدادات GAMY INVENTORY */
-const SETTINGS_KEY = "gamy_inventory_settings_v1";
-
-function loadSettings() {
-    let settings = {};
-
-    try {
-        settings = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}");
-    } catch (error) {
-        console.warn("تعذر تحميل الإعدادات:", error);
-    }
-
-    const storeNameInput = document.getElementById("settingsStoreName");
-
-    if (storeNameInput) {
-        storeNameInput.value = settings.storeName || "GAMY INVENTORY";
-    }
-}
-
-const saveSettingsButton = document.getElementById("saveSettingsButton");
-
-if (saveSettingsButton) {
-    saveSettingsButton.addEventListener("click", function () {
-        const storeNameInput = document.getElementById("settingsStoreName");
-        const message = document.getElementById("settingsMessage");
-
-        const settings = {
-            storeName: storeNameInput ? storeNameInput.value.trim() : ""
-        };
-
-        try {
-            localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-
-            if (message) {
-                message.textContent = "تم حفظ الإعدادات بنجاح.";
-            }
-        } catch (error) {
-            if (message) {
-                message.textContent = "تعذر حفظ الإعدادات.";
-            }
-        }
-    });
-}
-
-loadSettings();
+ 
 /* إغلاق قوائم المنتجات */
 function closeMenus() {
     document.querySelectorAll(".actions-dropdown").forEach(menu => menu.hidden = true);
@@ -2330,64 +982,64 @@ function closeMenus() {
         button.setAttribute("aria-expanded", "false");
     });
 }
-
+ 
 document.addEventListener("click", event => {
     if (!event.target.closest(".action-menu-wrap")) closeMenus();
 });
-
+ 
 /* قائمة المنتجات في نموذج البيع */
 function renderSaleOptions() {
     const select = $("saleProduct");
     const oldValue = select.value;
     select.replaceChildren();
-
+ 
     const first = document.createElement("option");
     first.value = "";
     first.textContent = products.length ? "اختار المنتج" : "أضف منتجات للمخزن أولًا";
     select.appendChild(first);
-
+ 
     products.forEach(product => {
         const option = document.createElement("option");
         option.value = product.id;
         option.textContent = product.name + " — " + product.code + " — المتاح: " + product.quantity;
         select.appendChild(option);
     });
-
+ 
     if (products.some(p => String(p.id) === oldValue)) select.value = oldValue;
 }
-
+ 
 /* عرض المنتجات */
 function renderProducts() {
     const body = $("productTableBody");
     body.replaceChildren();
-
+ 
     const term = normalize($("searchInput").value);
     const filtered = products.filter(p =>
         normalize(p.name).includes(term) ||
         normalize(p.code).includes(term) ||
         normalize(p.color).includes(term)
     );
-
+ 
     const units = products.reduce((sum, p) => sum + Number(p.quantity || 0), 0);
     const stockValue = products.reduce((sum, p) =>
         sum + Number(p.purchasePrice || 0) * Number(p.quantity || 0), 0
     );
     const low = products.filter(p => Number(p.quantity || 0) <= 5).length;
-
+ 
     $("productCount").textContent = products.length.toLocaleString("ar-EG");
     $("stockValue").textContent = formatMoney(stockValue);
     $("totalUnits").textContent = units.toLocaleString("ar-EG");
     $("lowStockCount").textContent = low.toLocaleString("ar-EG");
     $("tableCount").textContent = "عدد المنتجات: " + filtered.length.toLocaleString("ar-EG");
-
+ 
     renderSaleOptions();
-
+ 
     if (!filtered.length) {
         emptyRow(body, 8, term ? "لا توجد نتائج مطابقة للبحث." : "لا توجد منتجات مسجلة حتى الآن.");
     } else {
         filtered.forEach(p => {
             const tr = document.createElement("tr");
-
+ 
             tr.append(
                 createCell(p.name, "product-name"),
                 createCell(p.code, "code-text"),
@@ -2397,24 +1049,24 @@ function renderProducts() {
                 createCell(Number(p.quantity).toLocaleString("ar-EG")),
                 createCell(formatMoney(p.purchasePrice * p.quantity))
             );
-
+ 
             const actionCell = document.createElement("td");
             actionCell.className = "action-cell";
-
+ 
             const wrap = document.createElement("div");
             wrap.className = "action-menu-wrap";
-
+ 
             const dots = document.createElement("button");
             dots.type = "button";
             dots.className = "dots-button";
             dots.textContent = "⋮";
             dots.setAttribute("aria-label", "إجراءات المنتج");
             dots.setAttribute("aria-expanded", "false");
-
+ 
             const menu = document.createElement("div");
             menu.className = "actions-dropdown";
             menu.hidden = true;
-
+ 
             const edit = document.createElement("button");
             edit.type = "button";
             edit.textContent = "تعديل المنتج";
@@ -2422,7 +1074,7 @@ function renderProducts() {
                 closeMenus();
                 startEditProduct(p.id);
             });
-
+ 
             const stock = document.createElement("button");
             stock.type = "button";
             stock.textContent = "إضافة كمية جديدة";
@@ -2430,7 +1082,7 @@ function renderProducts() {
                 closeMenus();
                 openStockModal(p.id);
             });
-
+ 
             const remove = document.createElement("button");
             remove.type = "button";
             remove.className = "menu-delete";
@@ -2439,7 +1091,7 @@ function renderProducts() {
                 closeMenus();
                 deleteProduct(p.id);
             });
-
+ 
             dots.addEventListener("click", event => {
                 event.stopPropagation();
                 const shouldOpen = menu.hidden;
@@ -2447,7 +1099,7 @@ function renderProducts() {
                 menu.hidden = !shouldOpen;
                 dots.setAttribute("aria-expanded", String(shouldOpen));
             });
-
+ 
             menu.append(edit, stock, remove);
             wrap.append(dots, menu);
             actionCell.appendChild(wrap);
@@ -2459,29 +1111,28 @@ function renderProducts() {
     renderDashboardAnalytics();
     updateBackupSummary();
 }
-  
-
+ 
 $("searchInput").addEventListener("input", renderProducts);
-
+ 
 /* نموذج إضافة وتعديل المنتجات */
 function clearProductForm() {
     $("productForm").reset();
     editingProductId = null;
-
+ 
     $("productFormTitle").textContent = "إضافة منتج جديد";
     $("productFormDescription").textContent = "أدخل بيانات المنتج واحفظها في المخزون.";
     $("saveProductButton").textContent = "حفظ المنتج";
     $("cancelEditButton").hidden = true;
-
+ 
     clearMessage("formMessage");
 }
-
+ 
 function startEditProduct(id) {
     const p = findProduct(id);
     if (!p) return;
-
+ 
     editingProductId = p.id;
-
+ 
     $("productName").value = p.name;
     $("productCode").value = p.code;
     $("productColor").value = p.color;
@@ -2491,22 +1142,22 @@ function startEditProduct(id) {
     $("purchasePrice").value = p.purchasePrice;
     $("salePrice").value = p.salePrice;
     $("productQuantity").value = p.quantity;
-
+ 
     $("productFormTitle").textContent = "تعديل بيانات المنتج";
     $("productFormDescription").textContent = "عدّل البيانات ثم احفظ التغييرات.";
     $("saveProductButton").textContent = "حفظ التعديلات";
     $("cancelEditButton").hidden = false;
-
+ 
     showPage("products");
     $("productFormPanel").scrollIntoView({ behavior: "smooth", block: "start" });
 }
-
+ 
 $("clearFormButton").addEventListener("click", clearProductForm);
 $("cancelEditButton").addEventListener("click", clearProductForm);
-
+ 
 $("productForm").addEventListener("submit", event => {
     event.preventDefault();
-
+ 
     const name = $("productName").value.trim();
     const code = $("productCode").value.trim();
     const color = $("productColor").value.trim();
@@ -2517,50 +1168,50 @@ $("productForm").addEventListener("submit", event => {
     const salePrice = Number($("salePrice").value);
     const quantityText = $("productQuantity").value;
     const quantity = Number(quantityText);
-
+ 
     if (!name || !code) {
         showMessage("formMessage", "اكتب اسم المنتج وكوده.", "error");
         return;
     }
-
+ 
     if (!Number.isFinite(purchasePrice) || purchasePrice <= 0 ||
         !Number.isFinite(salePrice) || salePrice <= 0) {
         showMessage("formMessage", "سعر الشراء وسعر البيع لازم يكونوا أكبر من صفر.", "error");
         return;
     }
-
+ 
     if (!quantityText.trim() || !Number.isInteger(quantity) || quantity < 0) {
         showMessage("formMessage", "الكمية لازم تكون عددًا صحيحًا يساوي صفرًا أو أكثر.", "error");
         return;
     }
-
+ 
     const duplicate = products.some(p =>
         String(p.id) !== String(editingProductId) && normalize(p.code) === normalize(code)
     );
-
+ 
     if (duplicate) {
         showMessage("formMessage", "كود المنتج مستخدم بالفعل.", "error");
         return;
     }
-
+ 
     const values = { name, code, color, size, model, gender, purchasePrice, salePrice, quantity };
-
+ 
     if (editingProductId !== null) {
         const index = products.findIndex(p => String(p.id) === String(editingProductId));
-
+ 
         if (index < 0) {
             showMessage("formMessage", "لم يتم العثور على المنتج.", "error");
             return;
         }
-
+ 
         const previous = products[index];
         products[index] = { ...previous, ...values };
-
+ 
         if (!saveProducts()) {
             products[index] = previous;
             return;
         }
-
+ 
         clearProductForm();
         showMessage("formMessage", "تم حفظ تعديلات المنتج بنجاح.", "success");
     } else {
@@ -2568,286 +1219,260 @@ $("productForm").addEventListener("submit", event => {
             id: Date.now().toString() + Math.random().toString(16).slice(2),
             ...values
         };
-
+ 
         products.push(newProduct);
-
+ 
         if (!saveProducts()) {
             products.pop();
             return;
         }
-
+ 
         clearProductForm();
         showMessage("formMessage", "تم حفظ المنتج بنجاح.", "success");
     }
-
+ 
     renderProducts();
     renderSales();
 });
-
+ 
 /* نافذة إضافة كمية جديدة */
 function openStockModal(id) {
     const p = findProduct(id);
     if (!p) return;
-
+ 
     stockProductId = p.id;
     $("stockProductName").value = p.name;
     $("stockCurrentQuantity").value = p.quantity;
     $("stockAddQuantity").value = "";
-
+ 
     clearMessage("stockMessage");
     $("stockModal").hidden = false;
     $("stockAddQuantity").focus();
 }
-
+ 
 function closeStockModal() {
     $("stockModal").hidden = true;
     stockProductId = null;
     $("stockForm").reset();
     clearMessage("stockMessage");
 }
-
+ 
 $("closeStockModal").addEventListener("click", closeStockModal);
-
+ 
 $("stockModal").addEventListener("click", event => {
     if (event.target.id === "stockModal") closeStockModal();
 });
-
+ 
 document.addEventListener("keydown", event => {
     if (event.key === "Escape" && !$("stockModal").hidden) closeStockModal();
 });
-
+ 
 $("stockForm").addEventListener("submit", event => {
     event.preventDefault();
-
+ 
     const p = findProduct(stockProductId);
     const amountText = $("stockAddQuantity").value;
     const amount = Number(amountText);
-
+ 
     if (!p) {
         showMessage("stockMessage", "المنتج غير موجود.", "error");
         return;
     }
-
+ 
     if (!amountText.trim() || !Number.isInteger(amount) || amount <= 0) {
         showMessage("stockMessage", "اكتب كمية صحيحة أكبر من صفر.", "error");
         return;
     }
-
+ 
     const previousQuantity = p.quantity;
     p.quantity += amount;
-
+ 
     if (!saveProducts()) {
         p.quantity = previousQuantity;
         return;
     }
-
+ 
     closeStockModal();
     renderProducts();
     showMessage("formMessage", "تمت إضافة " + amount + " قطعة إلى المخزون.", "success");
 });
-
+ 
 /* حذف المنتج */
 function deleteProduct(id) {
     const p = findProduct(id);
     if (!p) return;
-
+ 
     if (!confirm("هل أنت متأكد من حذف المنتج: " + p.name + "؟")) return;
-
+ 
     const previousProducts = products;
     products = products.filter(item => String(item.id) !== String(id));
-
+ 
     if (!saveProducts()) {
         products = previousProducts;
         return;
     }
-
+ 
     if (String(editingProductId) === String(id)) clearProductForm();
-
+ 
     renderProducts();
     renderSales();
     showMessage("formMessage", "تم حذف المنتج.", "success");
 }
-
+ 
 /* حسابات البيع */
 function updateSalePreview() {
     const p = findProduct($("saleProduct").value);
     const quantity = Number($("saleQuantity").value);
     const price = Number($("saleUnitPrice").value);
-
+ 
     if (!p) {
         $("salePreview").textContent = "اختار المنتج وحدد الكمية لمعاينة الحسابات.";
         return;
     }
-
+ 
     if (!Number.isInteger(quantity) || quantity <= 0 ||
         !Number.isFinite(price) || price <= 0) {
         $("salePreview").textContent = "أدخل كمية صحيحة وسعر بيع أكبر من صفر.";
         return;
     }
-
+ 
     const warning = quantity > Number(p.quantity)
         ? " الكمية المطلوبة أكبر من المتاح بالمخزون (" + p.quantity + ")."
         : "";
-
+ 
     $("salePreview").textContent =
         "إجمالي البيع: " + formatMoney(quantity * price) +
         " | الربح المتوقع: " + formatMoney(quantity * (price - p.purchasePrice)) +
         " | المتاح: " + Number(p.quantity).toLocaleString("ar-EG") + " قطعة." + warning;
 }
-
+ 
 $("saleProduct").addEventListener("change", () => {
     const p = findProduct($("saleProduct").value);
     $("saleUnitPrice").value = p ? p.salePrice : "";
     updateSalePreview();
 });
-
+ 
 $("saleQuantity").addEventListener("input", updateSalePreview);
 $("saleUnitPrice").addEventListener("input", updateSalePreview);
-
+ 
 function isToday(value) {
     const date = new Date(value);
     const now = new Date();
-
+ 
     return !Number.isNaN(date.getTime()) &&
         date.getFullYear() === now.getFullYear() &&
         date.getMonth() === now.getMonth() &&
         date.getDate() === now.getDate();
 }
-
+ 
 function renderDashboardSales() {
     const today = sales.filter(s => isToday(s.createdAt));
-
+ 
     $("dashSalesToday").textContent = formatMoney(
         today.reduce((sum, s) => sum + Number(s.total || 0), 0)
     );
-
+ 
     $("dashProfitToday").textContent = formatMoney(
         today.reduce((sum, s) => sum + Number(s.profit || 0), 0)
     );
-
+ 
     const body = $("recentSalesBody");
     body.replaceChildren();
-
+ 
     const recent = [...sales].sort((a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     ).slice(0, 5);
-
+ 
     if (!recent.length) {
         emptyRow(body, 4, "لا توجد مبيعات مسجلة حتى الآن.");
         return;
     }
-
+ 
     recent.forEach(s => {
         const tr = document.createElement("tr");
         const date = new Date(s.createdAt);
-
+ 
         tr.append(
             createCell(Number.isNaN(date.getTime()) ? "—" : date.toLocaleString("ar-EG")),
             createCell(s.productName || "منتج محذوف", "product-name"),
             createCell(Number(s.quantity || 0).toLocaleString("ar-EG")),
             createCell(formatMoney(s.total))
         );
-
+ 
         body.appendChild(tr);
     });
 }
-
+ 
 function renderDashboardAnalytics() {
     const totalProducts = products.length;
-
-    const lowStock = products.filter(p =>
-        Number(p.quantity || 0) <= 5
-    ).length;
-
+    const lowStock = products.filter(p => Number(p.quantity || 0) <= 5).length;
     const healthy = totalProducts - lowStock;
-
-    const healthyPercent = totalProducts
-        ? Math.round((healthy / totalProducts) * 100)
-        : 0;
-
-    const lowPercent = totalProducts
-        ? Math.round((lowStock / totalProducts) * 100)
-        : 0;
-
+ 
+    const healthyPercent = totalProducts ? Math.round((healthy / totalProducts) * 100) : 0;
+    const lowPercent = totalProducts ? Math.round((lowStock / totalProducts) * 100) : 0;
+ 
     const stockChart = $("stockHealthChart");
     const lowChart = $("lowStockChart");
-
-    if (stockChart) {
-        stockChart.style.setProperty(
-            "--chart-percent",
-            healthyPercent + "%"
-        );
-    }
-
-    if (lowChart) {
-        lowChart.style.setProperty(
-            "--chart-percent",
-            lowPercent + "%"
-        );
-    }
-
-    if ($("stockHealthPercent")) {
-        $("stockHealthPercent").textContent = healthyPercent + "%";
-    }
-
-    if ($("lowStockPercent")) {
-        $("lowStockPercent").textContent = lowPercent + "%";
-    }
-
+ 
+    if (stockChart) stockChart.style.setProperty("--chart-percent", healthyPercent + "%");
+    if (lowChart) lowChart.style.setProperty("--chart-percent", lowPercent + "%");
+ 
+    if ($("stockHealthPercent")) $("stockHealthPercent").textContent = healthyPercent + "%";
+    if ($("lowStockPercent")) $("lowStockPercent").textContent = lowPercent + "%";
+ 
     if ($("stockHealthCaption")) {
         $("stockHealthCaption").textContent =
             healthy + " من " + totalProducts + " أنواع منتجات مخزونها أكثر من 5 قطع";
     }
-
+ 
     if ($("lowStockCaption")) {
         $("lowStockCaption").textContent =
             lowStock + " من " + totalProducts + " أنواع منتجات مخزونها 5 قطع أو أقل";
     }
-
+ 
     const chart = $("dashboardSalesChart");
     if (!chart) return;
-
+ 
     chart.replaceChildren();
-
+ 
     const days = [];
-
+ 
     for (let i = 6; i >= 0; i--) {
         const date = new Date();
         date.setHours(0, 0, 0, 0);
         date.setDate(date.getDate() - i);
-
+ 
         const key =
             date.getFullYear() + "-" +
             String(date.getMonth() + 1).padStart(2, "0") + "-" +
             String(date.getDate()).padStart(2, "0");
-
+ 
         const total = sales.reduce((sum, sale) => {
             const saleDate = new Date(sale.createdAt);
-
             if (Number.isNaN(saleDate.getTime())) return sum;
-
+ 
             const saleKey =
                 saleDate.getFullYear() + "-" +
                 String(saleDate.getMonth() + 1).padStart(2, "0") + "-" +
                 String(saleDate.getDate()).padStart(2, "0");
-
+ 
             return sum + (saleKey === key ? Number(sale.total || 0) : 0);
         }, 0);
-
+ 
         days.push({
             label: date.toLocaleDateString("ar-EG", { weekday: "short" }),
             total
         });
     }
-
+ 
     const maxTotal = Math.max(...days.map(day => day.total), 1);
-
+ 
     chart.style.display = "grid";
     chart.style.gridTemplateColumns = "repeat(7, minmax(0, 1fr))";
     chart.style.alignItems = "end";
     chart.style.gap = "8px";
     chart.style.width = "100%";
-
+ 
     days.forEach(day => {
         const column = document.createElement("div");
         column.style.display = "flex";
@@ -2857,61 +1482,61 @@ function renderDashboardAnalytics() {
         column.style.gap = "6px";
         column.style.minWidth = "0";
         column.style.height = "150px";
-
+ 
         const value = document.createElement("span");
         value.textContent = Math.round(day.total).toLocaleString("ar-EG");
         value.style.fontSize = "10px";
         value.style.overflowWrap = "anywhere";
-
+ 
         const bar = document.createElement("div");
         bar.style.width = "min(100%, 24px)";
         bar.style.height = Math.max(4, (day.total / maxTotal) * 95) + "px";
-        bar.style.background = "#16a34a";
+        bar.style.background = "#e6bd68";
         bar.style.borderRadius = "6px 6px 0 0";
         bar.title = day.label + ": " + formatMoney(day.total);
-
+ 
         const label = document.createElement("span");
         label.textContent = day.label;
         label.style.fontSize = "11px";
-
+ 
         column.append(value, bar, label);
         chart.appendChild(column);
     });
 }
-
+ 
 function renderSales() {
     const body = $("salesTableBody");
     body.replaceChildren();
-
+ 
     const term = normalize($("salesSearch").value);
     const today = sales.filter(s => isToday(s.createdAt));
-
+ 
     $("todaySalesTotal").textContent = formatMoney(
         today.reduce((sum, s) => sum + Number(s.total || 0), 0)
     );
-
+ 
     $("todayProfitTotal").textContent = formatMoney(
         today.reduce((sum, s) => sum + Number(s.profit || 0), 0)
     );
-
+ 
     $("todaySalesCount").textContent = today.length.toLocaleString("ar-EG");
-
+ 
     const filtered = [...sales].filter(s =>
-      normalize(s.productName).includes(term) ||
-normalize(s.productCode).includes(term)
+        normalize(s.productName).includes(term) ||
+        normalize(s.productCode).includes(term)
     ).sort((a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
-
+ 
     $("salesTableCount").textContent = "عدد العمليات: " + filtered.length.toLocaleString("ar-EG");
-
+ 
     if (!filtered.length) {
         emptyRow(body, 7, term ? "لا توجد عمليات مطابقة للبحث." : "لا توجد مبيعات مسجلة حتى الآن.");
     } else {
         filtered.forEach(s => {
             const tr = document.createElement("tr");
             const date = new Date(s.createdAt);
-
+ 
             tr.append(
                 createCell(Number.isNaN(date.getTime()) ? "—" : date.toLocaleString("ar-EG")),
                 createCell(s.productName || "منتج محذوف", "product-name"),
@@ -2921,63 +1546,63 @@ normalize(s.productCode).includes(term)
                 createCell(formatMoney(s.total)),
                 createCell(formatMoney(s.profit))
             );
-
+ 
             body.appendChild(tr);
         });
     }
-
+ 
     renderDashboardSales();
     renderDashboardAnalytics();
     updateBackupSummary();
 }
-
+ 
 $("salesSearch").addEventListener("input", renderSales);
-
+ 
 function clearSaleForm() {
     $("saleForm").reset();
     $("saleQuantity").value = "1";
     $("saleUnitPrice").value = "";
-
+ 
     clearMessage("saleMessage");
     renderSaleOptions();
     updateSalePreview();
 }
-
+ 
 $("clearSaleFormButton").addEventListener("click", clearSaleForm);
-
+ 
 $("saleForm").addEventListener("submit", event => {
     event.preventDefault();
-
+ 
     const p = findProduct($("saleProduct").value);
     const quantityText = $("saleQuantity").value.trim();
     const quantity = Number(quantityText);
     const priceText = $("saleUnitPrice").value.trim();
     const unitPrice = Number(priceText);
-
+ 
     if (!p) {
         showMessage("saleMessage", "اختار المنتج أولًا.", "error");
         return;
     }
-
+ 
     if (!quantityText || !Number.isInteger(quantity) || quantity <= 0) {
         showMessage("saleMessage", "اكتب كمية صحيحة أكبر من صفر.", "error");
         return;
     }
-
+ 
     if (!priceText || !Number.isFinite(unitPrice) || unitPrice <= 0) {
         showMessage("saleMessage", "اكتب سعر بيع صحيح أكبر من صفر.", "error");
         return;
     }
-
+ 
     if (quantity > Number(p.quantity)) {
         showMessage("saleMessage", "الكمية أكبر من الرصيد المتاح: " + p.quantity + " قطعة.", "error");
         return;
     }
-
+ 
     const oldProductsStorage = localStorage.getItem(PRODUCT_KEY);
     const oldSalesStorage = localStorage.getItem(SALES_KEY);
     const oldQuantity = p.quantity;
-
+ 
     const sale = {
         id: Date.now().toString() + Math.random().toString(16).slice(2),
         productId: p.id,
@@ -2990,37 +1615,37 @@ $("saleForm").addEventListener("submit", event => {
         profit: quantity * (unitPrice - Number(p.purchasePrice)),
         createdAt: new Date().toISOString()
     };
-
+ 
     p.quantity -= quantity;
     sales.push(sale);
-
+ 
     try {
         localStorage.setItem(PRODUCT_KEY, JSON.stringify(products));
         localStorage.setItem(SALES_KEY, JSON.stringify(sales));
     } catch (error) {
         p.quantity = oldQuantity;
         sales = sales.filter(s => s.id !== sale.id);
-
+ 
         try {
             if (oldProductsStorage === null) localStorage.removeItem(PRODUCT_KEY);
             else localStorage.setItem(PRODUCT_KEY, oldProductsStorage);
-
+ 
             if (oldSalesStorage === null) localStorage.removeItem(SALES_KEY);
             else localStorage.setItem(SALES_KEY, oldSalesStorage);
         } catch (restoreError) {
             console.error("تعذر استرجاع التخزين السابق:", restoreError);
         }
-
+ 
         showMessage("saleMessage", "تعذر حفظ البيع. لم يتم اعتماد العملية.", "error");
         return;
     }
-
+ 
     renderProducts();
     renderSales();
     clearSaleForm();
     showMessage("saleMessage", "تم تسجيل البيع وخصم الكمية من المخزون بنجاح.", "success");
 });
-
+ 
 /* اسم ملفات التصدير */
 function getLocalDateForFilename() {
     const now = new Date();
@@ -3028,52 +1653,52 @@ function getLocalDateForFilename() {
         String(now.getMonth() + 1).padStart(2, "0") + "-" +
         String(now.getDate()).padStart(2, "0");
 }
-
+ 
 /* تحميل مكتبة Excel عند الضغط فقط */
 let xlsxPromise = null;
-
+ 
 function loadXlsxLibrary() {
     if (window.XLSX) return Promise.resolve(window.XLSX);
     if (xlsxPromise) return xlsxPromise;
-
+ 
     xlsxPromise = new Promise((resolve, reject) => {
         const script = document.createElement("script");
         script.src = "https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js";
-
+ 
         script.onload = () => {
             if (window.XLSX) resolve(window.XLSX);
             else reject(new Error("لم يتم تحميل مكتبة Excel."));
         };
-
+ 
         script.onerror = () => reject(new Error("تعذر تحميل مكتبة Excel. تأكد من اتصال الإنترنت."));
         document.head.appendChild(script);
     }).catch(error => {
         xlsxPromise = null;
         throw error;
     });
-
+ 
     return xlsxPromise;
 }
-
+ 
 function setSheetLayout(sheet, widths, lastColumn, rowCount) {
     sheet["!cols"] = widths.map(width => ({ wch: width }));
     sheet["!autofilter"] = {
         ref: "A1:" + lastColumn + Math.max(1, rowCount)
     };
 }
-
+ 
 /* زر Excel */
 $("exportBackupButton").addEventListener("click", async () => {
     const button = $("exportBackupButton");
     button.disabled = true;
     button.textContent = "جاري تجهيز التقرير...";
     showMessage("exportMessage", "جاري تجهيز ملف Excel...", "info");
-
+ 
     try {
         const XLSX = await loadXlsxLibrary();
         const workbook = XLSX.utils.book_new();
         const now = new Date();
-
+ 
         const totalUnits = products.reduce((sum, p) => sum + Number(p.quantity || 0), 0);
         const stockValue = products.reduce((sum, p) =>
             sum + Number(p.purchasePrice || 0) * Number(p.quantity || 0), 0
@@ -3082,7 +1707,7 @@ $("exportBackupButton").addEventListener("click", async () => {
         const todaySales = sales.filter(s => isToday(s.createdAt));
         const dailyRevenue = todaySales.reduce((sum, s) => sum + Number(s.total || 0), 0);
         const dailyProfit = todaySales.reduce((sum, s) => sum + Number(s.profit || 0), 0);
-
+ 
         const summaryData = [
             ["تقرير GAMY INVENTORY", "القيمة"],
             ["تاريخ إعداد التقرير", now.toLocaleString("ar-EG")],
@@ -3094,16 +1719,19 @@ $("exportBackupButton").addEventListener("click", async () => {
             ["مبيعات اليوم (جنيه)", dailyRevenue],
             ["ربح اليوم التقديري (جنيه)", dailyProfit]
         ];
-
+ 
         const summarySheet = XLSX.utils.aoa_to_sheet(summaryData);
         summarySheet["!cols"] = [{ wch: 38 }, { wch: 25 }];
         XLSX.utils.book_append_sheet(workbook, summarySheet, "الملخص");
-
+ 
         const productsData = [
-            ["اسم المنتج", "كود المنتج", "اللون", "سعر الشراء", "سعر البيع", "الكمية", "قيمة المخزون"],
+            ["اسم المنتج", "كود المنتج", "الموديل", "النوع", "المقاس", "اللون", "سعر الشراء", "سعر البيع", "الكمية", "قيمة المخزون"],
             ...products.map(p => [
                 p.name,
                 p.code,
+                p.model || "",
+                p.gender || "",
+                p.size || "",
                 p.color || "",
                 Number(p.purchasePrice || 0),
                 Number(p.salePrice || 0),
@@ -3111,11 +1739,11 @@ $("exportBackupButton").addEventListener("click", async () => {
                 Number(p.purchasePrice || 0) * Number(p.quantity || 0)
             ])
         ];
-
+ 
         const productsSheet = XLSX.utils.aoa_to_sheet(productsData);
-        setSheetLayout(productsSheet, [26, 18, 15, 18, 18, 12, 20], "G", productsData.length);
+        setSheetLayout(productsSheet, [26, 18, 14, 12, 12, 15, 16, 16, 12, 20], "J", productsData.length);
         XLSX.utils.book_append_sheet(workbook, productsSheet, "المنتجات");
-
+ 
         const salesData = [
             ["التاريخ والوقت", "اسم المنتج", "كود المنتج", "الكمية", "سعر القطعة", "إجمالي البيع", "الربح"],
             ...sales.map(s => {
@@ -3131,17 +1759,17 @@ $("exportBackupButton").addEventListener("click", async () => {
                 ];
             })
         ];
-
+ 
         const salesSheet = XLSX.utils.aoa_to_sheet(salesData);
         setSheetLayout(salesSheet, [24, 26, 18, 12, 16, 18, 16], "G", salesData.length);
         XLSX.utils.book_append_sheet(workbook, salesSheet, "المبيعات");
-
+ 
         XLSX.writeFile(
             workbook,
             "GAMY-INVENTORY-" + getLocalDateForFilename() + ".xlsx",
             { bookType: "xlsx" }
         );
-
+ 
         showMessage("exportMessage", "تم إنشاء تقرير Excel بالملخص والمنتجات والمبيعات.", "success");
     } catch (error) {
         console.error("Excel export error:", error);
@@ -3151,7 +1779,7 @@ $("exportBackupButton").addEventListener("click", async () => {
         button.textContent = "تنزيل تقرير Excel";
     }
 });
-
+ 
 /* تنزيل نسخة JSON للاستعادة */
 $("exportJsonBackupButton").addEventListener("click", () => {
     try {
@@ -3162,22 +1790,22 @@ $("exportJsonBackupButton").addEventListener("click", () => {
             products,
             sales
         };
-
+ 
         const blob = new Blob(
             [JSON.stringify(backup, null, 2)],
             { type: "application/json;charset=utf-8" }
         );
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
-
+ 
         link.href = url;
         link.download = "GAMY-INVENTORY-backup-" + getLocalDateForFilename() + ".json";
         link.style.display = "none";
-
+ 
         document.body.appendChild(link);
         link.click();
         link.remove();
-
+ 
         setTimeout(() => URL.revokeObjectURL(url), 1500);
         showMessage("exportMessage", "تم تنزيل نسخة JSON للاستعادة.", "success");
     } catch (error) {
@@ -3185,21 +1813,21 @@ $("exportJsonBackupButton").addEventListener("click", () => {
         showMessage("exportMessage", "تعذر تنزيل النسخة الاحتياطية.", "error");
     }
 });
-
+ 
 /* استعادة نسخة JSON */
 $("chooseBackupButton").addEventListener("click", () => {
     $("backupFileInput").click();
 });
-
+ 
 function validateImportedProducts(list) {
     if (!Array.isArray(list)) throw new Error("قائمة المنتجات غير صحيحة.");
-
+ 
     const ids = new Set();
     const codes = new Set();
-
+ 
     return list.map((p, index) => {
         if (!p || typeof p !== "object") throw new Error("يوجد سجل منتج غير صالح.");
-
+ 
         const id = String(p.id || ("restored-product-" + index + "-" + Date.now()));
         const name = String(p.name || "").trim();
         const code = String(p.code || "").trim();
@@ -3210,7 +1838,7 @@ function validateImportedProducts(list) {
         const purchasePrice = Number(p.purchasePrice);
         const salePrice = Number(p.salePrice);
         const quantity = Number(p.quantity);
-
+ 
         if (!name || !code) throw new Error("يوجد منتج بلا اسم أو كود.");
         if (!Number.isFinite(purchasePrice) || purchasePrice < 0 ||
             !Number.isFinite(salePrice) || salePrice < 0) {
@@ -3219,27 +1847,27 @@ function validateImportedProducts(list) {
         if (!Number.isInteger(quantity) || quantity < 0) {
             throw new Error("يوجد مقدار مخزون غير صالح.");
         }
-
+ 
         const normalizedCode = normalize(code);
-
+ 
         if (ids.has(id)) throw new Error("يوجد رقم داخلي مكرر لمنتج.");
         if (codes.has(normalizedCode)) throw new Error("يوجد كود منتج مكرر.");
-
+ 
         ids.add(id);
         codes.add(normalizedCode);
-
+ 
         return { id, name, code, color, size, model, gender, purchasePrice, salePrice, quantity };
     });
 }
-
+ 
 function validateImportedSales(list) {
     if (!Array.isArray(list)) throw new Error("قائمة المبيعات غير صحيحة.");
-
+ 
     const ids = new Set();
-
+ 
     return list.map((s, index) => {
         if (!s || typeof s !== "object") throw new Error("يوجد سجل بيع غير صالح.");
-
+ 
         const id = String(s.id || ("restored-sale-" + index + "-" + Date.now()));
         const createdAt = String(s.createdAt || "");
         const quantity = Number(s.quantity);
@@ -3247,7 +1875,7 @@ function validateImportedSales(list) {
         const total = Number(s.total);
         const profit = Number(s.profit);
         const unitCost = Number(s.unitCost);
-
+ 
         if (!createdAt || Number.isNaN(new Date(createdAt).getTime())) {
             throw new Error("يوجد تاريخ بيع غير صالح.");
         }
@@ -3259,9 +1887,9 @@ function validateImportedSales(list) {
             throw new Error("يوجد سعر أو إجمالي غير صالح في المبيعات.");
         }
         if (ids.has(id)) throw new Error("يوجد رقم مكرر لعملية بيع.");
-
+ 
         ids.add(id);
-
+ 
         return {
             id,
             productId: String(s.productId || ""),
@@ -3276,7 +1904,7 @@ function validateImportedSales(list) {
         };
     });
 }
-
+ 
 function restoreStorageValue(key, value) {
     try {
         if (value === null) localStorage.removeItem(key);
@@ -3285,16 +1913,16 @@ function restoreStorageValue(key, value) {
         console.error("تعذرت استعادة التخزين السابق:", error);
     }
 }
-
+ 
 $("backupFileInput").addEventListener("change", async event => {
     const file = event.target.files && event.target.files[0];
     if (!file) return;
-
+ 
     clearMessage("importMessage");
-
+ 
     try {
         const backup = JSON.parse(await file.text());
-
+ 
         if (!backup ||
             backup.app !== "GAMY INVENTORY" ||
             (backup.formatVersion !== undefined && backup.formatVersion !== 1) ||
@@ -3302,25 +1930,25 @@ $("backupFileInput").addEventListener("change", async event => {
             !Array.isArray(backup.sales)) {
             throw new Error("الملف ليس نسخة احتياطية صالحة من GAMY INVENTORY.");
         }
-
+ 
         const newProducts = validateImportedProducts(backup.products);
         const newSales = validateImportedSales(backup.sales);
-
+ 
         const approved = confirm(
             "سيتم استبدال البيانات الحالية بالنسخة المختارة.\n\n" +
             "المنتجات داخل النسخة: " + newProducts.length + "\n" +
             "عمليات البيع داخل النسخة: " + newSales.length + "\n\n" +
             "هل تريد الاستمرار؟"
         );
-
+ 
         if (!approved) {
             showMessage("importMessage", "تم إلغاء الاستعادة. بياناتك لم تتغير.", "info");
             return;
         }
-
+ 
         const oldProducts = localStorage.getItem(PRODUCT_KEY);
         const oldSales = localStorage.getItem(SALES_KEY);
-
+ 
         try {
             localStorage.setItem(PRODUCT_KEY, JSON.stringify(newProducts));
             localStorage.setItem(SALES_KEY, JSON.stringify(newSales));
@@ -3329,17 +1957,17 @@ $("backupFileInput").addEventListener("change", async event => {
             restoreStorageValue(SALES_KEY, oldSales);
             throw new Error("تعذر حفظ البيانات المستعادة. لم تكتمل العملية.");
         }
-
+ 
         products = newProducts;
         sales = newSales;
-
+ 
         clearProductForm();
         clearSaleForm();
         renderProducts();
         renderSales();
         updateSalePreview();
         updateBackupSummary();
-
+ 
         showMessage(
             "importMessage",
             "تمت الاستعادة بنجاح. المنتجات: " + products.length +
@@ -3353,10 +1981,10 @@ $("backupFileInput").addEventListener("change", async event => {
         event.target.value = "";
     }
 });
-
-/* ===== GAMY INVENTORY: STOCK AUDIT ===== */
+ 
+/* ===== جرد المخزن ===== */
 const AUDIT_KEY = "gamy_inventory_audits_v1";
-
+ 
 function readAudits() {
     try {
         const value = JSON.parse(localStorage.getItem(AUDIT_KEY) || "[]");
@@ -3365,28 +1993,28 @@ function readAudits() {
         return [];
     }
 }
-
+ 
 let inventoryAudits = readAudits();
-
+ 
 function renderAuditTable() {
     const body = $("auditTableBody");
     const term = normalize($("auditSearch").value);
     body.replaceChildren();
-
+ 
     const filtered = products.filter(p =>
         normalize(p.name).includes(term) ||
         normalize(p.code).includes(term) ||
         normalize(p.color).includes(term)
     );
-
+ 
     if (!filtered.length) {
         emptyRow(body, 7, "لا توجد منتجات مطابقة للبحث.");
     }
-
+ 
     filtered.forEach(p => {
         const tr = document.createElement("tr");
         tr.dataset.productId = p.id;
-
+ 
         const actualCell = document.createElement("td");
         const input = document.createElement("input");
         input.type = "number";
@@ -3397,7 +2025,7 @@ function renderAuditTable() {
         input.style.width = "115px";
         input.setAttribute("aria-label", "الكمية الفعلية: " + p.name);
         actualCell.appendChild(input);
-
+ 
         tr.append(
             createCell(p.name, "product-name"),
             createCell(p.code, "code-text"),
@@ -3407,96 +2035,96 @@ function renderAuditTable() {
             createCell("—", "audit-difference"),
             createCell("لم يتم الجرد", "audit-status")
         );
-
+ 
         body.appendChild(tr);
     });
-
+ 
     body.querySelectorAll(".audit-actual").forEach(input => {
         input.addEventListener("input", () => updateAuditRow(input));
     });
-
+ 
     updateAuditSummary();
 }
-
+ 
 function updateAuditRow(input) {
     const row = input.closest("tr");
     const product = findProduct(row.dataset.productId);
     if (!product) return;
-
+ 
     const differenceCell = row.querySelector(".audit-difference");
     const statusCell = row.querySelector(".audit-status");
-
+ 
     if (input.value.trim() === "") {
         differenceCell.textContent = "—";
         statusCell.textContent = "لم يتم الجرد";
         updateAuditSummary();
         return;
     }
-
+ 
     const actual = Number(input.value);
-
+ 
     if (!Number.isInteger(actual) || actual < 0) {
         differenceCell.textContent = "—";
         statusCell.textContent = "كمية غير صحيحة";
         updateAuditSummary();
         return;
     }
-
+ 
     const difference = actual - Number(product.quantity);
-
+ 
     differenceCell.textContent =
         (difference > 0 ? "+" : "") + difference.toLocaleString("ar-EG");
-
+ 
     statusCell.textContent = difference < 0
         ? "عجز " + Math.abs(difference).toLocaleString("ar-EG")
         : difference > 0
             ? "زيادة " + difference.toLocaleString("ar-EG")
             : "مطابق";
-
+ 
     updateAuditSummary();
 }
-
+ 
 function updateAuditSummary() {
     const rows = [...$("auditTableBody").querySelectorAll("tr[data-product-id]")];
     let counted = 0;
     let shortage = 0;
     let surplus = 0;
-
+ 
     rows.forEach(row => {
         const input = row.querySelector(".audit-actual");
         if (!input || input.value.trim() === "") return;
-
+ 
         const actual = Number(input.value);
         if (!Number.isInteger(actual) || actual < 0) return;
-
+ 
         const product = findProduct(row.dataset.productId);
         if (!product) return;
-
+ 
         counted++;
-
+ 
         const difference = actual - Number(product.quantity);
         if (difference < 0) shortage++;
         if (difference > 0) surplus++;
     });
-
+ 
     $("auditCounted").textContent = counted.toLocaleString("ar-EG");
     $("auditShortage").textContent = shortage.toLocaleString("ar-EG");
     $("auditSurplus").textContent = surplus.toLocaleString("ar-EG");
 }
-
+ 
 function renderAuditHistory() {
     const body = $("auditHistoryBody");
     body.replaceChildren();
-
+ 
     if (!inventoryAudits.length) {
         emptyRow(body, 5, "لا توجد نتائج جرد محفوظة حتى الآن.");
         return;
     }
-
+ 
     [...inventoryAudits].reverse().forEach(audit => {
         const date = new Date(audit.createdAt);
         const tr = document.createElement("tr");
-
+ 
         tr.append(
             createCell(Number.isNaN(date.getTime()) ? "—" : date.toLocaleString("ar-EG")),
             createCell(audit.items.length),
@@ -3504,13 +2132,13 @@ function renderAuditHistory() {
             createCell(audit.surplus),
             createCell(audit.matched)
         );
-
+ 
         body.appendChild(tr);
     });
 }
-
+ 
 $("auditSearch").addEventListener("input", renderAuditTable);
-
+ 
 $("auditFillCurrent").addEventListener("click", () => {
     $("auditTableBody").querySelectorAll("tr[data-product-id]").forEach(row => {
         const product = findProduct(row.dataset.productId);
@@ -3520,12 +2148,12 @@ $("auditFillCurrent").addEventListener("click", () => {
             updateAuditRow(input);
         }
     });
-
+ 
     showMessage("auditMessage",
         "تم نسخ الكميات المسجلة إلى خانات الجرد. عدّل الكميات لتطابق العد الفعلي.",
         "info");
 });
-
+ 
 $("clearAuditButton").addEventListener("click", () => {
     $("auditTableBody").querySelectorAll(".audit-actual").forEach(input => {
         input.value = "";
@@ -3533,20 +2161,20 @@ $("clearAuditButton").addEventListener("click", () => {
     });
     clearMessage("auditMessage");
 });
-
+ 
 $("saveAuditButton").addEventListener("click", () => {
     const rows = [...$("auditTableBody").querySelectorAll("tr[data-product-id]")];
     const items = [];
-
+ 
     for (const row of rows) {
         const input = row.querySelector(".audit-actual");
         if (!input || input.value.trim() === "") continue;
-
+ 
         const actual = Number(input.value);
         const product = findProduct(row.dataset.productId);
-
+ 
         if (!product) continue;
-
+ 
         if (!Number.isInteger(actual) || actual < 0) {
             showMessage("auditMessage",
                 "راجع الكميات المدخلة؛ لازم تكون أعدادًا صحيحة لا تقل عن صفر.",
@@ -3554,10 +2182,10 @@ $("saveAuditButton").addEventListener("click", () => {
             input.focus();
             return;
         }
-
+ 
         const recorded = Number(product.quantity);
         const difference = actual - recorded;
-
+ 
         items.push({
             productId: product.id,
             name: product.name,
@@ -3569,14 +2197,14 @@ $("saveAuditButton").addEventListener("click", () => {
             status: difference < 0 ? "عجز" : difference > 0 ? "زيادة" : "مطابق"
         });
     }
-
+ 
     if (!items.length) {
         showMessage("auditMessage",
             "اكتب الكمية الفعلية لمنتج واحد على الأقل قبل الحفظ.",
             "error");
         return;
     }
-
+ 
     const audit = {
         id: Date.now().toString() + Math.random().toString(16).slice(2),
         createdAt: new Date().toISOString(),
@@ -3585,11 +2213,9 @@ $("saveAuditButton").addEventListener("click", () => {
         surplus: items.filter(item => item.difference > 0).length,
         matched: items.filter(item => item.difference === 0).length
     };
-
-    const previousAudits = localStorage.getItem(AUDIT_KEY);
-
+ 
     inventoryAudits.push(audit);
-
+ 
     try {
         localStorage.setItem(AUDIT_KEY, JSON.stringify(inventoryAudits));
     } catch (error) {
@@ -3599,7 +2225,7 @@ $("saveAuditButton").addEventListener("click", () => {
             "error");
         return;
     }
-
+ 
     renderAuditHistory();
     showMessage("auditMessage",
         "تم حفظ نتيجة الجرد بنجاح. المنتجات المجردة: " + items.length +
@@ -3609,7 +2235,7 @@ $("saveAuditButton").addEventListener("click", () => {
         ". لم يتم تغيير كميات المخزون.",
         "success");
 });
-
+ 
 /* تجهيز الجرد عند فتح القسم */
 const originalShowPageForAudit = showPage;
 showPage = function(name, updateHash = true) {
@@ -3619,27 +2245,26 @@ showPage = function(name, updateHash = true) {
         renderAuditHistory();
     }
 };
-
+ 
 renderAuditHistory();
-/* ===== END STOCK AUDIT ===== */
-
+ 
 /* تشغيل الموقع بعد تعريف كل الوظائف */
 renderProducts();
 renderSales();
 updateSalePreview();
 updateBackupSummary();
 showPage(location.hash.slice(1) || "dashboard", false);
-
-
-/* ===== GAMY INVENTORY: SETTINGS & RGB SMOKE ===== */
+ 
+ 
+/* ===== الإعدادات + دخان الماوس + الترجمة ===== */
 (() => {
   "use strict";
-
+ 
   const LANG_KEY = "gamy_inventory_language_v1";
   const THEME_KEY = "gamy_inventory_theme_v1";
   const SMOKE_KEY = "gamy_inventory_smoke_v1";
   const SMOKE_POWER_KEY = "gamy_inventory_smoke_strength_v1";
-
+ 
   const readPreference = (key, fallback) => {
     try {
       return localStorage.getItem(key) ?? fallback;
@@ -3647,7 +2272,7 @@ showPage(location.hash.slice(1) || "dashboard", false);
       return fallback;
     }
   };
-
+ 
   const savePreference = (key, value) => {
     try {
       localStorage.setItem(key, value);
@@ -3655,18 +2280,17 @@ showPage(location.hash.slice(1) || "dashboard", false);
       console.warn("Could not save preference:", error);
     }
   };
-
+ 
   let language = readPreference(LANG_KEY, "ar");
   let smokeEnabled = readPreference(SMOKE_KEY, "on") === "on";
   let smokePower = Number(readPreference(SMOKE_POWER_KEY, "5"));
-
+ 
   if (!Number.isFinite(smokePower)) smokePower = 5;
   smokePower = Math.max(1, Math.min(10, smokePower));
-
+ 
   const translations = {
     "نظام إدارة المخازن والمبيعات": "Inventory & Sales Management",
     "لوحة التحكم": "Dashboard",
-    "القائمة الرئيسية": "Main Menu",
     "إدارة المنتجات": "Products",
     "تسجيل المبيعات": "Record Sale",
     "سجل المبيعات": "Sales History",
@@ -3686,12 +2310,6 @@ showPage(location.hash.slice(1) || "dashboard", false);
     "إجمالي البيع اليوم": "Total sales today",
     "ربح اليوم التقديري": "Estimated Profit Today",
     "قبل مصاريف التشغيل": "Before operating expenses",
-    "الوصول السريع": "Quick Access",
-    "اختار القسم الذي تريد العمل عليه.": "Choose a section to work in.",
-    "إضافة المنتجات وتعديل البيانات ومتابعة الكميات.": "Add products, edit details, and track stock.",
-    "تسجيل البيع وخصم الكمية من المخزون.": "Record sales and deduct stock.",
-    "مراجعة عمليات البيع والإجماليات.": "Review sales transactions and totals.",
-    "تنزيل تقرير Excel أو نسخة استعادة.": "Download an Excel report or backup.",
     "أحدث المبيعات": "Recent Sales",
     "عرض سجل المبيعات": "View Sales History",
     "التاريخ والوقت": "Date & Time",
@@ -3776,99 +2394,96 @@ showPage(location.hash.slice(1) || "dashboard", false);
     "عدد المنتجات: ": "Products: ",
     "عدد العمليات: ": "Transactions: "
   };
-
+ 
   const reverseTranslations = Object.fromEntries(
     Object.entries(translations).map(([ar, en]) => [en, ar])
   );
-
+ 
   const originalText = new WeakMap();
-
+ 
   function translateValue(value, targetLanguage) {
     if (targetLanguage === "ar") {
       return reverseTranslations[value] || value;
     }
-
+ 
     if (translations[value]) return translations[value];
-
+ 
     let result = value;
     const phrases = Object.entries(translations)
       .sort((a, b) => b[0].length - a[0].length);
-
+ 
     for (const [ar, en] of phrases) {
       if (result.includes(ar)) result = result.split(ar).join(en);
     }
-
+ 
     return result;
   }
-
+ 
   function translatePage(targetLanguage) {
     language = targetLanguage;
     document.documentElement.lang = language;
     document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
     savePreference(LANG_KEY, language);
-
-    const walker = document.createTreeWalker(
-      document.body,
-      NodeFilter.SHOW_TEXT
-    );
-
+ 
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+ 
     const nodes = [];
     while (walker.nextNode()) nodes.push(walker.currentNode);
-
+ 
     nodes.forEach(node => {
       const parent = node.parentElement;
       if (!parent || parent.closest("script,style,canvas,.gamy-settings-wrap")) return;
-
+ 
       if (!originalText.has(node)) originalText.set(node, node.nodeValue);
       node.nodeValue = translateValue(originalText.get(node), language);
     });
-
+ 
     document.querySelectorAll("[placeholder]").forEach(el => {
       if (!el.dataset.originalPlaceholder) {
         el.dataset.originalPlaceholder = el.placeholder;
       }
       el.placeholder = translateValue(el.dataset.originalPlaceholder, language);
     });
-
+ 
     document.querySelectorAll("[data-title]").forEach(el => {
       if (!el.dataset.originalTitle) {
         el.dataset.originalTitle = el.dataset.title;
       }
       el.dataset.title = translateValue(el.dataset.originalTitle, language);
     });
-
+ 
     const headerLabel = document.querySelector(".header-label");
     const activeNav = document.querySelector(".nav-item.active");
-
+ 
     if (headerLabel && activeNav) {
       headerLabel.textContent = activeNav.dataset.title || activeNav.textContent;
     }
-
+ 
     document.title = language === "ar"
       ? "GAMY INVENTORY | إدارة المخازن"
       : "GAMY INVENTORY | Inventory Management";
-
+ 
     updateSettingsLabels();
   }
-
+ 
   function applyTheme(theme) {
     document.body.classList.toggle("dark-mode", theme === "dark");
     savePreference(THEME_KEY, theme);
-
+ 
     const button = document.querySelector(".gamy-theme-button");
     if (button) {
       button.textContent = theme === "dark"
         ? (language === "ar" ? "☀️ تشغيل الوضع النهاري" : "☀️ Light Mode")
         : (language === "ar" ? "🌙 تشغيل الوضع الليلي" : "🌙 Dark Mode");
-
+ 
       button.setAttribute("aria-pressed", String(theme === "dark"));
     }
   }
-
+ 
   /* زر واحد يفتح لوحة الإعدادات */
   const settingsWrap = document.createElement("div");
   settingsWrap.className = "gamy-settings-wrap";
-
+ 
   settingsWrap.innerHTML = `
     <button type="button"
       class="gamy-settings-trigger"
@@ -3877,13 +2492,13 @@ showPage(location.hash.slice(1) || "dashboard", false);
       <span class="settings-icon" aria-hidden="true"></span>
       <span class="gamy-settings-button-label">الإعدادات</span>
     </button>
-
+ 
     <section class="gamy-settings-panel" id="gamySettingsPanel" hidden>
       <div class="gamy-settings-heading">
         <h2 class="gamy-settings-title">إعدادات الموقع</h2>
         <button type="button" class="gamy-settings-close" aria-label="إغلاق الإعدادات">×</button>
       </div>
-
+ 
       <div class="gamy-setting-row">
         <div class="gamy-setting-info">
           <strong class="gamy-language-title">🌐 اللغة</strong>
@@ -3894,7 +2509,7 @@ showPage(location.hash.slice(1) || "dashboard", false);
           <option value="en">English</option>
         </select>
       </div>
-
+ 
       <div class="gamy-setting-row">
         <div class="gamy-setting-info">
           <strong class="gamy-theme-title">🌙 المظهر</strong>
@@ -3902,7 +2517,7 @@ showPage(location.hash.slice(1) || "dashboard", false);
         </div>
         <button type="button" class="gamy-setting-control gamy-theme-button"></button>
       </div>
-
+ 
       <div class="gamy-setting-row">
         <div class="gamy-setting-info">
           <strong class="gamy-smoke-title">💨 دخان الماوس</strong>
@@ -3910,7 +2525,7 @@ showPage(location.hash.slice(1) || "dashboard", false);
         </div>
         <button type="button" class="gamy-smoke-switch" aria-pressed="true"></button>
       </div>
-
+ 
       <div class="gamy-smoke-strength-wrap">
         <label class="gamy-smoke-strength-label" for="gamySmokeStrength">قوة تأثير الدخان</label>
         <input id="gamySmokeStrength" type="range" min="1" max="10" step="1">
@@ -3921,119 +2536,107 @@ showPage(location.hash.slice(1) || "dashboard", false);
       </div>
     </section>
   `;
-
-  document.querySelector("#mainSidebar .sidebar-nav")
-  .appendChild(settingsWrap);
-
+ 
+  document.querySelector("#mainSidebar .sidebar-nav").appendChild(settingsWrap);
+ 
   const settingsTrigger = settingsWrap.querySelector(".gamy-settings-trigger");
   const settingsPanel = settingsWrap.querySelector(".gamy-settings-panel");
   const languageSelect = settingsWrap.querySelector(".gamy-language-select");
   const themeButton = settingsWrap.querySelector(".gamy-theme-button");
   const smokeButton = settingsWrap.querySelector(".gamy-smoke-switch");
   const strengthSlider = settingsWrap.querySelector("#gamySmokeStrength");
-
+ 
   function setSettingsOpen(open) {
     settingsPanel.hidden = !open;
     settingsTrigger.setAttribute("aria-expanded", String(open));
   }
-
+ 
   settingsTrigger.addEventListener("click", () => {
     setSettingsOpen(settingsPanel.hidden);
   });
-
+ 
   settingsWrap.querySelector(".gamy-settings-close").addEventListener("click", () => {
     setSettingsOpen(false);
     settingsTrigger.focus();
   });
-
+ 
   document.addEventListener("click", event => {
     if (!settingsWrap.contains(event.target)) setSettingsOpen(false);
   });
-
+ 
   document.addEventListener("keydown", event => {
     if (event.key === "Escape" && !settingsPanel.hidden) {
       setSettingsOpen(false);
       settingsTrigger.focus();
     }
   });
-
+ 
   languageSelect.value = language;
   languageSelect.addEventListener("change", () => {
     translatePage(languageSelect.value);
   });
-
+ 
   themeButton.addEventListener("click", () => {
     const nextTheme = document.body.classList.contains("dark-mode") ? "light" : "dark";
     applyTheme(nextTheme);
   });
-
+ 
   function updateSettingsLabels() {
     const english = language === "en";
-
+ 
     settingsWrap.querySelector(".gamy-settings-button-label").textContent =
       english ? "Settings" : "الإعدادات";
-
     settingsWrap.querySelector(".gamy-settings-title").textContent =
       english ? "Site Settings" : "إعدادات الموقع";
-
     settingsWrap.querySelector(".gamy-language-title").textContent =
       english ? "🌐 Language" : "🌐 اللغة";
-
     settingsWrap.querySelector(".gamy-language-description").textContent =
       english ? "Choose interface language" : "اختار لغة الواجهة";
-
     settingsWrap.querySelector(".gamy-theme-title").textContent =
       english ? "🌙 Appearance" : "🌙 المظهر";
-
     settingsWrap.querySelector(".gamy-theme-description").textContent =
       english ? "Change the site appearance" : "تغيير شكل الموقع";
-
     settingsWrap.querySelector(".gamy-smoke-title").textContent =
       english ? "💨 Mouse Trail" : "💨 دخان الماوس";
-
     settingsWrap.querySelector(".gamy-smoke-description").textContent =
       english ? "Blue and red trail on movement" : "تأثير أزرق وأحمر مع الحركة";
-
     settingsWrap.querySelector(".gamy-smoke-strength-label").textContent =
       english ? "Smoke intensity" : "قوة تأثير الدخان";
-
     settingsWrap.querySelector(".gamy-smoke-low").textContent =
       english ? "Soft" : "خفيف";
-
     settingsWrap.querySelector(".gamy-smoke-high").textContent =
       english ? "Strong" : "قوي";
-
     settingsWrap.querySelector(".gamy-settings-close").setAttribute(
       "aria-label", english ? "Close settings" : "إغلاق الإعدادات"
     );
-
+ 
     applyTheme(document.body.classList.contains("dark-mode") ? "dark" : "light");
     updateSmokeButton();
   }
-
+ 
   function updateSmokeButton() {
     const english = language === "en";
-
+ 
     smokeButton.textContent = smokeEnabled
       ? (english ? "ON" : "تشغيل")
       : (english ? "OFF" : "إيقاف");
-
+ 
     smokeButton.classList.toggle("is-off", !smokeEnabled);
     smokeButton.setAttribute("aria-pressed", String(smokeEnabled));
   }
-
+ 
   strengthSlider.value = String(smokePower);
-
+ 
   strengthSlider.addEventListener("input", () => {
     smokePower = Number(strengthSlider.value);
     savePreference(SMOKE_POWER_KEY, String(smokePower));
   });
-
+ 
   smokeButton.addEventListener("click", () => {
     smokeEnabled = !smokeEnabled;
     savePreference(SMOKE_KEY, smokeEnabled ? "on" : "off");
     updateSmokeButton();
-
+ 
     if (!smokeEnabled) {
       particles = [];
       if (frame) cancelAnimationFrame(frame);
@@ -4041,45 +2644,42 @@ showPage(location.hash.slice(1) || "dashboard", false);
       if (context) context.clearRect(0, 0, width, height);
     }
   });
-
+ 
   /* دخان سريع بألوان أزرق وأحمر */
   const canvas = document.createElement("canvas");
   canvas.id = "smokeCanvas";
   canvas.setAttribute("aria-hidden", "true");
   document.body.appendChild(canvas);
-
+ 
   const context = canvas.getContext("2d");
-
+ 
   let particles = [];
   let width = 0;
   let height = 0;
   let frame = 0;
   let lastSpawn = 0;
-
+ 
   function resizeCanvas() {
     const ratio = Math.min(window.devicePixelRatio || 1, 2);
-
+ 
     width = window.innerWidth;
     height = window.innerHeight;
-
+ 
     canvas.width = Math.round(width * ratio);
     canvas.height = Math.round(height * ratio);
     context.setTransform(ratio, 0, 0, ratio, 0, 0);
   }
-
+ 
   function addSmoke(x, y) {
     if (!smokeEnabled) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
+ 
     const count = Math.max(1, Math.round(smokePower / 2));
-    const colors = [
-      [0, 170, 255],
-      [255, 45, 75]
-    ];
-
+    const colors = [[0, 170, 255], [255, 45, 75]];
+ 
     for (let i = 0; i < count; i++) {
       const color = colors[Math.floor(Math.random() * colors.length)];
-
+ 
       particles.push({
         x: x + (Math.random() - 0.5) * 8,
         y: y + (Math.random() - 0.5) * 8,
@@ -4092,17 +2692,17 @@ showPage(location.hash.slice(1) || "dashboard", false);
         color
       });
     }
-
+ 
     if (particles.length > 180) {
       particles.splice(0, particles.length - 180);
     }
   }
-
+ 
   function animateSmoke() {
     context.clearRect(0, 0, width, height);
-
+ 
     particles = particles.filter(p => p.life > 0.03);
-
+ 
     for (const p of particles) {
       p.x += p.vx;
       p.y += p.vy;
@@ -4110,11 +2710,10 @@ showPage(location.hash.slice(1) || "dashboard", false);
       p.vy *= 0.97;
       p.radius *= 0.985;
       p.life -= p.decay;
-
+ 
       const alpha = Math.max(0, p.alpha * p.life);
       const [r, g, b] = p.color;
-
-      /* نقطة مضيئة صغيرة بدون غيمة كبيرة أو بطيئة */
+ 
       context.beginPath();
       context.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
       context.shadowColor = `rgba(${r}, ${g}, ${b}, ${alpha})`;
@@ -4122,9 +2721,9 @@ showPage(location.hash.slice(1) || "dashboard", false);
       context.arc(p.x, p.y, Math.max(0.5, p.radius), 0, Math.PI * 2);
       context.fill();
     }
-
+ 
     context.shadowBlur = 0;
-
+ 
     if (smokeEnabled || particles.length) {
       frame = requestAnimationFrame(animateSmoke);
     } else {
@@ -4132,27 +2731,27 @@ showPage(location.hash.slice(1) || "dashboard", false);
       context.clearRect(0, 0, width, height);
     }
   }
-
+ 
   window.addEventListener("resize", resizeCanvas);
-
+ 
   document.addEventListener("pointermove", event => {
     if (event.pointerType === "touch" || !smokeEnabled) return;
-
+ 
     const now = performance.now();
     if (now - lastSpawn < 12) return;
     lastSpawn = now;
-
+ 
     addSmoke(event.clientX, event.clientY);
-
+ 
     if (!frame) frame = requestAnimationFrame(animateSmoke);
   }, { passive: true });
-
+ 
   resizeCanvas();
-
+ 
   /* ترجمة النصوص التي تظهر ديناميكيًا */
   const observer = new MutationObserver(records => {
     if (language !== "en") return;
-
+ 
     for (const record of records) {
       for (const node of record.addedNodes) {
         if (node.nodeType === Node.TEXT_NODE) {
@@ -4163,7 +2762,7 @@ showPage(location.hash.slice(1) || "dashboard", false);
           !node.closest(".gamy-settings-wrap, #smokeCanvas")
         ) {
           const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
-
+ 
           while (walker.nextNode()) {
             const textNode = walker.currentNode;
             if (!originalText.has(textNode)) {
@@ -4175,28 +2774,28 @@ showPage(location.hash.slice(1) || "dashboard", false);
       }
     }
   });
-
+ 
   observer.observe(document.body, { childList: true, subtree: true });
-
+ 
   applyTheme(readPreference(THEME_KEY, "light"));
   translatePage(language);
   updateSmokeButton();
-
+ 
   if (smokeEnabled) frame = requestAnimationFrame(animateSmoke);
 })();
-
-
+ 
+ 
 /* ===== تقرير الجرد Excel بالألوان ===== */
 let styledXlsxPromise = null;
-
+ 
 function loadStyledXlsxLibrary() {
     if (window.XLSX_STYLED) return Promise.resolve(window.XLSX_STYLED);
     if (styledXlsxPromise) return styledXlsxPromise;
-
+ 
     styledXlsxPromise = new Promise((resolve, reject) => {
         const script = document.createElement("script");
         script.src = "https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js";
-
+ 
         script.onload = () => {
             if (window.XLSX) {
                 window.XLSX_STYLED = window.XLSX;
@@ -4205,40 +2804,40 @@ function loadStyledXlsxLibrary() {
                 reject(new Error("لم يتم تحميل مكتبة Excel."));
             }
         };
-
+ 
         script.onerror = () => reject(new Error("تعذر تحميل مكتبة Excel. تأكد من اتصال الإنترنت."));
         document.head.appendChild(script);
     }).catch(error => {
         styledXlsxPromise = null;
         throw error;
     });
-
+ 
     return styledXlsxPromise;
 }
-
+ 
 const AUDIT_COLORS = {
     header:   { fill: "153E35", font: "FFFFFF" },
-    shortage: { fill: "F4A6A6", font: "7A1212" },  /* عجز = أحمر */
-    matched:  { fill: "FFF3A3", font: "5C4B00" },  /* مطابق = أصفر */
-    surplus:  { fill: "BFDBFE", font: "1E3A8A" },  /* زيادة = أزرق فاتح */
-    none:     { fill: "FFFFFF", font: "24332C" }   /* لم يتم الجرد */
+    shortage: { fill: "F4A6A6", font: "7A1212" },
+    matched:  { fill: "FFF3A3", font: "5C4B00" },
+    surplus:  { fill: "BFDBFE", font: "1E3A8A" },
+    none:     { fill: "FFFFFF", font: "24332C" }
 };
-
+ 
 function buildAuditSheet(XLSX, headers, rows, statuses, widths) {
     const sheet = XLSX.utils.aoa_to_sheet([headers, ...rows]);
     const line = { style: "thin", color: { rgb: "9AA79F" } };
     const borders = { top: line, bottom: line, left: line, right: line };
     const alignment = { horizontal: "center", vertical: "center", wrapText: true };
-
+ 
     for (let r = 0; r <= rows.length; r++) {
         const palette = r === 0
             ? AUDIT_COLORS.header
             : (AUDIT_COLORS[statuses[r - 1]] || AUDIT_COLORS.none);
-
+ 
         for (let c = 0; c < headers.length; c++) {
             const ref = XLSX.utils.encode_cell({ r, c });
             if (!sheet[ref]) sheet[ref] = { t: "s", v: "" };
-
+ 
             sheet[ref].s = {
                 font: { name: "Arial", sz: 11, bold: r === 0, color: { rgb: palette.font } },
                 fill: { patternType: "solid", fgColor: { rgb: palette.fill } },
@@ -4247,7 +2846,7 @@ function buildAuditSheet(XLSX, headers, rows, statuses, widths) {
             };
         }
     }
-
+ 
     sheet["!cols"] = widths.map(w => ({ wch: w }));
     sheet["!rows"] = [{ hpt: 28 }];
     sheet["!autofilter"] = {
@@ -4256,80 +2855,75 @@ function buildAuditSheet(XLSX, headers, rows, statuses, widths) {
             e: { r: rows.length, c: headers.length - 1 }
         })
     };
-
+ 
     return sheet;
 }
-
-/* ===== تقرير الجرد Excel: التاريخ واليوم والموديلات والأنواع ===== */
+ 
 const PRODUCT_MODELS = ["تيشيرت", "قميص", "شورت", "بنطلون", "جاكيت"];
 const PRODUCT_GENDERS = ["رجالي", "حريمي"];
-
+ 
 $("exportAuditExcelButton").addEventListener("click", async () => {
     const button = $("exportAuditExcelButton");
     button.disabled = true;
     showMessage("auditMessage", "جاري تجهيز تقرير الجرد...", "info");
-
+ 
     try {
         const XLSX = await loadStyledXlsxLibrary();
-
+ 
         const now = new Date();
         const reportDate = now.toLocaleDateString("ar-EG", { year: "numeric", month: "2-digit", day: "2-digit" });
         const reportDay = now.toLocaleDateString("ar-EG", { weekday: "long" });
-
-        /* الكميات الفعلية المكتوبة حاليًا في الجدول */
+ 
         const entered = new Map();
         $("auditTableBody").querySelectorAll("tr[data-product-id]").forEach(row => {
             const input = row.querySelector(".audit-actual");
             if (!input || input.value.trim() === "") return;
-
+ 
             const actual = Number(input.value);
             if (Number.isInteger(actual) && actual >= 0) {
                 entered.set(row.dataset.productId, actual);
             }
         });
-
-        /* ترتيب: النوع ثم الموديل ثم الاسم */
+ 
         const rank = (list, value) => {
             const i = list.indexOf(value);
             return i === -1 ? list.length : i;
         };
-
+ 
         const sorted = [...products].sort((a, b) =>
             rank(PRODUCT_GENDERS, a.gender) - rank(PRODUCT_GENDERS, b.gender) ||
             rank(PRODUCT_MODELS, a.model) - rank(PRODUCT_MODELS, b.model) ||
             String(a.name).localeCompare(String(b.name), "ar")
         );
-
+ 
         const headers = [
             "م", "التاريخ", "اليوم", "اسم المنتج", "الموديل", "النوع",
             "الكود", "اللون", "المقاس", "سعر الشراء", "سعر البيع",
             "الكمية المسجلة", "الكمية الفعلية", "الفرق", "الحالة", "قيمة المخزون"
         ];
         const widths = [6, 16, 14, 26, 14, 12, 16, 14, 12, 14, 14, 16, 16, 12, 16, 18];
-
+ 
         const records = sorted.map(p => {
             const recorded = Number(p.quantity) || 0;
             const purchase = Number(p.purchasePrice) || 0;
             const hasActual = entered.has(p.id);
             const actual = hasActual ? entered.get(p.id) : "";
             const difference = hasActual ? actual - recorded : "";
-
+ 
             let status = "none";
             let label = "لم يتم الجرد";
-
+ 
             if (hasActual) {
                 if (difference < 0) { status = "shortage"; label = "عجز"; }
                 else if (difference > 0) { status = "surplus"; label = "زيادة"; }
                 else { status = "matched"; label = "مطابق"; }
             }
-
+ 
             return {
                 p,
                 status,
                 row: [
-                    0,
-                    reportDate,
-                    reportDay,
+                    0, reportDate, reportDay,
                     p.name || "",
                     p.model || "غير محدد",
                     p.gender || "غير محدد",
@@ -4346,7 +2940,7 @@ $("exportAuditExcelButton").addEventListener("click", async () => {
                 ]
             };
         });
-
+ 
         const build = filter => {
             const list = records.filter(filter);
             return {
@@ -4354,20 +2948,19 @@ $("exportAuditExcelButton").addEventListener("click", async () => {
                 statuses: list.map(r => r.status)
             };
         };
-
+ 
         const all = build(() => true);
         const matched = build(r => r.status === "matched");
         const notMatched = build(r => r.status === "shortage" || r.status === "surplus");
         const men = build(r => r.p.gender === "رجالي");
         const women = build(r => r.p.gender === "حريمي");
-
-        /* ورقة الملخص */
+ 
         const count = key => records.filter(r => r.status === key).length;
         const totalUnits = products.reduce((s, p) => s + Number(p.quantity || 0), 0);
         const stockValue = products.reduce((s, p) =>
             s + Number(p.purchasePrice || 0) * Number(p.quantity || 0), 0
         );
-
+ 
         const summaryRows = [
             ["التاريخ", reportDate],
             ["اليوم", reportDay],
@@ -4385,71 +2978,70 @@ $("exportAuditExcelButton").addEventListener("click", async () => {
             "none", "none", "none", "none", "none", "none",
             "matched", "none", "shortage", "surplus", "none"
         ];
-
-        /* ورقة ملخص الموديلات حسب النوع */
+ 
         const groups = new Map();
         records.forEach(r => {
             const gender = r.p.gender || "غير محدد";
             const model = r.p.model || "غير محدد";
             const key = gender + "|" + model;
-
+ 
             if (!groups.has(key)) {
                 groups.set(key, {
                     gender, model, products: 0, units: 0, value: 0,
                     shortage: 0, matched: 0, surplus: 0, none: 0
                 });
             }
-
+ 
             const g = groups.get(key);
             g.products++;
             g.units += Number(r.p.quantity) || 0;
             g.value += (Number(r.p.purchasePrice) || 0) * (Number(r.p.quantity) || 0);
             g[r.status]++;
         });
-
+ 
         const modelRows = [...groups.values()].map(g => [
             g.gender, g.model, g.products, g.units, g.value,
             g.shortage, g.matched, g.surplus, g.none
         ]);
-
+ 
         const modelHeaders = [
             "النوع", "الموديل", "عدد المنتجات", "إجمالي القطع",
             "قيمة المخزون", "عجز", "مطابق", "زيادة", "لم يتم الجرد"
         ];
-
+ 
         const workbook = XLSX.utils.book_new();
         workbook.Workbook = { Views: [{ RTL: true }] };
-
+ 
         XLSX.utils.book_append_sheet(workbook,
             buildAuditSheet(XLSX, ["البيان", "القيمة"], summaryRows, summaryStatuses, [36, 28]),
             "ملخص الجرد");
-
+ 
         XLSX.utils.book_append_sheet(workbook,
             buildAuditSheet(XLSX, modelHeaders, modelRows, modelRows.map(() => "none"),
                 [12, 16, 16, 16, 18, 10, 10, 10, 16]),
             "ملخص الموديلات");
-
+ 
         XLSX.utils.book_append_sheet(workbook,
             buildAuditSheet(XLSX, headers, all.rows, all.statuses, widths), "الجرد");
-
+ 
         XLSX.utils.book_append_sheet(workbook,
             buildAuditSheet(XLSX, headers, matched.rows, matched.statuses, widths), "مطابق");
-
+ 
         XLSX.utils.book_append_sheet(workbook,
             buildAuditSheet(XLSX, headers, notMatched.rows, notMatched.statuses, widths), "غير مطابق");
-
+ 
         XLSX.utils.book_append_sheet(workbook,
             buildAuditSheet(XLSX, headers, men.rows, men.statuses, widths), "رجالي");
-
+ 
         XLSX.utils.book_append_sheet(workbook,
             buildAuditSheet(XLSX, headers, women.rows, women.statuses, widths), "حريمي");
-
+ 
         XLSX.writeFile(
             workbook,
             "GAMY-INVENTORY-Audit-Report-" + getLocalDateForFilename() + ".xlsx",
             { bookType: "xlsx" }
         );
-
+ 
         showMessage("auditMessage", "تم تنزيل تقرير الجرد بنجاح.", "success");
     } catch (error) {
         console.error("Audit Excel export error:", error);
@@ -4462,43 +3054,44 @@ $("exportAuditExcelButton").addEventListener("click", async () => {
         button.disabled = false;
     }
 });
-
+ 
 /* استلامات البضاعة: إضافة الأصناف وحساب الإجمالي */
 (function setupReceipts() {
     const receiptBody = document.getElementById("receiptTableBody");
     const addButton = document.getElementById("addReceiptRowButton");
     const grandTotal = document.getElementById("receiptGrandTotal");
-const saveButton = document.getElementById("saveReceiptButton");
-const receiptMessage = document.getElementById("receiptMessage");
-  if (!receiptBody || !addButton || !grandTotal || !saveButton || !receiptMessage) return;
-
+    const saveButton = document.getElementById("saveReceiptButton");
+    const receiptMessage = document.getElementById("receiptMessage");
+ 
+    if (!receiptBody || !addButton || !grandTotal || !saveButton || !receiptMessage) return;
+ 
     function updateReceiptTotals() {
         let total = 0;
-
+ 
         receiptBody.querySelectorAll("tr").forEach(row => {
             const quantity = Number(row.querySelector(".receipt-quantity").value) || 0;
             const cost = Number(row.querySelector(".receipt-cost").value) || 0;
             const rowTotal = quantity * cost;
-
+ 
             row.querySelector(".receipt-total").textContent =
                 rowTotal.toLocaleString("ar-EG", {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2
                 }) + " ج.م";
-
+ 
             total += rowTotal;
         });
-
+ 
         grandTotal.textContent =
             total.toLocaleString("ar-EG", {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             }) + " ج.م";
     }
-
+ 
     function addReceiptRow() {
         const row = document.createElement("tr");
-
+ 
         row.innerHTML = `
             <td><input type="text" class="receipt-name" placeholder="اسم الصنف"></td>
             <td><input type="text" class="receipt-code" placeholder="كود المنتج"></td>
@@ -4509,142 +3102,132 @@ const receiptMessage = document.getElementById("receiptMessage");
             <td class="receipt-total">0.00 ج.م</td>
             <td><button type="button" class="secondary-btn receipt-delete">حذف</button></td>
         `;
-
+ 
         receiptBody.appendChild(row);
         updateReceiptTotals();
     }
-
+ 
     addButton.addEventListener("click", addReceiptRow);
-
+ 
     receiptBody.addEventListener("input", event => {
-        if (
-            event.target.matches(".receipt-quantity, .receipt-cost") ||
-            event.target.matches("input")
-        ) {
-            updateReceiptTotals();
-        }
+        if (event.target.matches("input")) updateReceiptTotals();
     });
  
-  
-saveButton.addEventListener("click", () => {
-    const rows = Array.from(receiptBody.querySelectorAll("tr"));
-    const entries = [];
-
-    for (const row of rows) {
-        const name = row.querySelector(".receipt-name").value.trim();
-        const code = row.querySelector(".receipt-code").value.trim();
-        const size = row.querySelector(".receipt-size").value.trim();
-        const color = row.querySelector(".receipt-color").value.trim();
-        const qtyText = row.querySelector(".receipt-quantity").value;
-        const costText = row.querySelector(".receipt-cost").value;
-        const quantity = Number(qtyText);
-        const cost = Number(costText);
-
-        const isBlank = !name && !code && !size && !color &&
-            !qtyText.trim() && !costText.trim();
-
-        if (isBlank) continue;
-
-        if (!name || !code) {
-            showMessage("receiptMessage", "اكتب اسم الصنف وكوده.", "error");
+    saveButton.addEventListener("click", () => {
+        const rows = Array.from(receiptBody.querySelectorAll("tr"));
+        const entries = [];
+ 
+        for (const row of rows) {
+            const name = row.querySelector(".receipt-name").value.trim();
+            const code = row.querySelector(".receipt-code").value.trim();
+            const size = row.querySelector(".receipt-size").value.trim();
+            const color = row.querySelector(".receipt-color").value.trim();
+            const qtyText = row.querySelector(".receipt-quantity").value;
+            const costText = row.querySelector(".receipt-cost").value;
+            const quantity = Number(qtyText);
+            const cost = Number(costText);
+ 
+            const isBlank = !name && !code && !size && !color &&
+                !costText.trim() && (!qtyText.trim() || qtyText === "1");
+ 
+            if (isBlank) continue;
+ 
+            if (!name || !code) {
+                showMessage("receiptMessage", "اكتب اسم الصنف وكوده.", "error");
+                return;
+            }
+ 
+            if (!qtyText.trim() || !Number.isInteger(quantity) || quantity <= 0) {
+                showMessage("receiptMessage", "اكتب كمية صحيحة أكبر من صفر.", "error");
+                return;
+            }
+ 
+            if (!costText.trim() || !Number.isFinite(cost) || cost < 0) {
+                showMessage("receiptMessage", "اكتب سعر شراء صحيحًا.", "error");
+                return;
+            }
+ 
+            entries.push({
+                name, code, size, color,
+                quantity,
+                actualQuantity: quantity,
+                cost
+            });
+        }
+ 
+        if (!entries.length) {
+            showMessage("receiptMessage", "أضف صنفًا واكتب بياناته أولًا.", "error");
             return;
         }
-
-        if (!qtyText.trim() || !Number.isInteger(quantity) || quantity <= 0) {
-            showMessage("receiptMessage", "اكتب كمية صحيحة أكبر من صفر.", "error");
+ 
+        const seenCodes = new Set();
+ 
+        for (const item of entries) {
+            const key = normalize(item.code);
+ 
+            if (seenCodes.has(key)) {
+                showMessage("receiptMessage", "لا تكرر كود الصنف في أكثر من صف.", "error");
+                return;
+            }
+ 
+            seenCodes.add(key);
+ 
+            const existing = products.find(p => normalize(p.code) === key);
+ 
+            if (existing &&
+                (normalize(existing.name) !== normalize(item.name) ||
+                 normalize(existing.size) !== normalize(item.size) ||
+                 normalize(existing.color) !== normalize(item.color))) {
+                showMessage("receiptMessage", "كود المنتج موجود لكن بياناته مختلفة. راجع الاسم والمقاس واللون.", "error");
+                return;
+            }
+        }
+ 
+        const RECEIPTS_KEY = "gamy_inventory_receipts_v1";
+        let savedReceipts;
+ 
+        try {
+            savedReceipts = JSON.parse(localStorage.getItem(RECEIPTS_KEY) || "[]");
+ 
+            if (!Array.isArray(savedReceipts)) {
+                throw new Error("سجل الإذونات غير صالح.");
+            }
+        } catch (error) {
+            showMessage("receiptMessage", "تعذر قراءة سجل الاستلامات. لم يتغير المخزون.", "error");
             return;
         }
-
-        if (!costText.trim() || !Number.isFinite(cost) || cost < 0) {
-            showMessage("receiptMessage", "اكتب سعر شراء صحيحًا.", "error");
+ 
+        const receipt = {
+            id: "REC-" + Date.now() + "-" + Math.random().toString(16).slice(2, 8),
+            date: new Date().toISOString(),
+            status: "draft",
+            items: entries
+        };
+ 
+        try {
+            savedReceipts.push(receipt);
+            localStorage.setItem(RECEIPTS_KEY, JSON.stringify(savedReceipts));
+        } catch (error) {
+            showMessage("receiptMessage", "تعذر حفظ المسودة. لم يتغير المخزون.", "error");
             return;
         }
-
-        entries.push({
-            name,
-            code,
-            size,
-            color,
-            quantity,
-            actualQuantity: quantity,
-            cost
-        });
-    }
-
-    if (!entries.length) {
-        showMessage("receiptMessage", "أضف صنفًا واكتب بياناته أولًا.", "error");
-        return;
-    }
-
-    const seenCodes = new Set();
-
-    for (const item of entries) {
-        const key = normalize(item.code);
-
-        if (seenCodes.has(key)) {
-            showMessage("receiptMessage", "لا تكرر كود الصنف في أكثر من صف.", "error");
-            return;
-        }
-
-        seenCodes.add(key);
-
-        const existing = products.find(p => normalize(p.code) === key);
-
-        if (existing &&
-            (normalize(existing.name) !== normalize(item.name) ||
-             normalize(existing.size) !== normalize(item.size) ||
-             normalize(existing.color) !== normalize(item.color))) {
-            showMessage("receiptMessage", "كود المنتج موجود لكن بياناته مختلفة. راجع الاسم والمقاس واللون.", "error");
-            return;
-        }
-    }
-
-    const RECEIPTS_KEY = "gamy_inventory_receipts_v1";
-    let savedReceipts;
-
-    try {
-        savedReceipts = JSON.parse(localStorage.getItem(RECEIPTS_KEY) || "[]");
-
-        if (!Array.isArray(savedReceipts)) {
-            throw new Error("سجل الإذونات غير صالح.");
-        }
-    } catch (error) {
-        showMessage("receiptMessage", "تعذر قراءة سجل الاستلامات. لم يتغير المخزون.", "error");
-        return;
-    }
-
-    const receipt = {
-        id: "REC-" + Date.now() + "-" + Math.random().toString(16).slice(2, 8),
-        date: new Date().toISOString(),
-        status: "draft",
-        items: entries
-    };
-
-    try {
-        savedReceipts.push(receipt);
-        localStorage.setItem(RECEIPTS_KEY, JSON.stringify(savedReceipts));
-    } catch (error) {
-        showMessage("receiptMessage", "تعذر حفظ المسودة. لم يتغير المخزون.", "error");
-        return;
-    }
-
-    receiptBody.replaceChildren();
-    addReceiptRow();
-
-    showMessage(
-        "receiptMessage",
-        "تم حفظ المسودة برقم " + receipt.id + ". لم تتم إضافة أي كمية للمخزون.",
-        "success"
-    );
-});
-
-
+ 
+        receiptBody.replaceChildren();
+        addReceiptRow();
+ 
+        showMessage(
+            "receiptMessage",
+            "تم حفظ المسودة برقم " + receipt.id + ". لم تتم إضافة أي كمية للمخزون.",
+            "success"
+        );
+    });
+ 
     receiptBody.addEventListener("click", event => {
         const deleteButton = event.target.closest(".receipt-delete");
         if (!deleteButton) return;
-
+ 
         const rows = receiptBody.querySelectorAll("tr");
-
+ 
         if (rows.length === 1) {
             rows[0].querySelectorAll("input").forEach(input => {
                 input.value = input.classList.contains("receipt-quantity") ? "1" : "";
@@ -4652,30 +3235,27 @@ saveButton.addEventListener("click", () => {
         } else {
             deleteButton.closest("tr").remove();
         }
-
+ 
         updateReceiptTotals();
     });
-
+ 
     updateReceiptTotals();
 })();
-
 </script>
-<script>
  
+<script>
 /* عرض سجل أذون الاستلام واعتمادها */
 (function () {
     const RECEIPTS_KEY = "gamy_inventory_receipts_v1";
     const historyBody = document.getElementById("receiptHistoryBody");
     const detailsBox = document.getElementById("receiptHistoryDetails");
-
+ 
     if (!historyBody || !detailsBox) return;
-
+ 
     function normalizeReceiptValue(value) {
-        return String(value == null ? "" : value)
-            .trim()
-            .toLowerCase();
+        return String(value == null ? "" : value).trim().toLowerCase();
     }
-
+ 
     function readReceipts() {
         const data = JSON.parse(localStorage.getItem(RECEIPTS_KEY) || "[]");
         if (!Array.isArray(data)) {
@@ -4683,10 +3263,10 @@ saveButton.addEventListener("click", () => {
         }
         return data;
     }
-
+ 
     function renderReceiptHistory() {
         let receipts;
-
+ 
         try {
             receipts = readReceipts();
         } catch (error) {
@@ -4694,9 +3274,9 @@ saveButton.addEventListener("click", () => {
                 '<tr><td colspan="6">تعذر قراءة سجل الاستلام.</td></tr>';
             return;
         }
-
+ 
         historyBody.replaceChildren();
-
+ 
         if (receipts.length === 0) {
             historyBody.innerHTML =
                 '<tr><td colspan="6" class="empty-state">لا توجد أذون محفوظة حتى الآن.</td></tr>';
@@ -4704,12 +3284,12 @@ saveButton.addEventListener("click", () => {
             detailsBox.replaceChildren();
             return;
         }
-
+ 
         receipts.slice().reverse().forEach(receipt => {
             const items = Array.isArray(receipt.items) ? receipt.items : [];
             const total = items.reduce((sum, item) =>
                 sum + (Number(item.quantity) || 0) * (Number(item.cost) || 0), 0);
-
+ 
             const tr = document.createElement("tr");
             const values = [
                 receipt.id || "—",
@@ -4718,27 +3298,27 @@ saveButton.addEventListener("click", () => {
                 total.toLocaleString("ar-EG", { maximumFractionDigits: 2 }),
                 receipt.status === "approved" ? "تم اعتماد الاستلام" : "مسودة"
             ];
-
+ 
             values.forEach(value => {
                 const td = document.createElement("td");
                 td.textContent = value;
                 tr.appendChild(td);
             });
-
+ 
             const actionCell = document.createElement("td");
-
+ 
             const detailsButton = document.createElement("button");
             detailsButton.type = "button";
             detailsButton.className = "secondary-btn";
             detailsButton.textContent = "عرض التفاصيل";
-
+ 
             detailsButton.addEventListener("click", () => {
                 detailsBox.replaceChildren();
-
+ 
                 const heading = document.createElement("h3");
                 heading.textContent = "تفاصيل الإذن " + (receipt.id || "");
                 detailsBox.appendChild(heading);
-
+ 
                 items.forEach(item => {
                     const line = document.createElement("p");
                     line.textContent =
@@ -4750,78 +3330,78 @@ saveButton.addEventListener("click", () => {
                         " | التكلفة: " + (Number(item.cost) || 0);
                     detailsBox.appendChild(line);
                 });
-
+ 
                 detailsBox.hidden = false;
             });
-
+ 
             actionCell.appendChild(detailsButton);
-
+ 
             if (receipt.status !== "approved") {
                 const approveButton = document.createElement("button");
                 approveButton.type = "button";
                 approveButton.className = "primary-btn";
                 approveButton.textContent = "اعتماد الاستلام";
                 approveButton.style.marginInlineStart = "8px";
-
+ 
                 approveButton.addEventListener("click", () => {
                     if (!receipt.id) {
                         showMessage("receiptMessage", "الإذن لا يحتوي على رقم صالح.", "error");
                         return;
                     }
-
+ 
                     let currentReceipts;
-
+ 
                     try {
                         currentReceipts = readReceipts();
                     } catch (error) {
                         showMessage("receiptMessage", "تعذر قراءة سجل الإذونات.", "error");
                         return;
                     }
-
+ 
                     const currentReceipt = currentReceipts.find(
                         item => item && item.id === receipt.id
                     );
-
+ 
                     if (!currentReceipt) {
                         showMessage("receiptMessage", "الإذن غير موجود في السجل.", "error");
                         renderReceiptHistory();
                         return;
                     }
-
+ 
                     if (currentReceipt.status === "approved") {
                         showMessage("receiptMessage", "تم اعتماد هذا الإذن من قبل.", "error");
                         renderReceiptHistory();
                         return;
                     }
-
+ 
                     const receiptItems = currentReceipt.items;
                     if (!Array.isArray(receiptItems) || receiptItems.length === 0) {
                         showMessage("receiptMessage", "الإذن لا يحتوي على أصناف.", "error");
                         return;
                     }
-
+ 
                     const updates = [];
                     const seenCodes = new Set();
-
+ 
                     for (const item of receiptItems) {
                         const code = normalizeReceiptValue(item.code);
                         const quantity = Number(item.quantity);
-
+ 
                         if (!code || !Number.isSafeInteger(quantity) || quantity <= 0) {
                             showMessage("receiptMessage", "يوجد كود أو كمية غير صحيحة. لم يتغير المخزون.", "error");
                             return;
                         }
-
+ 
                         if (seenCodes.has(code)) {
                             showMessage("receiptMessage", "الإذن يحتوي على كود صنف مكرر. لم يتغير المخزون.", "error");
                             return;
                         }
                         seenCodes.add(code);
-
+ 
                         const product = products.find(
                             p => normalizeReceiptValue(p.code) === code
                         );
-
+ 
                         if (!product) {
                             showMessage(
                                 "receiptMessage",
@@ -4830,7 +3410,7 @@ saveButton.addEventListener("click", () => {
                             );
                             return;
                         }
-
+ 
                         if (
                             normalizeReceiptValue(product.name) !== normalizeReceiptValue(item.name) ||
                             normalizeReceiptValue(product.size) !== normalizeReceiptValue(item.size) ||
@@ -4843,7 +3423,7 @@ saveButton.addEventListener("click", () => {
                             );
                             return;
                         }
-
+ 
                         const oldQuantity = Number(product.quantity);
                         if (
                             !Number.isSafeInteger(oldQuantity) ||
@@ -4853,17 +3433,17 @@ saveButton.addEventListener("click", () => {
                             showMessage("receiptMessage", "كمية المخزون غير صالحة أو أكبر من الحد المسموح.", "error");
                             return;
                         }
-
+ 
                         updates.push({
                             product,
                             oldQuantity,
                             newQuantity: oldQuantity + quantity
                         });
                     }
-
+ 
                     let oldProductsStorage;
                     let oldReceiptsStorage;
-
+ 
                     try {
                         oldProductsStorage = localStorage.getItem(PRODUCT_KEY);
                         oldReceiptsStorage = localStorage.getItem(RECEIPTS_KEY);
@@ -4871,14 +3451,14 @@ saveButton.addEventListener("click", () => {
                         showMessage("receiptMessage", "تعذر الوصول إلى التخزين. لم يتغير المخزون.", "error");
                         return;
                     }
-
+ 
                     updates.forEach(update => {
                         update.product.quantity = update.newQuantity;
                     });
-
+ 
                     currentReceipt.status = "approved";
                     currentReceipt.approvedAt = new Date().toISOString();
-
+ 
                     try {
                         localStorage.setItem(PRODUCT_KEY, JSON.stringify(products));
                         localStorage.setItem(RECEIPTS_KEY, JSON.stringify(currentReceipts));
@@ -4886,14 +3466,14 @@ saveButton.addEventListener("click", () => {
                         updates.forEach(update => {
                             update.product.quantity = update.oldQuantity;
                         });
-
+ 
                         try {
                             if (oldProductsStorage === null) {
                                 localStorage.removeItem(PRODUCT_KEY);
                             } else {
                                 localStorage.setItem(PRODUCT_KEY, oldProductsStorage);
                             }
-
+ 
                             if (oldReceiptsStorage === null) {
                                 localStorage.removeItem(RECEIPTS_KEY);
                             } else {
@@ -4902,11 +3482,11 @@ saveButton.addEventListener("click", () => {
                         } catch (rollbackError) {
                             console.error("تعذر التراجع الكامل عن حفظ الإذن:", rollbackError);
                         }
-
+ 
                         showMessage("receiptMessage", "فشل الحفظ. حاول مرة أخرى وتأكد من مساحة التخزين.", "error");
                         return;
                     }
-
+ 
                     renderProducts();
                     renderReceiptHistory();
                     showMessage(
@@ -4915,211 +3495,216 @@ saveButton.addEventListener("click", () => {
                         "success"
                     );
                 });
-
-               
-actionCell.appendChild(approveButton);
-
-const deleteButton = document.createElement("button");
-deleteButton.type = "button";
-deleteButton.className = "secondary-btn";
-deleteButton.textContent = "حذف الإذن";
-deleteButton.style.marginInlineStart = "8px";
-
-deleteButton.addEventListener("click", () => {
-    if (!receipt.id) {
-        showMessage("receiptMessage", "الإذن لا يحتوي على رقم صالح.", "error");
-        return;
-    }
-
-    const confirmed = confirm(
-        "هل أنت متأكد من حذف الإذن رقم " + receipt.id + "؟\n" +
-        "لن يتم حذف المنتج أو تغيير كميته في المخزون."
-    );
-
-    if (!confirmed) return;
-
-    let currentReceipts;
-
-    try {
-        currentReceipts = readReceipts();
-
-        const index = currentReceipts.findIndex(
-            item => String(item.id) === String(receipt.id)
-        );
-
-        if (index === -1) {
-            showMessage("receiptMessage", "الإذن غير موجود في السجل.", "error");
-            return;
-        }
-
-        currentReceipts.splice(index, 1);
-        localStorage.setItem(
-            "gamy_inventory_receipts_v1",
-            JSON.stringify(currentReceipts)
-        );
-
-        showMessage("receiptMessage", "تم حذف الإذن من السجل.", "success");
-        renderReceiptHistory();
-    } catch (error) {
-        showMessage("receiptMessage", "تعذر حذف الإذن. لم يتم تأكيد نجاح الحذف.", "error");
-    }
-});
-
-actionCell.appendChild(deleteButton);
-
-
+ 
+                actionCell.appendChild(approveButton);
+ 
+                const deleteButton = document.createElement("button");
+                deleteButton.type = "button";
+                deleteButton.className = "secondary-btn";
+                deleteButton.textContent = "حذف الإذن";
+                deleteButton.style.marginInlineStart = "8px";
+ 
+                deleteButton.addEventListener("click", () => {
+                    if (!receipt.id) {
+                        showMessage("receiptMessage", "الإذن لا يحتوي على رقم صالح.", "error");
+                        return;
+                    }
+ 
+                    const confirmed = confirm(
+                        "هل أنت متأكد من حذف الإذن رقم " + receipt.id + "؟\n" +
+                        "لن يتم حذف المنتج أو تغيير كميته في المخزون."
+                    );
+ 
+                    if (!confirmed) return;
+ 
+                    try {
+                        const currentReceipts = readReceipts();
+ 
+                        const index = currentReceipts.findIndex(
+                            item => String(item.id) === String(receipt.id)
+                        );
+ 
+                        if (index === -1) {
+                            showMessage("receiptMessage", "الإذن غير موجود في السجل.", "error");
+                            return;
+                        }
+ 
+                        currentReceipts.splice(index, 1);
+                        localStorage.setItem(RECEIPTS_KEY, JSON.stringify(currentReceipts));
+ 
+                        showMessage("receiptMessage", "تم حذف الإذن من السجل.", "success");
+                        renderReceiptHistory();
+                    } catch (error) {
+                        showMessage("receiptMessage", "تعذر حذف الإذن. لم يتم تأكيد نجاح الحذف.", "error");
+                    }
+                });
+ 
+                actionCell.appendChild(deleteButton);
+            }
+ 
             tr.appendChild(actionCell);
             historyBody.appendChild(tr);
         });
     }
-
+ 
     renderReceiptHistory();
-
+ 
     document.getElementById("saveReceiptButton")?.addEventListener("click", () => {
         setTimeout(renderReceiptHistory, 0);
     });
 })();
-
-
 </script>
-
-
+ 
 <script>
-/* تقرير حركة المخزون - قراءة أذون الاستلام المعتمدة فقط */
+/* حركة المخزون: الاستلامات المعتمدة + المبيعات، الأحدث أولًا */
 (function () {
     const RECEIPTS_KEY = "gamy_inventory_receipts_v1";
-
+ 
     const tableBody = document.getElementById("stockMovementsBody");
     const searchInput = document.getElementById("stockMovementSearch");
     const refreshButton = document.getElementById("refreshStockMovementsButton");
     const summary = document.getElementById("stockMovementsSummary");
-
+ 
     if (!tableBody || !searchInput || !refreshButton || !summary) return;
-
+ 
     function formatDate(value) {
         if (!value) return "—";
-
         const date = new Date(value);
         if (Number.isNaN(date.getTime())) return "—";
-
         return date.toLocaleString("ar-EG");
     }
-
+ 
     function safeText(value) {
         return String(value ?? "");
     }
-
+ 
+    function showSummary(text, type) {
+        summary.textContent = text;
+        summary.className = "message " + type;
+    }
+ 
     function renderStockMovements() {
         tableBody.replaceChildren();
-
+ 
         let receipts;
-
+ 
         try {
             receipts = JSON.parse(localStorage.getItem(RECEIPTS_KEY) || "[]");
-
-            if (!Array.isArray(receipts)) {
-                throw new Error("سجل الاستلامات غير صالح.");
-            }
+            if (!Array.isArray(receipts)) throw new Error("invalid");
         } catch (error) {
-            summary.textContent = "تعذرت قراءة سجل أذون الاستلام.";
+            showSummary("تعذرت قراءة سجل أذون الاستلام.", "error");
             return;
         }
-
+ 
         const movements = [];
-
+ 
         receipts.forEach(function (receipt) {
             if (!receipt || receipt.status !== "approved") return;
-
+ 
             const items = Array.isArray(receipt.items) ? receipt.items : [];
-
+ 
             items.forEach(function (item) {
                 movements.push({
                     date: receipt.approvedAt || receipt.date,
                     receiptId: receipt.id || "—",
+                    type: "استلام",
                     name: item.name || "—",
                     code: item.code || "—",
                     size: item.size || "—",
                     color: item.color || "—",
-                    quantity: item.actualQuantity ?? item.quantity ?? 0
+                    quantity: Number(item.actualQuantity ?? item.quantity ?? 0) || 0
                 });
             });
         });
-
- // إضافة المبيعات إلى حركة المخزون للعرض فقط
-let savedSales = [];
-
-try {
-    savedSales = JSON.parse(localStorage.getItem(SALES_KEY) || "[]");
-
-    if (!Array.isArray(savedSales)) {
-        savedSales = [];
-    }
-} catch (error) {
-    console.error("تعذر قراءة سجل المبيعات:", error);
-}
-
-savedSales.forEach(function (sale) {
-    if (!sale || !sale.id) return;
-
-    movements.push({
-        date: sale.createdAt,
-        receiptId: sale.id,
-        name: sale.productName || "—",
-        code: sale.productCode || "—",
-        size: "—",
-        color: "—",
-        quantity: -Math.abs(Number(sale.quantity) || 0),
-        type: "بيع"
-    });
-});
-
+ 
+        let savedSales = [];
+ 
+        try {
+            savedSales = JSON.parse(localStorage.getItem(SALES_KEY) || "[]");
+            if (!Array.isArray(savedSales)) savedSales = [];
+        } catch (error) {
+            console.error("تعذر قراءة سجل المبيعات:", error);
+        }
+ 
+        savedSales.forEach(function (sale) {
+            if (!sale || !sale.id) return;
+ 
+            movements.push({
+                date: sale.createdAt,
+                receiptId: sale.id,
+                type: "بيع",
+                name: sale.productName || "—",
+                code: sale.productCode || "—",
+                size: "—",
+                color: "—",
+                quantity: -Math.abs(Number(sale.quantity) || 0)
+            });
+        });
+ 
+        movements.sort(function (a, b) {
+            return new Date(b.date).getTime() - new Date(a.date).getTime();
+        });
+ 
         const query = searchInput.value.trim().toLowerCase();
-
+ 
         const filtered = movements.filter(function (movement) {
             return [
-                movement.receiptId,
-                movement.name,
-                movement.code,
-                movement.size,
-                movement.color
+                movement.receiptId, movement.type, movement.name,
+                movement.code, movement.size, movement.color
             ].some(function (value) {
                 return safeText(value).toLowerCase().includes(query);
             });
         });
-
+ 
         filtered.forEach(function (movement) {
             const tr = document.createElement("tr");
-
+ 
             [
                 formatDate(movement.date),
                 movement.receiptId,
+                movement.type,
                 movement.name,
                 movement.code,
                 movement.size,
                 movement.color,
-                movement.quantity
+                (movement.quantity > 0 ? "+" : "") + movement.quantity.toLocaleString("ar-EG")
             ].forEach(function (value) {
                 const td = document.createElement("td");
                 td.textContent = safeText(value) || "—";
                 tr.appendChild(td);
             });
-
+ 
             tableBody.appendChild(tr);
         });
-
-        const totalQuantity = filtered.reduce(function (total, movement) {
-            const quantity = Number(movement.quantity);
-            return total + (Number.isFinite(quantity) ? quantity : 0);
+ 
+        if (!filtered.length) {
+            const tr = document.createElement("tr");
+            const td = document.createElement("td");
+            td.colSpan = 8;
+            td.className = "empty-state";
+            td.textContent = query ? "لا توجد نتائج مطابقة للبحث." : "لا توجد حركات مخزون حتى الآن.";
+            tr.appendChild(td);
+            tableBody.appendChild(tr);
+        }
+ 
+        const net = filtered.reduce(function (total, movement) {
+            return total + movement.quantity;
         }, 0);
-
-        summary.textContent =
-            "عدد حركات الاستلام المعروضة: " + filtered.length +
-            " | إجمالي الكميات الداخلة: " + totalQuantity;
+ 
+        showSummary(
+            "عدد الحركات المعروضة: " + filtered.length.toLocaleString("ar-EG") +
+            " | صافي الكمية: " + net.toLocaleString("ar-EG"),
+            "info"
+        );
     }
-
+ 
     searchInput.addEventListener("input", renderStockMovements);
     refreshButton.addEventListener("click", renderStockMovements);
-
+ 
+    document.querySelectorAll('.nav-item[data-page="stockMovements"]').forEach(function (btn) {
+        btn.addEventListener("click", renderStockMovements);
+    });
+ 
     renderStockMovements();
 })();
 </script>
@@ -5129,11 +3714,11 @@ savedSales.forEach(function (sale) {
 (function () {
     const layout = document.querySelector(".app-layout");
     const toggle = document.getElementById("sidebarToggle");
-
+ 
     if (!layout || !toggle) return;
-
+ 
     const KEY = "gamy_sidebar_collapsed";
-
+ 
     function setSidebarState(collapsed) {
         layout.classList.toggle("sidebar-collapsed", collapsed);
         toggle.setAttribute("aria-expanded", String(!collapsed));
@@ -5141,36 +3726,33 @@ savedSales.forEach(function (sale) {
             "aria-label",
             collapsed ? "فتح القائمة الجانبية" : "طي القائمة الجانبية"
         );
-
+ 
         try {
             localStorage.setItem(KEY, String(collapsed));
         } catch (error) {}
     }
-
+ 
     let collapsed = false;
-
+ 
     try {
         collapsed = localStorage.getItem(KEY) === "true";
     } catch (error) {}
-
+ 
     setSidebarState(collapsed);
-
+ 
     toggle.addEventListener("click", function () {
         setSidebarState(!layout.classList.contains("sidebar-collapsed"));
     });
 })();
 </script>
-
+ 
 <script>
+/* العملاء والموردون */
 (function () {
     "use strict";
-
-    <script>
-(function () {
-    "use strict";
-
+ 
     const CONTACTS_KEY = "gamy_inventory_contacts_v1";
-
+ 
     const form = document.getElementById("customerSupplierForm");
     const typeInput = document.getElementById("contactType");
     const nameInput = document.getElementById("contactName");
@@ -5185,53 +3767,56 @@ savedSales.forEach(function (sale) {
     const message = document.getElementById("contactsMessage");
     const emptyMessage = document.getElementById("contactsEmptyMessage");
     const cancelButton = document.getElementById("cancelContactEdit");
-
-    /* لو أي عنصر ناقص، نوقف قبل أي استخدام له */
-    if (!form || !typeInput || !nameInput || !phoneInput || !addressInput ||
-        !goodsTypeInput || !goodsTypeGroup || !searchInput || !tableBody ||
-        !customerCount || !supplierCount || !message || !emptyMessage ||
-        !cancelButton) return;
-
+ 
+    const required = { customerSupplierForm: form, contactType: typeInput, contactName: nameInput,
+        contactPhone: phoneInput, contactAddress: addressInput, contactGoodsType: goodsTypeInput,
+        supplierGoodsGroup: goodsTypeGroup, contactsSearch: searchInput, contactsTableBody: tableBody,
+        customersCount: customerCount, suppliersCount: supplierCount, contactsMessage: message,
+        contactsEmptyMessage: emptyMessage, cancelContactEdit: cancelButton };
+    const missing = Object.keys(required).filter(k => !required[k]);
+    if (missing.length) {
+        console.error("عناصر ناقصة في صفحة العملاء والموردين:", missing);
+        alert("عناصر ناقصة في صفحة العملاء والموردين: " + missing.join(", "));
+        return;
+    }
+    const submitButton = form.querySelector('button[type="submit"]');
+ 
     let contacts = [];
     let editingId = null;
-
-    function showMessage(text, isError) {
+ 
+    function showContactMessage(text, isError) {
         message.textContent = text;
         message.className = "message " + (isError ? "error" : "success");
     }
-
+ 
     function updateGoodsTypeVisibility() {
         const isSupplier = typeInput.value === "supplier";
         goodsTypeGroup.hidden = !isSupplier;
-        goodsTypeInput.required = isSupplier;
         if (!isSupplier) goodsTypeInput.value = "";
     }
-
+ 
     function loadContacts() {
         try {
-            const saved = JSON.parse(
-                localStorage.getItem(CONTACTS_KEY) || "[]"
-            );
+            const saved = JSON.parse(localStorage.getItem(CONTACTS_KEY) || "[]");
             contacts = Array.isArray(saved) ? saved.filter(
-                item => item && typeof item === "object" &&
-                    typeof item.id === "string"
+                item => item && typeof item === "object" && typeof item.id === "string"
             ) : [];
         } catch (error) {
             contacts = [];
-            showMessage("تعذر قراءة بيانات العملاء والموردين.", true);
+            showContactMessage("تعذر قراءة بيانات العملاء والموردين.", true);
         }
     }
-
+ 
     function saveContacts() {
         try {
             localStorage.setItem(CONTACTS_KEY, JSON.stringify(contacts));
             return true;
         } catch (error) {
-            showMessage("تعذر حفظ البيانات. تحقق من مساحة التخزين.", true);
+            showContactMessage("تعذر حفظ البيانات. تحقق من مساحة التخزين.", true);
             return false;
         }
     }
-
+ 
     function resetForm() {
         form.reset();
         updateGoodsTypeVisibility();
@@ -5239,10 +3824,10 @@ savedSales.forEach(function (sale) {
         form.querySelector('button[type="submit"]').textContent = "حفظ البيانات";
         cancelButton.hidden = true;
     }
-
+ 
     function renderContacts() {
         const query = searchInput.value.trim().toLowerCase();
-
+ 
         const filtered = contacts.filter(contact => [
             contact.name,
             contact.phone,
@@ -5250,12 +3835,12 @@ savedSales.forEach(function (sale) {
             contact.goodsType,
             contact.type === "customer" ? "عميل" : "مورد"
         ].some(value => String(value || "").toLowerCase().includes(query)));
-
+ 
         tableBody.replaceChildren();
-
+ 
         filtered.forEach(contact => {
             const row = document.createElement("tr");
-
+ 
             [
                 contact.type === "customer" ? "عميل" : "مورد",
                 contact.name,
@@ -5267,9 +3852,9 @@ savedSales.forEach(function (sale) {
                 cell.textContent = value;
                 row.appendChild(cell);
             });
-
+ 
             const actions = document.createElement("td");
-
+ 
             const editButton = document.createElement("button");
             editButton.type = "button";
             editButton.className = "secondary-btn";
@@ -5282,12 +3867,11 @@ savedSales.forEach(function (sale) {
                 addressInput.value = contact.address || "";
                 updateGoodsTypeVisibility();
                 goodsTypeInput.value = contact.goodsType || "";
-                form.querySelector('button[type="submit"]').textContent =
-                    "حفظ التعديلات";
+                form.querySelector('button[type="submit"]').textContent = "حفظ التعديلات";
                 cancelButton.hidden = false;
                 form.scrollIntoView({ behavior: "smooth", block: "start" });
             });
-
+ 
             const deleteButton = document.createElement("button");
             deleteButton.type = "button";
             deleteButton.className = "secondary-btn";
@@ -5295,110 +3879,115 @@ savedSales.forEach(function (sale) {
             deleteButton.style.marginInlineStart = "6px";
             deleteButton.addEventListener("click", () => {
                 if (!confirm("هل تريد حذف هذا السجل؟")) return;
-
+ 
                 const oldContacts = contacts;
                 contacts = contacts.filter(item => item.id !== contact.id);
-
+ 
                 if (!saveContacts()) {
                     contacts = oldContacts;
                     return;
                 }
-
+ 
                 if (editingId === contact.id) resetForm();
                 renderContacts();
-                showMessage("تم حذف السجل بنجاح.", false);
+                showContactMessage("تم حذف السجل بنجاح.", false);
             });
-
+ 
             actions.append(editButton, deleteButton);
             row.appendChild(actions);
             tableBody.appendChild(row);
         });
-
+ 
         customerCount.textContent = contacts.filter(
             item => item.type === "customer"
         ).length.toLocaleString("ar-EG");
-
+ 
         supplierCount.textContent = contacts.filter(
             item => item.type === "supplier"
         ).length.toLocaleString("ar-EG");
-
+ 
         emptyMessage.hidden = filtered.length > 0;
         emptyMessage.textContent = query
             ? "لا توجد نتائج مطابقة للبحث."
             : "لا توجد بيانات مسجلة حتى الآن.";
     }
-
-    form.addEventListener("submit", event => {
+ 
+    const saveContact = event => {
         event.preventDefault();
-
+ 
         const name = nameInput.value.trim();
         if (!name) {
-            showMessage("اكتب الاسم أولًا.", true);
+            showContactMessage("اكتب الاسم أولًا.", true);
             nameInput.focus();
             return;
         }
-
+ 
+        if (typeInput.value === "supplier" && !goodsTypeInput.value) {
+            showContactMessage("اختر نوع المنتج للمورد.", true);
+            goodsTypeInput.focus();
+            return;
+        }
+ 
         const duplicate = contacts.some(item =>
             item.id !== editingId &&
             item.type === typeInput.value &&
             String(item.name || "").trim().toLowerCase() === name.toLowerCase()
         );
-
+ 
         if (duplicate) {
-            showMessage("الاسم مسجل بالفعل لنفس النوع.", true);
+            showContactMessage("الاسم مسجل بالفعل لنفس النوع.", true);
             nameInput.focus();
             return;
         }
-
+ 
         const oldContacts = contacts;
         const contactData = {
             type: typeInput.value,
             name,
             phone: phoneInput.value.trim(),
             address: addressInput.value.trim(),
-            goodsType: typeInput.value === "supplier"
-                ? goodsTypeInput.value
-                : ""
+            goodsType: typeInput.value === "supplier" ? goodsTypeInput.value : ""
         };
-
+ 
         if (editingId) {
             contacts = contacts.map(item =>
-                item.id === editingId
-                    ? { ...item, ...contactData }
-                    : item
+                item.id === editingId ? { ...item, ...contactData } : item
             );
         } else {
             contacts = [...contacts, {
-                id: Date.now().toString() +
-                    Math.random().toString(16).slice(2),
+                id: Date.now().toString() + Math.random().toString(16).slice(2),
                 ...contactData,
                 createdAt: new Date().toISOString()
             }];
         }
-
+ 
         if (!saveContacts()) {
             contacts = oldContacts;
             return;
         }
-
+ 
         resetForm();
         renderContacts();
-        showMessage("تم حفظ البيانات بنجاح.", false);
-    });
-
+        showContactMessage("تم حفظ البيانات بنجاح.", false);
+    };
+ 
+    form.addEventListener("submit", event => event.preventDefault());
+    submitButton.addEventListener("click", saveContact);
+ 
     cancelButton.addEventListener("click", () => {
         resetForm();
-        showMessage("تم إلغاء التعديل.", false);
+        showContactMessage("تم إلغاء التعديل.", false);
     });
-
+ 
     typeInput.addEventListener("change", updateGoodsTypeVisibility);
     searchInput.addEventListener("input", renderContacts);
-
+ 
     updateGoodsTypeVisibility();
     loadContacts();
     renderContacts();
 })();
-</script
-
+</script>
+ 
 </body>
 </html>
+
