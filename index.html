@@ -1836,12 +1836,15 @@ body.dark-mode {
       <table>
         <thead>
           <tr>
-            <th>النوع</th>
-            <th>الاسم</th>
-            <th>الهاتف</th>
+ 
+ <th>النوع</th>
+<th>الاسم</th>
+<th>الهاتف</th>
 <th>نوع المنتج</th>
-            <th>العنوان</th>
-            <th>الإجراءات</th>
+<th>العنوان</th>
+<th>الإجراءات</th>
+ 
+        
           </tr>
         </thead>
         <tbody id="contactsTableBody"></tbody>
@@ -5265,18 +5268,17 @@ typeInput.addEventListener("change", updateGoodsTypeVisibility);
 
         filtered.forEach(contact => {
             const row = document.createElement("tr");
-[
-    contact.type === "customer" ? "عميل" : "مورد",
-    contact.name,
-    contact.type === "supplier" ? (contact.goodsType || "—") : "—",
-    contact.phone || "—",
-    contact.address || "—"
-].forEach(value => {
-           
+
                 const cell = document.createElement("td");
                 cell.textContent = value;
                 row.appendChild(cell);
-            });
+            });[
+    contact.type === "customer" ? "عميل" : "مورد",
+    contact.name,
+    contact.phone || "—",
+    contact.type === "supplier" ? (contact.goodsType || "—") : "—",
+    contact.address || "—"
+].forEach(value => {
 
             const actions = document.createElement("td");
 
