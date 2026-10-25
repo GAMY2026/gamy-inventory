@@ -5165,6 +5165,10 @@ savedSales.forEach(function (sale) {
 (function () {
     "use strict";
 
+    <script>
+(function () {
+    "use strict";
+
     const CONTACTS_KEY = "gamy_inventory_contacts_v1";
 
     const form = document.getElementById("customerSupplierForm");
@@ -5172,8 +5176,8 @@ savedSales.forEach(function (sale) {
     const nameInput = document.getElementById("contactName");
     const phoneInput = document.getElementById("contactPhone");
     const addressInput = document.getElementById("contactAddress");
- const goodsTypeInput = document.getElementById("contactGoodsType");
- const goodsTypeGroup = document.getElementById("supplierGoodsGroup");
+    const goodsTypeInput = document.getElementById("contactGoodsType");
+    const goodsTypeGroup = document.getElementById("supplierGoodsGroup");
     const searchInput = document.getElementById("contactsSearch");
     const tableBody = document.getElementById("contactsTableBody");
     const customerCount = document.getElementById("customersCount");
@@ -5181,22 +5185,27 @@ savedSales.forEach(function (sale) {
     const message = document.getElementById("contactsMessage");
     const emptyMessage = document.getElementById("contactsEmptyMessage");
     const cancelButton = document.getElementById("cancelContactEdit");
-function updateGoodsTypeVisibility() {
-    const isSupplier = typeInput.value === "supplier";
 
-    goodsTypeGroup.hidden = !isSupplier;
-    goodsTypeInput.required = isSupplier;
-
-    if (!isSupplier) {
-        goodsTypeInput.value = "";
-    }
-}
-
-typeInput.addEventListener("change", updateGoodsTypeVisibility);
-    if (!form || !tableBody) return;
+    /* لو أي عنصر ناقص، نوقف قبل أي استخدام له */
+    if (!form || !typeInput || !nameInput || !phoneInput || !addressInput ||
+        !goodsTypeInput || !goodsTypeGroup || !searchInput || !tableBody ||
+        !customerCount || !supplierCount || !message || !emptyMessage ||
+        !cancelButton) return;
 
     let contacts = [];
     let editingId = null;
+
+    function showMessage(text, isError) {
+        message.textContent = text;
+        message.className = "message " + (isError ? "error" : "success");
+    }
+
+    function updateGoodsTypeVisibility() {
+        const isSupplier = typeInput.value === "supplier";
+        goodsTypeGroup.hidden = !isSupplier;
+        goodsTypeInput.required = isSupplier;
+        if (!isSupplier) goodsTypeInput.value = "";
+    }
 
     function loadContacts() {
         try {
@@ -5212,11 +5221,7 @@ typeInput.addEventListener("change", updateGoodsTypeVisibility);
             showMessage("تعذر قراءة بيانات العملاء والموردين.", true);
         }
     }
-function showMessage(text, isError) {
-    message.textContent = text;
-    message.className = "message " + (isError ? "error" : "success");
-}
-   
+
     function saveContacts() {
         try {
             localStorage.setItem(CONTACTS_KEY, JSON.stringify(contacts));
@@ -5229,7 +5234,7 @@ function showMessage(text, isError) {
 
     function resetForm() {
         form.reset();
-     updateGoodsTypeVisibility();
+        updateGoodsTypeVisibility();
         editingId = null;
         form.querySelector('button[type="submit"]').textContent = "حفظ البيانات";
         cancelButton.hidden = true;
@@ -5238,32 +5243,30 @@ function showMessage(text, isError) {
     function renderContacts() {
         const query = searchInput.value.trim().toLowerCase();
 
-const filtered = contacts.filter(contact => [
-    contact.name,
-    contact.phone,
-    contact.address,
-    contact.goodsType,
-    contact.type === "customer" ? "عميل" : "مورد"
-].some(value => String(value || "").toLowerCase().includes(query)));
+        const filtered = contacts.filter(contact => [
+            contact.name,
+            contact.phone,
+            contact.address,
+            contact.goodsType,
+            contact.type === "customer" ? "عميل" : "مورد"
+        ].some(value => String(value || "").toLowerCase().includes(query)));
 
-tableBody.replaceChildren();
+        tableBody.replaceChildren();
 
-filtered.forEach(contact => {
-    const row = document.createElement("tr");
+        filtered.forEach(contact => {
+            const row = document.createElement("tr");
 
-    [
-        contact.type === "customer" ? "عميل" : "مورد",
-        contact.name,
-        contact.phone || "—",
-        contact.type === "supplier" ? (contact.goodsType || "—") : "—",
-        contact.address || "—"
-    ].forEach(value => {
-        const cell = document.createElement("td");
-        cell.textContent = value;
-        row.appendChild(cell);
-    });
-
-        
+            [
+                contact.type === "customer" ? "عميل" : "مورد",
+                contact.name,
+                contact.phone || "—",
+                contact.type === "supplier" ? (contact.goodsType || "—") : "—",
+                contact.address || "—"
+            ].forEach(value => {
+                const cell = document.createElement("td");
+                cell.textContent = value;
+                row.appendChild(cell);
+            });
 
             const actions = document.createElement("td");
 
@@ -5277,8 +5280,8 @@ filtered.forEach(contact => {
                 nameInput.value = contact.name;
                 phoneInput.value = contact.phone || "";
                 addressInput.value = contact.address || "";
-             goodsTypeInput.value = contact.goodsType || "";
-updateGoodsTypeVisibility();
+                updateGoodsTypeVisibility();
+                goodsTypeInput.value = contact.goodsType || "";
                 form.querySelector('button[type="submit"]').textContent =
                     "حفظ التعديلات";
                 cancelButton.hidden = false;
@@ -5320,6 +5323,9 @@ updateGoodsTypeVisibility();
         ).length.toLocaleString("ar-EG");
 
         emptyMessage.hidden = filtered.length > 0;
+        emptyMessage.textContent = query
+            ? "لا توجد نتائج مطابقة للبحث."
+            : "لا توجد بيانات مسجلة حتى الآن.";
     }
 
     form.addEventListener("submit", event => {
@@ -5332,16 +5338,28 @@ updateGoodsTypeVisibility();
             return;
         }
 
+        const duplicate = contacts.some(item =>
+            item.id !== editingId &&
+            item.type === typeInput.value &&
+            String(item.name || "").trim().toLowerCase() === name.toLowerCase()
+        );
+
+        if (duplicate) {
+            showMessage("الاسم مسجل بالفعل لنفس النوع.", true);
+            nameInput.focus();
+            return;
+        }
+
         const oldContacts = contacts;
-       const contactData = {
-    type: typeInput.value,
-    name,
-    phone: phoneInput.value.trim(),
-    address: addressInput.value.trim(),
-    goodsType: typeInput.value === "supplier"
-        ? goodsTypeInput.value
-        : ""
-};
+        const contactData = {
+            type: typeInput.value,
+            name,
+            phone: phoneInput.value.trim(),
+            address: addressInput.value.trim(),
+            goodsType: typeInput.value === "supplier"
+                ? goodsTypeInput.value
+                : ""
+        };
 
         if (editingId) {
             contacts = contacts.map(item =>
@@ -5373,12 +5391,14 @@ updateGoodsTypeVisibility();
         showMessage("تم إلغاء التعديل.", false);
     });
 
+    typeInput.addEventListener("change", updateGoodsTypeVisibility);
     searchInput.addEventListener("input", renderContacts);
 
+    updateGoodsTypeVisibility();
     loadContacts();
     renderContacts();
 })();
-</script>
+</script
 
 </body>
 </html>
