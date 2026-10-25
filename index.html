@@ -5257,28 +5257,32 @@ typeInput.addEventListener("change", updateGoodsTypeVisibility);
     function renderContacts() {
         const query = searchInput.value.trim().toLowerCase();
 
-        const filtered = contacts.filter(contact => [
-            contact.name,
-            contact.phone,
-            contact.address,
-            contact.type === "customer" ? "عميل" : "مورد"
-        ].some(value => String(value || "").toLowerCase().includes(query)));
-
-        tableBody.replaceChildren();
-
-        filtered.forEach(contact => {
-            const row = document.createElement("tr");
-
-                const cell = document.createElement("td");
-                cell.textContent = value;
-                row.appendChild(cell);
-            });[
-    contact.type === "customer" ? "عميل" : "مورد",
+const filtered = contacts.filter(contact => [
     contact.name,
-    contact.phone || "—",
-    contact.type === "supplier" ? (contact.goodsType || "—") : "—",
-    contact.address || "—"
-].forEach(value => {
+    contact.phone,
+    contact.address,
+    contact.goodsType,
+    contact.type === "customer" ? "عميل" : "مورد"
+].some(value => String(value || "").toLowerCase().includes(query)));
+
+tableBody.replaceChildren();
+
+filtered.forEach(contact => {
+    const row = document.createElement("tr");
+
+    [
+        contact.type === "customer" ? "عميل" : "مورد",
+        contact.name,
+        contact.phone || "—",
+        contact.type === "supplier" ? (contact.goodsType || "—") : "—",
+        contact.address || "—"
+    ].forEach(value => {
+        const cell = document.createElement("td");
+        cell.textContent = value;
+        row.appendChild(cell);
+    });
+
+        
 
             const actions = document.createElement("td");
 
