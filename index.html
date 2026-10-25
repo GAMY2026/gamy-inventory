@@ -1737,6 +1737,85 @@ body.dark-mode {
   </section>
 </section>
 
+<section class="page" data-page-section="customersSuppliers">
+  <div class="page-topline">
+    <h1>العملاء والموردون</h1>
+    <p>إدارة بيانات العملاء والموردين وحفظها داخل النظام.</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card">
+      <h3>إجمالي العملاء</h3>
+      <p id="customersCount">0</p>
+    </div>
+    <div class="stat-card">
+      <h3>إجمالي الموردين</h3>
+      <p id="suppliersCount">0</p>
+    </div>
+  </div>
+
+  <section class="panel">
+    <h2 class="section-title">إضافة عميل أو مورد</h2>
+
+    <form id="customerSupplierForm">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="contactType">نوع التعامل</label>
+          <select id="contactType" required>
+            <option value="customer">عميل</option>
+            <option value="supplier">مورد</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="contactName">الاسم</label>
+          <input id="contactName" type="text" required placeholder="الاسم بالكامل">
+        </div>
+
+        <div class="form-group">
+          <label for="contactPhone">رقم الهاتف</label>
+          <input id="contactPhone" type="tel" placeholder="رقم الهاتف">
+        </div>
+
+        <div class="form-group">
+          <label for="contactAddress">العنوان</label>
+          <input id="contactAddress" type="text" placeholder="العنوان">
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="primary-btn" type="submit">حفظ البيانات</button>
+        <button class="secondary-btn" type="button" id="cancelContactEdit" hidden>إلغاء التعديل</button>
+      </div>
+
+      <div id="contactsMessage" class="message" role="status"></div>
+    </form>
+  </section>
+
+  <section class="panel">
+    <div class="panel-heading">
+      <h2 class="section-title">سجل العملاء والموردين</h2>
+      <input id="contactsSearch" type="search" placeholder="ابحث بالاسم أو الهاتف أو العنوان">
+    </div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>النوع</th>
+            <th>الاسم</th>
+            <th>الهاتف</th>
+            <th>العنوان</th>
+            <th>الإجراءات</th>
+          </tr>
+        </thead>
+        <tbody id="contactsTableBody"></tbody>
+      </table>
+    </div>
+    <div id="contactsEmptyMessage" class="message" role="status">لا توجد بيانات مسجلة حتى الآن.</div>
+  </section>
+</section>
+
 <section class="page" data-page-section="settings">
   <div class="page-topline">
     <h1> إعدادات النظام</h1>
@@ -5059,6 +5138,203 @@ savedSales.forEach(function (sale) {
     toggle.addEventListener("click", function () {
         setSidebarState(!layout.classList.contains("sidebar-collapsed"));
     });
+})();
+</script>
+
+<script>
+(function () {
+    "use strict";
+
+    const CONTACTS_KEY = "gamy_inventory_contacts_v1";
+
+    const form = document.getElementById("customerSupplierForm");
+    const typeInput = document.getElementById("contactType");
+    const nameInput = document.getElementById("contactName");
+    const phoneInput = document.getElementById("contactPhone");
+    const addressInput = document.getElementById("contactAddress");
+    const searchInput = document.getElementById("contactsSearch");
+    const tableBody = document.getElementById("contactsTableBody");
+    const customerCount = document.getElementById("customersCount");
+    const supplierCount = document.getElementById("suppliersCount");
+    const message = document.getElementById("contactsMessage");
+    const emptyMessage = document.getElementById("contactsEmptyMessage");
+    const cancelButton = document.getElementById("cancelContactEdit");
+
+    if (!form || !tableBody) return;
+
+    let contacts = [];
+    let editingId = null;
+
+    function loadContacts() {
+        try {
+            const saved = JSON.parse(
+                localStorage.getItem(CONTACTS_KEY) || "[]"
+            );
+            contacts = Array.isArray(saved) ? saved.filter(
+                item => item && typeof item === "object" &&
+                    typeof item.id === "string"
+            ) : [];
+        } catch (error) {
+            contacts = [];
+            showMessage("تعذر قراءة بيانات العملاء والموردين.", true);
+        }
+    }
+
+    function showMessage(text, isError) {
+        message.textContent = text;
+        message.style.color = isError ? "#dc2626" : "#16805d";
+    }
+
+    function saveContacts() {
+        try {
+            localStorage.setItem(CONTACTS_KEY, JSON.stringify(contacts));
+            return true;
+        } catch (error) {
+            showMessage("تعذر حفظ البيانات. تحقق من مساحة التخزين.", true);
+            return false;
+        }
+    }
+
+    function resetForm() {
+        form.reset();
+        editingId = null;
+        form.querySelector('button[type="submit"]').textContent = "حفظ البيانات";
+        cancelButton.hidden = true;
+    }
+
+    function renderContacts() {
+        const query = searchInput.value.trim().toLowerCase();
+
+        const filtered = contacts.filter(contact => [
+            contact.name,
+            contact.phone,
+            contact.address,
+            contact.type === "customer" ? "عميل" : "مورد"
+        ].some(value => String(value || "").toLowerCase().includes(query)));
+
+        tableBody.replaceChildren();
+
+        filtered.forEach(contact => {
+            const row = document.createElement("tr");
+
+            [
+                contact.type === "customer" ? "عميل" : "مورد",
+                contact.name,
+                contact.phone || "—",
+                contact.address || "—"
+            ].forEach(value => {
+                const cell = document.createElement("td");
+                cell.textContent = value;
+                row.appendChild(cell);
+            });
+
+            const actions = document.createElement("td");
+
+            const editButton = document.createElement("button");
+            editButton.type = "button";
+            editButton.className = "secondary-btn";
+            editButton.textContent = "تعديل";
+            editButton.addEventListener("click", () => {
+                editingId = contact.id;
+                typeInput.value = contact.type;
+                nameInput.value = contact.name;
+                phoneInput.value = contact.phone || "";
+                addressInput.value = contact.address || "";
+                form.querySelector('button[type="submit"]').textContent =
+                    "حفظ التعديلات";
+                cancelButton.hidden = false;
+                form.scrollIntoView({ behavior: "smooth", block: "start" });
+            });
+
+            const deleteButton = document.createElement("button");
+            deleteButton.type = "button";
+            deleteButton.className = "secondary-btn";
+            deleteButton.textContent = "حذف";
+            deleteButton.style.marginInlineStart = "6px";
+            deleteButton.addEventListener("click", () => {
+                if (!confirm("هل تريد حذف هذا السجل؟")) return;
+
+                const oldContacts = contacts;
+                contacts = contacts.filter(item => item.id !== contact.id);
+
+                if (!saveContacts()) {
+                    contacts = oldContacts;
+                    return;
+                }
+
+                if (editingId === contact.id) resetForm();
+                renderContacts();
+                showMessage("تم حذف السجل بنجاح.", false);
+            });
+
+            actions.append(editButton, deleteButton);
+            row.appendChild(actions);
+            tableBody.appendChild(row);
+        });
+
+        customerCount.textContent = contacts.filter(
+            item => item.type === "customer"
+        ).length.toLocaleString("ar-EG");
+
+        supplierCount.textContent = contacts.filter(
+            item => item.type === "supplier"
+        ).length.toLocaleString("ar-EG");
+
+        emptyMessage.hidden = filtered.length > 0;
+    }
+
+    form.addEventListener("submit", event => {
+        event.preventDefault();
+
+        const name = nameInput.value.trim();
+        if (!name) {
+            showMessage("اكتب الاسم أولًا.", true);
+            nameInput.focus();
+            return;
+        }
+
+        const oldContacts = contacts;
+        const contactData = {
+            type: typeInput.value,
+            name,
+            phone: phoneInput.value.trim(),
+            address: addressInput.value.trim()
+        };
+
+        if (editingId) {
+            contacts = contacts.map(item =>
+                item.id === editingId
+                    ? { ...item, ...contactData }
+                    : item
+            );
+        } else {
+            contacts = [...contacts, {
+                id: Date.now().toString() +
+                    Math.random().toString(16).slice(2),
+                ...contactData,
+                createdAt: new Date().toISOString()
+            }];
+        }
+
+        if (!saveContacts()) {
+            contacts = oldContacts;
+            return;
+        }
+
+        resetForm();
+        renderContacts();
+        showMessage("تم حفظ البيانات بنجاح.", false);
+    });
+
+    cancelButton.addEventListener("click", () => {
+        resetForm();
+        showMessage("تم إلغاء التعديل.", false);
+    });
+
+    searchInput.addEventListener("input", renderContacts);
+
+    loadContacts();
+    renderContacts();
 })();
 </script>
 
