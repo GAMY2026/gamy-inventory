@@ -2348,7 +2348,20 @@ renderSales();
 updateSalePreview();
 updateBackupSummary();
 showPage(location.hash.slice(1) || "dashboard", false);
- 
+ /* ربط أزرار القائمة والتنقل بين الصفحات */
+document.querySelectorAll(".nav-item[data-page]").forEach(button => {
+    button.addEventListener("click", () => showPage(button.dataset.page));
+});
+
+document.querySelectorAll("[data-page-link]").forEach(button => {
+    button.addEventListener("click", () => showPage(button.dataset.pageLink));
+});
+
+window.addEventListener("hashchange", () => {
+    const name = location.hash.slice(1);
+    const active = document.querySelector(".nav-item.active");
+    if (name && (!active || active.dataset.page !== name)) showPage(name, false);
+});
  
 /* ===== الإعدادات + دخان الماوس + الترجمة ===== */
 (() => {
