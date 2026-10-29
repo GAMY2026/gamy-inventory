@@ -254,6 +254,7 @@ footer{margin-top:35px;padding:21px 15px;text-align:center;background:#091523;bo
    <button type="button" class="nav-item" data-page="stockMovements" data-title="حركة المخزون">حركة المخزون</button>
    <button type="button" class="nav-item" data-page="reports" data-title="التقارير والإحصائيات">التقارير والإحصائيات</button>
    <button type="button" class="nav-item" data-page="customersSuppliers" data-title="العملاء والموردون">العملاء والموردون</button>
+   <button type="button" class="nav-item" data-page="stockAlerts" data-title="تنبيهات المخزون">تنبيهات المخزون</button>
   </nav>
 </aside>
 <main class="app-content">
@@ -663,6 +664,55 @@ footer{margin-top:35px;padding:21px 15px;text-align:center;background:#091523;bo
    </section>
   </section>
  
+<section class="page" data-page-section="stockAlerts">
+  <div class="page-topline">
+    <h1>تنبيهات المخزون</h1>
+    <p>متابعة المنتجات منخفضة المخزون والمنتجات التي نفدت كميتها.</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card">
+      <div class="stat-label">إجمالي التنبيهات</div>
+      <div class="stat-value" id="stockAlertsCount">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">منتجات نفدت</div>
+      <div class="stat-value" id="outOfStockCount">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">مخزون منخفض</div>
+      <div class="stat-value" id="lowStockAlertsCount">0</div>
+    </div>
+  </div>
+
+  <section class="panel">
+    <div class="panel-heading">
+      <h2 class="section-title">المنتجات التي تحتاج متابعة</h2>
+      <p class="description">تظهر المنتجات التي كميتها 5 قطع أو أقل.</p>
+    </div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>اسم المنتج</th>
+            <th>الكود</th>
+            <th>اللون</th>
+            <th>المقاس</th>
+            <th>الكمية الحالية</th>
+            <th>حالة المخزون</th>
+          </tr>
+        </thead>
+        <tbody id="stockAlertsBody"></tbody>
+      </table>
+    </div>
+
+    <div id="stockAlertsEmpty" class="empty-state">
+      لا توجد منتجات تحتاج إلى تنبيه حاليًا.
+    </div>
+  </section>
+</section>
+
 </main>
 </div>
  
@@ -919,29 +969,31 @@ function renderReports() {
     );
 }
  
+
 /* التنقل بين الصفحات */
 function showPage(name, updateHash = true) {
     const allowed = [
         "dashboard", "products", "receipts", "sales", "history", "backup",
-        "inventoryAudit", "stockMovements", "reports", "customersSuppliers"
+        "inventoryAudit", "stockMovements", "reports", "customersSuppliers",
+        "stockAlerts"
     ];
- 
+
     const target = allowed.includes(name) ? name : "dashboard";
- 
+
     document.querySelectorAll("[data-page-section]").forEach(section => {
         section.classList.toggle("active", section.dataset.pageSection === target);
     });
- 
+
     document.querySelectorAll(".nav-item[data-page]").forEach(button => {
         const active = button.dataset.page === target;
         button.classList.toggle("active", active);
         button.setAttribute("aria-current", active ? "page" : "false");
     });
- 
+
     const activeButton = document.querySelector('.nav-item[data-page="' + target + '"]');
     const label = document.querySelector(".header-label");
     if (label && activeButton) label.textContent = activeButton.dataset.title;
- 
+
     if (updateHash && location.hash !== "#" + target) {
         try {
             location.hash = target;
@@ -949,32 +1001,18 @@ function showPage(name, updateHash = true) {
             console.warn("Hash navigation unavailable:", error);
         }
     }
- 
+
     renderProducts();
     renderSales();
     updateSalePreview();
     updateBackupSummary();
+
     if (target === "reports") renderReports();
+    if (target === "stockAlerts") renderStockAlerts();
+
     window.scrollTo(0, 0);
 }
- 
-document.querySelectorAll(".nav-item[data-page]").forEach(button => {
-    button.addEventListener("click", () => showPage(button.dataset.page));
-});
- 
-const refreshReportsButton = $("refreshReportsButton");
-if (refreshReportsButton) {
-    refreshReportsButton.addEventListener("click", renderReports);
-}
- 
-document.querySelectorAll("[data-page-link]").forEach(button => {
-    button.addEventListener("click", () => showPage(button.dataset.pageLink));
-});
- 
-window.addEventListener("hashchange", () => {
-    showPage(location.hash.slice(1), false);
-});
- 
+
 /* إغلاق قوائم المنتجات */
 function closeMenus() {
     document.querySelectorAll(".actions-dropdown").forEach(menu => menu.hidden = true);
@@ -1113,6 +1151,62 @@ function renderProducts() {
 }
  
 $("searchInput").addEventListener("input", renderProducts);
+
+/* عرض تنبيهات المخزون */
+function renderStockAlerts() {
+    const body = $("stockAlertsBody");
+    if (!body) return;
+
+    body.replaceChildren();
+
+    const alerts = products.filter(p =>
+        Number(p.quantity || 0) <= 5
+    );
+
+    const outOfStock = alerts.filter(p =>
+        Number(p.quantity || 0) <= 0
+    );
+
+    const lowStock = alerts.filter(p =>
+        Number(p.quantity || 0) > 0 &&
+        Number(p.quantity || 0) <= 5
+    );
+
+    $("stockAlertsCount").textContent =
+        alerts.length.toLocaleString("ar-EG");
+
+    $("outOfStockCount").textContent =
+        outOfStock.length.toLocaleString("ar-EG");
+
+    $("lowStockAlertsCount").textContent =
+        lowStock.length.toLocaleString("ar-EG");
+
+    alerts.forEach(p => {
+        const row = document.createElement("tr");
+        const quantity = Number(p.quantity || 0);
+
+        const status = quantity <= 0
+            ? "نفد المخزون"
+            : "مخزون منخفض";
+
+        row.append(
+            createCell(p.name, "product-name"),
+            createCell(p.code, "code-text"),
+            createCell(p.color || "—"),
+            createCell(p.size || "—"),
+            createCell(quantity.toLocaleString("ar-EG")),
+            createCell(status)
+        );
+
+        body.appendChild(row);
+    });
+
+    $("stockAlertsEmpty").hidden = alerts.length > 0;
+}
+
+
+
+ 
  
 /* نموذج إضافة وتعديل المنتجات */
 function clearProductForm() {
