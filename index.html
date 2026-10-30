@@ -1092,6 +1092,13 @@ function printProductBarcode(product) {
         <head>
             <meta charset="UTF-8">
             <title>باركود المنتج</title>
+            
+            .product-gender {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 4px 0 10px;
+    color: #333;
+}
             <style>
                 body {
                     font-family: Arial, sans-serif;
@@ -1114,14 +1121,23 @@ function printProductBarcode(product) {
         </head>
         <body>
             <div class="barcode-label">
-                <h3>${safeName}</h3>
-                ${barcodeHTML}
-            </div>
-            <script>
-                window.onload = function() {
-                    window.print();
-                };
-            <\/script>
+    <h3>${safeName}</h3>
+
+    <div class="product-gender">
+        ${product.gender === "male" ? "رجالي" : product.gender === "female" ? "حريمي" : ""}
+    </div>
+
+    <div class="product-size">
+        ${product.size ? "المقاس: " + String(product.size).replace(/[&<>"']/g, "") : ""}
+    </div>
+
+    ${barcodeHTML}
+</div>
+<script>
+    window.onload = function() {
+        window.print();
+    };
+<\/script>
         </body>
         </html>
     `);
