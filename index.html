@@ -356,7 +356,7 @@ footer{margin-top:35px;padding:21px 15px;text-align:center;background:#091523;bo
    <section class="panel">
     <div class="table-toolbar"><h2 class="section-title">قائمة المنتجات</h2><input id="searchInput" class="search-input" type="search" placeholder="بحث بالاسم أو الكود أو اللون"></div>
     <div class="table-wrapper">
-     <th>اسم المنتج</th><th>كود المنتج</th><th>نوع الصنف</th><th>اللون</th><th>سعر الشراء</th><th>سعر البيع</th><th>الكمية</th><th>قيمة المخزون</th><th>الإجراءات</th></tr></thead><tbody id="productTableBody"></tbody></table>
+     <table><thead><tr><th>اسم المنتج</th><th>كود المنتج</th><th>اللون</th><th>سعر الشراء</th><th>سعر البيع</th><th>الكمية</th><th>قيمة المخزون</th><th>الإجراءات</th></tr></thead><tbody id="productTableBody"></tbody></table>
     </div>
     <div class="table-footer"><span id="tableCount">عدد المنتجات: 0</span><span>كل المبالغ بالجنيه المصري</span></div>
    </section>
@@ -1171,21 +1171,20 @@ function renderProducts() {
     renderSaleOptions();
  
     if (!filtered.length) {
-       emptyRow(body, 9, term ? "لا توجد نتائج مطابقة للبحث." : "لا توجد منتجات مسجلة حتى الآن.");
+        emptyRow(body, 8, term ? "لا توجد نتائج مطابقة للبحث." : "لا توجد منتجات مسجلة حتى الآن.");
     } else {
         filtered.forEach(p => {
             const tr = document.createElement("tr");
  
-tr.append(
-    createCell(p.name, "product-name"),
-    createCell(p.code, "code-text"),
-    createCell(p.gender || "—"),
-    createCell(p.color || "—"),
-    createCell(formatMoney(p.purchasePrice)),
-    createCell(formatMoney(p.salePrice)),
-    createCell(Number(p.quantity).toLocaleString("ar-EG")),
-    createCell(formatMoney(p.purchasePrice * p.quantity))
-);
+            tr.append(
+                createCell(p.name, "product-name"),
+                createCell(p.code, "code-text"),
+                createCell(p.color || "—"),
+                createCell(formatMoney(p.purchasePrice)),
+                createCell(formatMoney(p.salePrice)),
+                createCell(Number(p.quantity).toLocaleString("ar-EG")),
+                createCell(formatMoney(p.purchasePrice * p.quantity))
+            );
  
             const actionCell = document.createElement("td");
             actionCell.className = "action-cell";
