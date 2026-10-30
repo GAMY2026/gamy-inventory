@@ -1124,8 +1124,8 @@ function printProductBarcode(product) {
     <h3>${safeName}</h3>
 
     <div class="product-gender">
-        ${product.gender === "male" ? "رجالي" : product.gender === "female" ? "حريمي" : ""}
-    </div>
+    ${product.gender === "رجالي" ? "رجالي" : product.gender === "حريمي" ? "حريمي" : ""}
+</div>
 
     <div class="product-size">
         ${product.size ? "المقاس: " + String(product.size).replace(/[&<>"']/g, "") : ""}
