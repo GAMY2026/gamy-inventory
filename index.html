@@ -224,6 +224,7 @@ footer{margin-top:35px;padding:21px 15px;text-align:center;background:#091523;bo
   *,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}
 }
 </style>
+ <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 </head>
 <body>
  
@@ -1045,7 +1046,88 @@ function renderSaleOptions() {
  
     if (products.some(p => String(p.id) === oldValue)) select.value = oldValue;
 }
- 
+/* إنشاء وطباعة باركود المنتج */
+function printProductBarcode(product) {
+    if (typeof JsBarcode === "undefined") {
+        alert("مكتبة الباركود لم يتم تحميلها. تأكد من الاتصال بالإنترنت.");
+        return;
+    }
+
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+
+    try {
+        JsBarcode(svg, String(product.code), {
+            format: "CODE128",
+            displayValue: true,
+            font: "Arial",
+            width: 2,
+            height: 65,
+            margin: 8
+        });
+    } catch (error) {
+        console.error(error);
+        alert("تعذر إنشاء الباركود. راجع كود المنتج.");
+        return;
+    }
+
+    const barcodeHTML = new XMLSerializer().serializeToString(svg);
+    const printWindow = window.open("", "_blank", "width=500,height=400");
+
+    if (!printWindow) {
+        alert("اسمح بالنوافذ المنبثقة حتى تتمكن من طباعة الباركود.");
+        return;
+    }
+
+    const safeName = String(product.name).replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[char]);
+
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html lang="ar" dir="rtl">
+        <head>
+            <meta charset="UTF-8">
+            <title>باركود المنتج</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    text-align: center;
+                    padding: 25px;
+                }
+                .barcode-label {
+                    width: 300px;
+                    margin: 20px auto;
+                    padding: 15px;
+                    border: 1px dashed #999;
+                }
+                h3 { margin: 5px 0 12px; }
+                svg { max-width: 100%; height: auto; }
+                @media print {
+                    body { padding: 0; }
+                    .barcode-label { border: none; }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="barcode-label">
+                <h3>${safeName}</h3>
+                ${barcodeHTML}
+            </div>
+            <script>
+                window.onload = function() {
+                    window.print();
+                };
+            <\/script>
+        </body>
+        </html>
+    `);
+
+    printWindow.document.close();
+}
 /* عرض المنتجات */
 function renderProducts() {
     const body = $("productTableBody");
@@ -1120,6 +1202,15 @@ function renderProducts() {
                 closeMenus();
                 openStockModal(p.id);
             });
+
+
+         const barcode = document.createElement("button");
+barcode.type = "button";
+barcode.textContent = "طباعة الباركود";
+barcode.addEventListener("click", () => {
+    closeMenus();
+    printProductBarcode(p);
+});
  
             const remove = document.createElement("button");
             remove.type = "button";
@@ -1138,7 +1229,7 @@ function renderProducts() {
                 dots.setAttribute("aria-expanded", String(shouldOpen));
             });
  
-            menu.append(edit, stock, remove);
+          menu.append(edit, stock, barcode, remove);
             wrap.append(dots, menu);
             actionCell.appendChild(wrap);
             tr.appendChild(actionCell);
