@@ -465,6 +465,9 @@ footer{margin-top:35px;padding:21px 15px;text-align:center;background:#091523;bo
     </div>
     <div class="actions">
      <button type="button" class="primary-btn" id="exportBackupButton">تنزيل تقرير Excel</button>
+     <button type="button" class="primary-btn" id="exportSalesExcelButton">
+    تنزيل تقرير المبيعات التفصيلي Excel
+</button>
      <button type="button" class="secondary-btn" id="exportJsonBackupButton">تنزيل نسخة استعادة JSON</button>
     </div>
     <div id="exportMessage" class="message" role="status"></div>
@@ -3523,7 +3526,303 @@ $("exportAuditExcelButton").addEventListener("click", async () => {
         button.disabled = false;
     }
 });
- 
+
+/* ===== تقرير المبيعات Excel ===== */
+$("exportSalesExcelButton").addEventListener("click", async () => {
+    const button = $("exportSalesExcelButton");
+
+    if (button.disabled) return;
+
+    button.disabled = true;
+    showMessage("exportMessage", "جاري تجهيز تقرير المبيعات...", "info");
+
+    try {
+        const XLSX = await loadStyledXlsxLibrary();
+
+        const month = new Date().toISOString().slice(0, 7);
+
+        const monthSales = sales.filter(sale =>
+            String(sale.createdAt || "").slice(0, 7) === month
+        );
+
+        const getProduct = sale =>
+            products.find(p => p.id === sale.productId) || {};
+
+        const detailsHeaders = [
+            "التاريخ والوقت", "رقم الفاتورة", "اسم المنتج",
+            "كود المنتج", "اللون", "المقاس", "النوع",
+            "الكمية", "سعر البيع", "تكلفة القطعة",
+            "إجمالي البيع", "الربح"
+        ];
+
+        const detailsRows = monthSales.map(sale => {
+            const product = getProduct(sale);
+
+            return [
+                sale.createdAt || "",
+                sale.invoiceId || "بيع سابق",
+                sale.productName || product.name || "",
+                sale.productCode || product.code || "",
+                sale.productColor || product.color || "",
+                sale.productSize || product.size || "",
+                sale.productGender || product.gender || "",
+                Number(sale.quantity || 0),
+                Number(sale.unitPrice || 0),
+                Number(sale.unitCost || 0),
+                Number(sale.total || 0),
+                Number(sale.profit || 0)
+            ];
+        });
+
+        const dailyMap = new Map();
+
+        monthSales.forEach(sale => {
+            const date = String(sale.createdAt || "").slice(0, 10);
+            if (!date) return;
+
+            if (!dailyMap.has(date)) {
+                dailyMap.set(date, {
+                    date,
+                    invoices: new Set(),
+                    units: 0,
+                    total: 0,
+                    cost: 0,
+                    profit: 0
+                });
+            }
+
+            const day = dailyMap.get(date);
+
+            day.invoices.add(sale.invoiceId || sale.id);
+            day.units += Number(sale.quantity || 0);
+            day.total += Number(sale.total || 0);
+            day.cost += Number(sale.unitCost || 0) * Number(sale.quantity || 0);
+            day.profit += Number(sale.profit || 0);
+        });
+
+        const dailyRows = [...dailyMap.values()]
+            .sort((a, b) => a.date.localeCompare(b.date))
+            .map(day => [
+                day.date,
+                day.invoices.size,
+                day.units,
+                day.total,
+                day.cost,
+                day.profit
+            ]);
+
+        const productMap = new Map();
+
+        monthSales.forEach(sale => {
+            const product = getProduct(sale);
+            const name = sale.productName || product.name || "";
+            const code = sale.productCode || product.code || "";
+            const color = sale.productColor || product.color || "";
+            const size = sale.productSize || product.size || "";
+
+            const key = [code, name, color, size].join("|");
+
+            if (!productMap.has(key)) {
+                productMap.set(key, {
+                    name, code, color, size,
+                    units: 0,
+                    total: 0,
+                    profit: 0
+                });
+            }
+
+            const item = productMap.get(key);
+            item.units += Number(sale.quantity || 0);
+            item.total += Number(sale.total || 0);
+            item.profit += Number(sale.profit || 0);
+        });
+
+        const productsSorted = [...productMap.values()]
+            .sort((a, b) => b.units - a.units);
+
+        const monthlyRows = productsSorted.map(item => [
+            item.code,
+            item.name,
+            item.color,
+            item.size,
+            item.units,
+            item.total,
+            item.profit
+        ]);
+
+        const bestRows = productsSorted.map((item, index) => [
+            index + 1,
+            item.code,
+            item.name,
+            item.color,
+            item.size,
+            item.units,
+            item.total,
+            item.profit
+        ]);
+
+        const totalSales = monthSales.reduce(
+            (sum, sale) => sum + Number(sale.total || 0), 0
+        );
+
+        const totalProfit = monthSales.reduce(
+            (sum, sale) => sum + Number(sale.profit || 0), 0
+        );
+
+        const totalUnits = monthSales.reduce(
+            (sum, sale) => sum + Number(sale.quantity || 0), 0
+        );
+
+        const invoiceCount = new Set(
+            monthSales.map(sale => sale.invoiceId || sale.id)
+        ).size;
+
+        const workbook = XLSX.utils.book_new();
+        workbook.Workbook = { Views: [{ RTL: true }] };
+
+        const makeSheet = (headers, rows, widths) => {
+            const sheet = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+            const border = {
+                style: "thin",
+                color: { rgb: "9AA79F" }
+            };
+
+            for (let r = 0; r <= rows.length; r++) {
+                for (let c = 0; c < headers.length; c++) {
+                    const ref = XLSX.utils.encode_cell({ r, c });
+
+                    if (!sheet[ref]) {
+                        sheet[ref] = { t: "s", v: "" };
+                    }
+
+                    sheet[ref].s = {
+                        font: {
+                            name: "Arial",
+                            sz: 11,
+                            bold: r === 0,
+                            color: {
+                                rgb: r === 0 ? "FFFFFF" : "24332C"
+                            }
+                        },
+                        fill: {
+                            patternType: "solid",
+                            fgColor: {
+                                rgb: r === 0 ? "153E35" : "FFFFFF"
+                            }
+                        },
+                        alignment: {
+                            horizontal: "center",
+                            vertical: "center",
+                            wrapText: true
+                        },
+                        border: {
+                            top: border,
+                            bottom: border,
+                            left: border,
+                            right: border
+                        }
+                    };
+                }
+            }
+
+            sheet["!cols"] = widths.map(w => ({ wch: w }));
+            sheet["!rows"] = [{ hpt: 28 }];
+
+            if (rows.length) {
+                sheet["!autofilter"] = {
+                    ref: XLSX.utils.encode_range({
+                        s: { r: 0, c: 0 },
+                        e: { r: rows.length, c: headers.length - 1 }
+                    })
+                };
+            }
+
+            return sheet;
+        };
+
+        const summaryRows = [
+            ["الشهر", month],
+            ["إجمالي المبيعات", totalSales],
+            ["إجمالي الأرباح", totalProfit],
+            ["عدد القطع المباعة", totalUnits],
+            ["عدد الفواتير", invoiceCount]
+        ];
+
+        XLSX.utils.book_append_sheet(
+            workbook,
+            makeSheet(["البيان", "القيمة"], summaryRows, [30, 25]),
+            "ملخص الشهر"
+        );
+
+        XLSX.utils.book_append_sheet(
+            workbook,
+            makeSheet(
+                detailsHeaders,
+                detailsRows,
+                [22, 28, 25, 16, 14, 12, 12, 10, 14, 14, 16, 14]
+            ),
+            "تفاصيل المبيعات"
+        );
+
+        XLSX.utils.book_append_sheet(
+            workbook,
+            makeSheet(
+                ["التاريخ", "عدد الفواتير", "القطع المباعة",
+                 "إجمالي المبيعات", "التكلفة", "الربح"],
+                dailyRows,
+                [18, 16, 16, 20, 18, 18]
+            ),
+            "المبيعات اليومية"
+        );
+
+        XLSX.utils.book_append_sheet(
+            workbook,
+            makeSheet(
+                ["الكود", "اسم المنتج", "اللون", "المقاس",
+                 "القطع المباعة", "إجمالي المبيعات", "الربح"],
+                monthlyRows,
+                [16, 25, 14, 12, 16, 20, 18]
+            ),
+            "تحليل المنتجات"
+        );
+
+        XLSX.utils.book_append_sheet(
+            workbook,
+            makeSheet(
+                ["الترتيب", "الكود", "اسم المنتج", "اللون",
+                 "المقاس", "القطع المباعة", "المبيعات", "الربح"],
+                bestRows,
+                [10, 16, 25, 14, 12, 16, 18, 18]
+            ),
+            "الأكثر مبيعًا"
+        );
+
+        XLSX.writeFile(
+            workbook,
+            "GAMY-Sales-Report-" + month + ".xlsx",
+            { bookType: "xlsx" }
+        );
+
+        showMessage(
+            "exportMessage",
+            "تم تنزيل تقرير المبيعات Excel بنجاح.",
+            "success"
+        );
+
+    } catch (error) {
+        console.error("Sales Excel export error:", error);
+
+        showMessage(
+            "exportMessage",
+            error.message || "تعذر تصدير تقرير المبيعات.",
+            "error"
+        );
+
+    } finally {
+        button.disabled = false;
+    }
+});
+
 /* استلامات البضاعة: إضافة الأصناف وحساب الإجمالي */
 (function setupReceipts() {
     const receiptBody = document.getElementById("receiptTableBody");
