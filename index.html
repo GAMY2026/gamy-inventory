@@ -924,11 +924,9 @@ footer{margin-top:35px;padding:21px 15px;text-align:center;background:#091523;bo
 /* الحفاظ على مفاتيح التخزين القديمة */
 const PRODUCT_KEY = "gamy_inventory_products_v1";
 const SALES_KEY = "gamy_inventory_sales_v1";
- const RETURNS_KEY = "gamy_inventory_returns_v1";
 const $ = id => document.getElementById(id);
  let products = [];
 let sales = [];
- let salesReturns = [];
 let invoiceCart = [];
 let editingProductId = null;
 let stockProductId = null;
@@ -960,9 +958,6 @@ products = readStorageArray(PRODUCT_KEY)
  
 sales = readStorageArray(SALES_KEY)
     .filter(s => s && typeof s === "object" && s.id && s.createdAt);
-
- salesReturns = readStorageArray(RETURNS_KEY)
-    .filter(r => r && typeof r === "object" && r.id && r.createdAt);
  
 function formatMoney(value) {
     return new Intl.NumberFormat("ar-EG", {
@@ -1004,23 +999,7 @@ function saveProducts() {
         return false;
     }
 }
-function saveSalesReturns() {
-    try {
-        localStorage.setItem(
-            RETURNS_KEY,
-            JSON.stringify(salesReturns)
-        );
-        return true;
-    } catch (error) {
-        console.error("Sales returns save error:", error);
-        showMessage(
-            "returnMessage",
-            "تعذر حفظ بيانات المرتجعات.",
-            "error"
-        );
-        return false;
-    }
-}
+ 
 function createCell(value, className = "") {
     const td = document.createElement("td");
     td.textContent = value == null ? "" : String(value);
@@ -2190,60 +2169,22 @@ $("saleForm").addEventListener("submit", event => {
         createdAt: now
     }));
 
-   // خصم الكميات وإضافة عمليات البيع
-checkedItems.forEach(({ item, product }) => {
-    product.quantity -= item.quantity;
-});
-
-sales.push(...newSales);
-
-// حفظ الفاتورة
-try {
-    const productsData = JSON.stringify(products);
-    const salesData = JSON.stringify(sales);
-
-    localStorage.setItem(PRODUCT_KEY, productsData);
-    localStorage.setItem(SALES_KEY, salesData);
-
-} catch (error) {
-
-    console.error("خطأ في حفظ الفاتورة:", error);
-
-    // استرجاع الكميات الأصلية
-    oldQuantities.forEach(({ product, quantity }) => {
-        product.quantity = quantity;
+    // خصم الكميات وإضافة عمليات البيع
+    checkedItems.forEach(({ item, product }) => {
+        product.quantity -= item.quantity;
     });
 
-    // حذف عمليات البيع الجديدة
-    sales = sales.filter(
-        sale => !newSales.some(newSale => newSale.id === sale.id)
-    );
+    sales.push(...newSales);
 
-    // استرجاع البيانات السابقة
     try {
-        if (oldProductsStorage === null) {
-            localStorage.removeItem(PRODUCT_KEY);
-        } else {
-            localStorage.setItem(PRODUCT_KEY, oldProductsStorage);
-        }
+        // تجهيز البيانات قبل اعتماد العملية
+        const productsData = JSON.stringify(products);
+        const salesData = JSON.stringify(sales);
 
-        if (oldSalesStorage === null) {
-            localStorage.removeItem(SALES_KEY);
-        } else {
-            localStorage.setItem(SALES_KEY, oldSalesStorage);
-        }
+        localStorage.setItem(PRODUCT_KEY, productsData);
+        localStorage.setItem(SALES_KEY, salesData);
 
-    } catch (restoreError) {
-        console.error("تعذر استرجاع التخزين السابق:", restoreError);
-    }
-
-    showMessage(
-        "saleMessage",
-        "تعذر حفظ الفاتورة. لم يتم اعتماد العملية.",
-        "error"
-    );
-    return;
-}
+    } catch (error) {
         // استرجاع الكميات وسجل المبيعات عند فشل الحفظ
         oldQuantities.forEach(({ product, quantity }) => {
             product.quantity = quantity;
