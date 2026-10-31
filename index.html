@@ -392,7 +392,53 @@ footer{margin-top:35px;padding:21px 15px;text-align:center;background:#091523;bo
       <div class="field"><label for="saleQuantity">الكمية المباعة</label><input id="saleQuantity" type="number" min="1" step="1" value="1" required></div>
       <div class="field"><label for="saleUnitPrice">سعر بيع القطعة بالجنيه</label><input id="saleUnitPrice" type="number" min="0.01" step="0.01" required></div>
      </div>
-     <div class="sale-preview" id="salePreview">اختار المنتج وحدد الكمية لمعاينة الحسابات.</div>
+<div class="panel" id="invoiceCartPanel" style="margin-top:18px;">
+    <div class="panel-heading">
+        <h2 class="section-title">المنتجات داخل الفاتورة</h2>
+        <p class="description">أضف أكثر من منتج وراجع الفاتورة قبل التأكيد.</p>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>المنتج</th>
+                    <th>الكود</th>
+                    <th>الكمية</th>
+                    <th>سعر القطعة</th>
+                    <th>الإجمالي</th>
+                    <th>إجراء</th>
+                </tr>
+            </thead>
+            <tbody id="invoiceCartBody">
+                <tr>
+                    <td colspan="6">لا توجد منتجات في الفاتورة حتى الآن.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="sale-stat" style="margin-top:15px;">
+        <div class="sale-stat-label">إجمالي الفاتورة</div>
+        <div class="sale-stat-value" id="invoiceCartTotal">0 ج.م</div>
+    </div>
+
+    <button class="secondary-btn" type="button" id="addToInvoiceButton">
+        إضافة المنتج للفاتورة
+    </button>
+</div>
+
+<div class="sale-preview" id="salePreview">اختار المنتج وحدد الكمية لمعاينة الحسابات.</div>
+
+
+
+
+
+
+
+
+
+    
      <div class="actions"><button class="primary-btn" type="submit">تسجيل عملية البيع</button><button class="secondary-btn" type="button" id="clearSaleFormButton">مسح بيانات البيع</button></div>
      <div id="saleMessage" class="message" role="status"></div>
     </form>
@@ -751,12 +797,11 @@ footer{margin-top:35px;padding:21px 15px;text-align:center;background:#091523;bo
 const PRODUCT_KEY = "gamy_inventory_products_v1";
 const SALES_KEY = "gamy_inventory_sales_v1";
 const $ = id => document.getElementById(id);
- 
-let products = [];
+ let products = [];
 let sales = [];
+let invoiceCart = [];
 let editingProductId = null;
 let stockProductId = null;
- 
 function readStorageArray(key) {
     try {
         const raw = localStorage.getItem(key);
@@ -1600,6 +1645,118 @@ $("saleBarcode").addEventListener("keydown", event => {
 });
  
 $("saleQuantity").addEventListener("input", updateSalePreview);
+function renderInvoiceCart() {
+    const body = $("invoiceCartBody");
+    body.replaceChildren();
+
+    if (!invoiceCart.length) {
+        emptyRow(body, 6, "لا توجد منتجات في الفاتورة حتى الآن.");
+    }
+
+    invoiceCart.forEach(item => {
+        const product = findProduct(item.productId);
+        if (!product) return;
+
+        const tr = document.createElement("tr");
+
+        tr.append(
+            createCell(product.name, "product-name"),
+            createCell(product.code, "code-text"),
+            createCell(item.quantity.toLocaleString("ar-EG")),
+            createCell(formatMoney(item.unitPrice)),
+            createCell(formatMoney(item.quantity * item.unitPrice))
+        );
+
+        const actionCell = document.createElement("td");
+        const removeButton = document.createElement("button");
+
+        removeButton.type = "button";
+        removeButton.className = "secondary-btn";
+        removeButton.textContent = "حذف";
+
+        removeButton.addEventListener("click", () => {
+            invoiceCart = invoiceCart.filter(
+                cartItem => cartItem.productId !== item.productId
+            );
+            renderInvoiceCart();
+        });
+
+        actionCell.appendChild(removeButton);
+        tr.appendChild(actionCell);
+        body.appendChild(tr);
+    });
+
+    const total = invoiceCart.reduce(
+        (sum, item) => sum + item.quantity * item.unitPrice,
+        0
+    );
+
+    $("invoiceCartTotal").textContent = formatMoney(total);
+}
+
+$("addToInvoiceButton").addEventListener("click", () => {
+    const product = findProduct($("saleProduct").value);
+    const quantity = Number($("saleQuantity").value);
+    const unitPrice = Number($("saleUnitPrice").value);
+
+    if (!product) {
+        showMessage("saleMessage", "اختار المنتج أولًا.", "error");
+        return;
+    }
+
+    if (!Number.isInteger(quantity) || quantity <= 0) {
+        showMessage("saleMessage", "اكتب كمية صحيحة أكبر من صفر.", "error");
+        return;
+    }
+
+    if (!Number.isFinite(unitPrice) || unitPrice <= 0) {
+        showMessage("saleMessage", "اكتب سعر بيع صحيح.", "error");
+        return;
+    }
+
+    const existingItem = invoiceCart.find(
+        item => item.productId === product.id
+    );
+
+    const newQuantity = existingItem
+        ? existingItem.quantity + quantity
+        : quantity;
+
+    if (newQuantity > Number(product.quantity)) {
+        showMessage(
+            "saleMessage",
+            "الكمية المطلوبة أكبر من الرصيد المتاح: " + product.quantity,
+            "error"
+        );
+        return;
+    }
+
+    if (existingItem) {
+        existingItem.quantity = newQuantity;
+        existingItem.unitPrice = unitPrice;
+    } else {
+        invoiceCart.push({
+            productId: product.id,
+            quantity,
+            unitPrice
+        });
+    }
+
+    renderInvoiceCart();
+    showMessage("saleMessage", "تمت إضافة المنتج إلى الفاتورة.", "success");
+
+    $("saleQuantity").value = "1";
+    $("saleBarcode").value = "";
+    $("saleBarcode").focus();
+    updateSalePreview();
+});
+
+
+
+ 
+
+
+ 
 $("saleUnitPrice").addEventListener("input", updateSalePreview);
  
 function isToday(value) {
