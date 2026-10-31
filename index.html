@@ -225,6 +225,7 @@ footer{margin-top:35px;padding:21px 15px;text-align:center;background:#091523;bo
 }
 </style>
  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body>
  
@@ -256,6 +257,7 @@ footer{margin-top:35px;padding:21px 15px;text-align:center;background:#091523;bo
    <button type="button" class="nav-item" data-page="reports" data-title="التقارير والإحصائيات">التقارير والإحصائيات</button>
    <button type="button" class="nav-item" data-page="customersSuppliers" data-title="العملاء والموردون">العملاء والموردون</button>
    <button type="button" class="nav-item" data-page="stockAlerts" data-title="تنبيهات المخزون">تنبيهات المخزون</button>
+   <button type="button" class="nav-item" data-page="exportExcel" data-title="تصدير Excel">تصدير Excel</button>
   </nav>
 </aside>
 <main class="app-content">
@@ -477,6 +479,48 @@ footer{margin-top:35px;padding:21px 15px;text-align:center;background:#091523;bo
     </div>
     <div class="backup-note">عند الاستعادة سيتم استبدال المنتجات والمبيعات الحالية بالبيانات الموجودة في الملف. احتفظ بنسخة احتياطية من بياناتك الحالية أولًا.</div>
     <div id="importMessage" class="message" role="status"></div>
+   </section>
+  </section>
+  <section class="page" data-page-section="exportExcel">
+   <div class="page-topline">
+    <h1>تقارير وتحليلات المبيعات Excel</h1>
+    <p>تقارير تفصيلية لحركة المبيعات وتحليل الأداء اليومي والشهري.</p>
+   </div>
+
+   <section class="panel">
+    <div class="panel-heading">
+     <h2 class="section-title">إعداد التقرير</h2>
+     <p class="description">اختار الشهر المطلوب لتحليل المبيعات والمنتجات الأكثر بيعًا.</p>
+    </div>
+
+    <div class="form-grid">
+     <div class="field">
+      <label for="excelReportMonth">شهر التقرير</label>
+      <input type="month" id="excelReportMonth">
+     </div>
+    </div>
+
+    <div class="actions">
+     <button type="button" class="primary-btn" id="exportSalesExcelButton">
+      تصدير تقرير المبيعات Excel
+     </button>
+    </div>
+
+    <div id="excelReportMessage" class="message" role="status"></div>
+   </section>
+
+   <section class="panel">
+    <div class="panel-heading">
+     <h2 class="section-title">ملخص التقرير</h2>
+     <p class="description">مؤشرات المبيعات للشهر المحدد.</p>
+    </div>
+
+    <div class="backup-summary">
+     <div><span>إجمالي المبيعات</span><strong id="excelSalesTotal">0</strong></div>
+     <div><span>إجمالي الأرباح</span><strong id="excelSalesProfit">0</strong></div>
+     <div><span>عدد القطع المباعة</span><strong id="excelSalesUnits">0</strong></div>
+     <div><span>عدد الفواتير</span><strong id="excelInvoiceCount">0</strong></div>
+    </div>
    </section>
   </section>
  
@@ -1025,14 +1069,230 @@ function renderReports() {
         "info"
     );
 }
- 
 
+function renderExcelReports() {
+    const monthInput = $("excelReportMonth");
+    if (!monthInput) return;
+
+    if (!monthInput.value) {
+        const now = new Date();
+        monthInput.value =
+            now.getFullYear() + "-" +
+            String(now.getMonth() + 1).padStart(2, "0");
+    }
+
+    const month = monthInput.value;
+    const monthSales = sales.filter(sale =>
+        String(sale.createdAt || "").slice(0, 7) === month
+    );
+
+    const totalSales = monthSales.reduce(
+        (sum, sale) => sum + Number(sale.total || 0), 0
+    );
+
+    const totalProfit = monthSales.reduce(
+        (sum, sale) => sum + Number(sale.profit || 0), 0
+    );
+
+    const totalUnits = monthSales.reduce(
+        (sum, sale) => sum + Number(sale.quantity || 0), 0
+    );
+
+    const invoiceIds = new Set(
+        monthSales.map(sale => sale.invoiceId || sale.id)
+    );
+
+    $("excelSalesTotal").textContent = formatMoney(totalSales);
+    $("excelSalesProfit").textContent = formatMoney(totalProfit);
+    $("excelSalesUnits").textContent = totalUnits.toLocaleString("ar-EG");
+    $("excelInvoiceCount").textContent = invoiceIds.size.toLocaleString("ar-EG");
+}
+
+$("excelReportMonth").addEventListener("change", renderExcelReports);
+
+$("exportSalesExcelButton").addEventListener("click", () => {
+    if (typeof XLSX === "undefined") {
+        showMessage(
+            "excelReportMessage",
+            "مكتبة Excel لم يتم تحميلها. تأكد من اتصال الإنترنت.",
+            "error"
+        );
+        return;
+    }
+
+    const month = $("excelReportMonth").value;
+
+    if (!month) {
+        showMessage("excelReportMessage", "اختار شهر التقرير أولًا.", "error");
+        return;
+    }
+
+    const monthSales = sales.filter(sale =>
+        String(sale.createdAt || "").slice(0, 7) === month
+    );
+
+    const getProduct = sale =>
+        products.find(product => product.id === sale.productId) || {};
+
+    const details = [
+        [
+            "التاريخ والوقت", "رقم الفاتورة", "اسم المنتج", "كود المنتج",
+            "اللون", "المقاس", "النوع", "الكمية", "سعر البيع",
+            "تكلفة القطعة", "إجمالي البيع", "الربح"
+        ]
+    ];
+
+    monthSales.forEach(sale => {
+        const product = getProduct(sale);
+
+        details.push([
+            sale.createdAt || "",
+            sale.invoiceId || "بيع سابق",
+            sale.productName || product.name || "",
+            sale.productCode || product.code || "",
+            sale.productColor || product.color || "",
+            sale.productSize || product.size || "",
+            sale.productGender || product.gender || "",
+            Number(sale.quantity || 0),
+            Number(sale.unitPrice || 0),
+            Number(sale.unitCost || 0),
+            Number(sale.total || 0),
+            Number(sale.profit || 0)
+        ]);
+    });
+
+    const dailyMap = new Map();
+
+    monthSales.forEach(sale => {
+        const date = String(sale.createdAt || "").slice(0, 10);
+        if (!date) return;
+
+        if (!dailyMap.has(date)) {
+            dailyMap.set(date, {
+                date,
+                units: 0,
+                total: 0,
+                cost: 0,
+                profit: 0,
+                invoices: new Set()
+            });
+        }
+
+        const day = dailyMap.get(date);
+        day.units += Number(sale.quantity || 0);
+        day.total += Number(sale.total || 0);
+        day.cost += Number(sale.unitCost || 0) * Number(sale.quantity || 0);
+        day.profit += Number(sale.profit || 0);
+        day.invoices.add(sale.invoiceId || sale.id);
+    });
+
+    const daily = [
+        ["التاريخ", "عدد الفواتير", "القطع المباعة", "إجمالي المبيعات",
+         "التكلفة", "صافي الربح"]
+    ];
+
+    [...dailyMap.values()]
+        .sort((a, b) => a.date.localeCompare(b.date))
+        .forEach(day => {
+            daily.push([
+                day.date,
+                day.invoices.size,
+                day.units,
+                day.total,
+                day.cost,
+                day.profit
+            ]);
+        });
+
+    const productMap = new Map();
+
+    monthSales.forEach(sale => {
+        const product = getProduct(sale);
+        const name = sale.productName || product.name || "";
+        const code = sale.productCode || product.code || "";
+        const color = sale.productColor || product.color || "";
+        const size = sale.productSize || product.size || "";
+
+        const key = [code, name, color, size].join("|");
+
+        if (!productMap.has(key)) {
+            productMap.set(key, {
+                name, code, color, size,
+                units: 0,
+                total: 0,
+                profit: 0
+            });
+        }
+
+        const item = productMap.get(key);
+        item.units += Number(sale.quantity || 0);
+        item.total += Number(sale.total || 0);
+        item.profit += Number(sale.profit || 0);
+    });
+
+    const productRows = [...productMap.values()]
+        .sort((a, b) => b.units - a.units);
+
+    const monthly = [
+        ["كود المنتج", "اسم المنتج", "اللون", "المقاس",
+         "القطع المباعة", "إجمالي المبيعات", "إجمالي الربح"]
+    ];
+
+    productRows.forEach(item => {
+        monthly.push([
+            item.code, item.name, item.color, item.size,
+            item.units, item.total, item.profit
+        ]);
+    });
+
+    const bestSelling = [
+        ["الترتيب", "كود المنتج", "اسم المنتج", "اللون",
+         "المقاس", "القطع المباعة", "إجمالي المبيعات", "إجمالي الربح"]
+    ];
+
+    productRows.forEach((item, index) => {
+        bestSelling.push([
+            index + 1, item.code, item.name, item.color,
+            item.size, item.units, item.total, item.profit
+        ]);
+    });
+
+    const workbook = XLSX.utils.book_new();
+
+    const sheets = [
+        ["تفاصيل حركة المبيعات", details],
+        ["ملخص المبيعات اليومية", daily],
+        ["تحليل المنتجات الشهري", monthly],
+        ["الأكثر مبيعًا", bestSelling]
+    ];
+
+    sheets.forEach(([name, rows]) => {
+        const worksheet = XLSX.utils.aoa_to_sheet(rows);
+        worksheet["!cols"] = rows[0].map((_, index) => ({
+            wch: Math.max(
+                14,
+                ...rows.slice(0, 100).map(row =>
+                    String(row[index] ?? "").length + 2
+                )
+            )
+        }));
+
+        XLSX.utils.book_append_sheet(workbook, worksheet, name);
+    });
+
+    XLSX.writeFile(workbook, "GAMY-Sales-Report-" + month + ".xlsx");
+
+    showMessage(
+        "excelReportMessage",
+        "تم تجهيز تقرير Excel للشهر المحدد بنجاح.",
+        "success"
+    );
+});
 /* التنقل بين الصفحات */
 function showPage(name, updateHash = true) {
     const allowed = [
-        "dashboard", "products", "receipts", "sales", "history", "backup",
-        "inventoryAudit", "stockMovements", "reports", "customersSuppliers",
-        "stockAlerts"
+       "inventoryAudit", "stockMovements", "reports", "customersSuppliers",
+"stockAlerts", "exportExcel"
     ];
 
     const target = allowed.includes(name) ? name : "dashboard";
@@ -1066,6 +1326,7 @@ function showPage(name, updateHash = true) {
 
     if (target === "reports") renderReports();
     if (target === "stockAlerts") renderStockAlerts();
+ if (target === "exportExcel") renderExcelReports();
 
     window.scrollTo(0, 0);
 }
@@ -2026,21 +2287,34 @@ $("saleForm").addEventListener("submit", event => {
     const now = new Date().toISOString();
     const invoiceId =
         "INV-" + Date.now() + "-" + Math.random().toString(16).slice(2, 8);
+const now = new Date().toISOString();
+const invoiceId =
+    "INV-" + Date.now() + "-" + Math.random().toString(16).slice(2, 8);
+ 
+const newSales = checkedItems.map(({ item, product }) => ({
+    id: Date.now().toString() + Math.random().toString(16).slice(2),
+    invoiceId,
+    productId: product.id,
+    productName: product.name,
+    productCode: product.code,
+    productColor: product.color || "",
+    productSize: product.size || "",
+    productGender: product.gender || "",
+    quantity: item.quantity,
+    unitPrice: item.unitPrice,
+    unitCost: Number(product.purchasePrice),
+    total: item.quantity * item.unitPrice,
+    profit: item.quantity * (item.unitPrice - Number(product.purchasePrice)),
+    createdAt: now
+}));
 
-    const newSales = checkedItems.map(({ item, product }) => ({
-        id: Date.now().toString() + Math.random().toString(16).slice(2),
-        invoiceId,
-        productId: product.id,
-        productName: product.name,
-        productCode: product.code,
-        quantity: item.quantity,
-        unitPrice: item.unitPrice,
-        unitCost: Number(product.purchasePrice),
-        total: item.quantity * item.unitPrice,
-        profit: item.quantity * (item.unitPrice - Number(product.purchasePrice)),
-        createdAt: now
-    }));
 
+
+
+
+
+ 
+   
     // خصم الكميات وإضافة عمليات البيع
     checkedItems.forEach(({ item, product }) => {
         product.quantity -= item.quantity;
