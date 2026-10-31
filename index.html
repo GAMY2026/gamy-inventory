@@ -374,7 +374,19 @@ footer{margin-top:35px;padding:21px 15px;text-align:center;background:#091523;bo
    </section>
    <section class="panel">
     <div class="panel-heading"><h2 class="section-title">تسجيل عملية بيع</h2><p class="description">اختار المنتج والكمية وسعر البيع، وسيتم خصم الكمية عند التأكيد.</p></div>
-    <form id="saleForm">
+    
+   <form id="saleForm">
+
+     <div class="field">
+      <label for="saleBarcode">مسح باركود المنتج</label>
+      <input
+       id="saleBarcode"
+       type="text"
+       placeholder="امسح الباركود هنا..."
+       autocomplete="off"
+      >
+     </div>
+
      <div class="form-grid">
       <div class="field"><label for="saleProduct">المنتج</label><select id="saleProduct" required><option value="">اختار المنتج</option></select></div>
       <div class="field"><label for="saleQuantity">الكمية المباعة</label><input id="saleQuantity" type="number" min="1" step="1" value="1" required></div>
@@ -386,7 +398,6 @@ footer{margin-top:35px;padding:21px 15px;text-align:center;background:#091523;bo
     </form>
    </section>
   </section>
- 
   <section class="page" data-page-section="history">
    <div class="page-topline"><h1>سجل المبيعات</h1><p>راجع عمليات البيع السابقة وإجمالي كل عملية.</p></div>
    <section class="panel">
@@ -1548,6 +1559,41 @@ function updateSalePreview() {
 }
  
 $("saleProduct").addEventListener("change", () => {
+$("saleBarcode").addEventListener("keydown", event => {
+    if (event.key !== "Enter") return;
+
+    event.preventDefault();
+
+    const barcode = $("saleBarcode").value.trim();
+
+    if (!barcode) return;
+
+    const product = products.find(p =>
+        String(p.code).trim() === barcode
+    );
+
+    if (!product) {
+        showMessage("saleMessage", "الباركود غير مسجل في المنتجات.", "error");
+        $("saleBarcode").select();
+        return;
+    }
+
+    $("saleProduct").value = product.id;
+    $("saleProduct").dispatchEvent(new Event("change"));
+
+    $("saleQuantity").focus();
+    $("saleQuantity").select();
+
+    $("saleBarcode").value = "";
+});
+
+
+
+
+
+
+
+ 
     const p = findProduct($("saleProduct").value);
     $("saleUnitPrice").value = p ? p.salePrice : "";
     updateSalePreview();
