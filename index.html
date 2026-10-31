@@ -1976,78 +1976,130 @@ $("clearSaleFormButton").addEventListener("click", clearSaleForm);
  
 $("saleForm").addEventListener("submit", event => {
     event.preventDefault();
- 
-    const p = findProduct($("saleProduct").value);
-    const quantityText = $("saleQuantity").value.trim();
-    const quantity = Number(quantityText);
-    const priceText = $("saleUnitPrice").value.trim();
-    const unitPrice = Number(priceText);
- 
-    if (!p) {
-        showMessage("saleMessage", "اختار المنتج أولًا.", "error");
+
+    if (!invoiceCart.length) {
+        showMessage("saleMessage", "أضف منتجًا واحدًا على الأقل للفاتورة.", "error");
         return;
     }
- 
-    if (!quantityText || !Number.isInteger(quantity) || quantity <= 0) {
-        showMessage("saleMessage", "اكتب كمية صحيحة أكبر من صفر.", "error");
-        return;
+
+    // مراجعة جميع المنتجات والكميات قبل أي خصم
+    const checkedItems = [];
+
+    for (const item of invoiceCart) {
+        const product = findProduct(item.productId);
+
+        if (!product) {
+            showMessage("saleMessage", "أحد منتجات الفاتورة لم يعد موجودًا.", "error");
+            return;
+        }
+
+        if (
+            !Number.isInteger(item.quantity) ||
+            item.quantity <= 0 ||
+            item.quantity > Number(product.quantity)
+        ) {
+            showMessage(
+                "saleMessage",
+                "الرصيد غير كافٍ للمنتج: " + product.name +
+                " — المتاح: " + product.quantity,
+                "error"
+            );
+            return;
+        }
+
+        if (!Number.isFinite(item.unitPrice) || item.unitPrice <= 0) {
+            showMessage("saleMessage", "يوجد سعر غير صحيح في الفاتورة.", "error");
+            return;
+        }
+
+        checkedItems.push({ item, product });
     }
- 
-    if (!priceText || !Number.isFinite(unitPrice) || unitPrice <= 0) {
-        showMessage("saleMessage", "اكتب سعر بيع صحيح أكبر من صفر.", "error");
-        return;
-    }
- 
-    if (quantity > Number(p.quantity)) {
-        showMessage("saleMessage", "الكمية أكبر من الرصيد المتاح: " + p.quantity + " قطعة.", "error");
-        return;
-    }
- 
+
     const oldProductsStorage = localStorage.getItem(PRODUCT_KEY);
     const oldSalesStorage = localStorage.getItem(SALES_KEY);
-    const oldQuantity = p.quantity;
- 
-    const sale = {
+
+    const oldQuantities = checkedItems.map(({ product }) => ({
+        product,
+        quantity: product.quantity
+    }));
+
+    const now = new Date().toISOString();
+    const invoiceId =
+        "INV-" + Date.now() + "-" + Math.random().toString(16).slice(2, 8);
+
+    const newSales = checkedItems.map(({ item, product }) => ({
         id: Date.now().toString() + Math.random().toString(16).slice(2),
-        productId: p.id,
-        productName: p.name,
-        productCode: p.code,
-        quantity,
-        unitPrice,
-        unitCost: Number(p.purchasePrice),
-        total: quantity * unitPrice,
-        profit: quantity * (unitPrice - Number(p.purchasePrice)),
-        createdAt: new Date().toISOString()
-    };
- 
-    p.quantity -= quantity;
-    sales.push(sale);
- 
+        invoiceId,
+        productId: product.id,
+        productName: product.name,
+        productCode: product.code,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+        unitCost: Number(product.purchasePrice),
+        total: item.quantity * item.unitPrice,
+        profit: item.quantity * (item.unitPrice - Number(product.purchasePrice)),
+        createdAt: now
+    }));
+
+    // خصم الكميات وإضافة عمليات البيع
+    checkedItems.forEach(({ item, product }) => {
+        product.quantity -= item.quantity;
+    });
+
+    sales.push(...newSales);
+
     try {
-        localStorage.setItem(PRODUCT_KEY, JSON.stringify(products));
-        localStorage.setItem(SALES_KEY, JSON.stringify(sales));
+        // تجهيز البيانات قبل اعتماد العملية
+        const productsData = JSON.stringify(products);
+        const salesData = JSON.stringify(sales);
+
+        localStorage.setItem(PRODUCT_KEY, productsData);
+        localStorage.setItem(SALES_KEY, salesData);
+
     } catch (error) {
-        p.quantity = oldQuantity;
-        sales = sales.filter(s => s.id !== sale.id);
- 
+        // استرجاع الكميات وسجل المبيعات عند فشل الحفظ
+        oldQuantities.forEach(({ product, quantity }) => {
+            product.quantity = quantity;
+        });
+
+        sales = sales.filter(
+            sale => !newSales.some(newSale => newSale.id === sale.id)
+        );
+
         try {
-            if (oldProductsStorage === null) localStorage.removeItem(PRODUCT_KEY);
-            else localStorage.setItem(PRODUCT_KEY, oldProductsStorage);
- 
-            if (oldSalesStorage === null) localStorage.removeItem(SALES_KEY);
-            else localStorage.setItem(SALES_KEY, oldSalesStorage);
+            if (oldProductsStorage === null) {
+                localStorage.removeItem(PRODUCT_KEY);
+            } else {
+                localStorage.setItem(PRODUCT_KEY, oldProductsStorage);
+            }
+
+            if (oldSalesStorage === null) {
+                localStorage.removeItem(SALES_KEY);
+            } else {
+                localStorage.setItem(SALES_KEY, oldSalesStorage);
+            }
         } catch (restoreError) {
             console.error("تعذر استرجاع التخزين السابق:", restoreError);
         }
- 
-        showMessage("saleMessage", "تعذر حفظ البيع. لم يتم اعتماد العملية.", "error");
+
+        showMessage("saleMessage", "تعذر حفظ الفاتورة. لم يتم اعتماد العملية.", "error");
         return;
     }
- 
+
+    // تحديث الواجهات بعد نجاح الحفظ
+    invoiceCart = [];
+
+    renderInvoiceCart();
     renderProducts();
     renderSales();
     clearSaleForm();
-    showMessage("saleMessage", "تم تسجيل البيع وخصم الكمية من المخزون بنجاح.", "success");
+
+    showMessage(
+        "saleMessage",
+        "تم تسجيل الفاتورة " + invoiceId +
+        " بنجاح، وعدد المنتجات: " + newSales.length,
+        "success"
+    );
 });
  
 /* اسم ملفات التصدير */
