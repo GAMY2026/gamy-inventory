@@ -513,7 +513,10 @@ footer{margin-top:35px;padding:21px 15px;text-align:center;background:#091523;bo
       </tbody>
      </table>
     </div>
- 
+<div class="form-group" style="max-width: 280px; margin-bottom: 15px;">
+    <label for="salesReportMonth">اختار شهر التقرير</label>
+    <input type="month" id="salesReportMonth">
+</div>
     <div class="actions">
      <button type="button" class="secondary-btn" id="addReceiptRowButton">إضافة صنف</button>
      <button type="button" class="primary-btn" id="saveReceiptButton">حفظ إذن الاستلام كمسودة</button>
@@ -3539,7 +3542,12 @@ $("exportSalesExcelButton").addEventListener("click", async () => {
     try {
         const XLSX = await loadStyledXlsxLibrary();
 
-        const month = new Date().toISOString().slice(0, 7);
+     const monthInput = $("salesReportMonth");
+
+const month = monthInput.value ||
+    new Date().toISOString().slice(0, 7);
+
+monthInput.value = month;
 
         const monthSales = sales.filter(sale =>
             String(sale.createdAt || "").slice(0, 7) === month
