@@ -223,6 +223,50 @@ footer{margin-top:35px;padding:21px 15px;text-align:center;background:#091523;bo
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}
 }
+
+/* ===== القائمة الجانبية الزجاجية (درج يُسحب من الحافة) ===== */
+.brand-wrap{display:flex;align-items:center;gap:14px}
+.menu-toggle{width:auto!important;min-width:112px;padding:0 14px;min-height:44px}
+.app-layout,.app-layout.sidebar-collapsed{display:block!important;width:92%;max-width:1500px}
+.sidebar,.app-layout.sidebar-collapsed .sidebar{
+  position:fixed!important;top:0;right:0;left:auto;bottom:0;height:100vh;
+  width:min(290px,86vw);overflow-y:auto;z-index:600;
+  border-radius:18px 0 0 18px;padding:16px 14px 22px;
+  background:rgba(13,27,43,.45)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(150%);backdrop-filter:blur(18px) saturate(150%);
+  border:1px solid rgba(230,189,104,.45);border-right:0;
+  box-shadow:-18px 0 50px rgba(0,0,0,.4);
+  transform:translateX(0);
+  transition:transform .28s ease,background .2s ease,visibility 0s
+}
+.app-layout.sidebar-collapsed .sidebar{
+  transform:translateX(105%);visibility:hidden;pointer-events:none;
+  transition:transform .28s ease,visibility 0s .28s
+}
+/* أثناء السحب تصبح القائمة أكثر شفافية */
+.sidebar.dragging{
+  background:rgba(13,27,43,.18)!important;
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  transition:none!important;visibility:visible!important
+}
+.sidebar-collapsed .sidebar-nav,.sidebar-nav{display:flex!important;flex-direction:column!important;overflow:visible!important;margin-top:10px;gap:7px}
+.sidebar-collapsed .nav-item,.nav-item{width:100%!important;font-size:13px!important;text-align:right!important;padding:12px!important;min-width:0;background:rgba(255,255,255,.05);color:#fff}
+.nav-item:hover{background:rgba(230,189,104,.18)}
+.sidebar-collapsed .gamy-settings-wrap{display:block!important}
+.sidebar .gamy-settings-panel{position:static;width:100%;margin-top:10px;animation:none}
+.menu-header{cursor:grab;touch-action:none;user-select:none;text-align:center;
+  padding:6px 0 14px;border-bottom:1px solid rgba(230,189,104,.35)}
+.menu-header:active{cursor:grabbing}
+.menu-role{color:#ffe0a0;font-size:13px;font-weight:700}
+.menu-name{color:#fff;font-size:18px;font-weight:800;letter-spacing:1.5px;direction:ltr}
+#menuEdge{position:fixed;top:0;right:0;bottom:0;width:18px;z-index:550;touch-action:none}
+.field textarea{width:100%;min-height:80px;padding:10px 11px;border:1px solid #30445a;border-radius:9px;color:#edf3fb;background:#091625;outline:none;font:inherit;font-size:13px;resize:vertical}
+.field textarea:focus{border-color:var(--gamy-gold);box-shadow:0 0 0 3px #d9b76e20}
+.field textarea::placeholder{color:#71869c}
+#salesReturnForm .field{margin-top:18px}
+#salesReturnForm .form-grid .field{margin-top:0}
+#exchangeForm>.field,#exchangeForm>.sale-preview{margin-top:18px}
+select option{background:#0d1b2b;color:#edf3fb}
 </style>
  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 </head>
@@ -230,9 +274,14 @@ footer{margin-top:35px;padding:21px 15px;text-align:center;background:#091523;bo
  
 <header class="topbar">
  <div class="topbar-inner">
-  <div>
-   <div class="brand">GAMY <span>INVENTORY</span></div>
-   <div class="brand-subtitle">نظام إدارة المخازن والمبيعات</div>
+  <div class="brand-wrap">
+   <button type="button" class="sidebar-toggle menu-toggle" id="sidebarToggle" aria-label="فتح القائمة" aria-expanded="false">
+    <span>☰</span><span class="toggle-label">القائمة</span>
+   </button>
+   <div>
+    <div class="brand">GAMY <span>INVENTORY</span></div>
+    <div class="brand-subtitle">نظام إدارة المخازن والمبيعات</div>
+   </div>
   </div>
   <div class="header-label">لوحة التحكم</div>
  </div>
@@ -240,16 +289,14 @@ footer{margin-top:35px;padding:21px 15px;text-align:center;background:#091523;bo
  
 <div class="app-layout">
 <aside class="sidebar" id="mainSidebar">
-  <button type="button" class="sidebar-toggle" id="sidebarToggle" aria-label="فتح أو إغلاق القائمة" aria-expanded="true">
-    <span>☰</span>
-    <span class="toggle-label">القائمة</span>
-  </button>
+  <div class="menu-header" id="menuDragHandle"><div class="menu-role">مدير</div><div class="menu-name">MOHAMED GAMAL</div></div>
   <nav class="sidebar-nav">
    <button type="button" class="nav-item active" data-page="dashboard" data-title="لوحة التحكم">لوحة التحكم</button>
    <button type="button" class="nav-item" data-page="products" data-title="إدارة المنتجات">إدارة المنتجات</button>
    <button type="button" class="nav-item" data-page="receipts" data-title="استلامات البضاعة">استلامات البضاعة</button>
 <button type="button" class="nav-item" data-page="sales" data-title="تسجيل المبيعات">تسجيل المبيعات</button>
 <button type="button" class="nav-item" data-page="salesReturns" data-title="مرتجعات المبيعات">مرتجعات المبيعات</button>
+<button type="button" class="nav-item" data-page="exchanges" data-title="التبديل (الاكستشنج)">التبديل (الاكستشنج)</button>
    <button type="button" class="nav-item" data-page="history" data-title="سجل المبيعات">سجل المبيعات</button>
    <button type="button" class="nav-item" data-page="backup" data-title="النسخ الاحتياطي">النسخ الاحتياطي</button>
    <button type="button" class="nav-item" data-page="inventoryAudit" data-title="جرد المخزن">جرد المخزن</button>
@@ -259,6 +306,7 @@ footer{margin-top:35px;padding:21px 15px;text-align:center;background:#091523;bo
    <button type="button" class="nav-item" data-page="stockAlerts" data-title="تنبيهات المخزون">تنبيهات المخزون</button>
   </nav>
 </aside>
+<div id="menuEdge" aria-hidden="true"></div>
 <main class="app-content">
  
   <section class="page active" data-page-section="dashboard">
@@ -472,7 +520,7 @@ footer{margin-top:35px;padding:21px 15px;text-align:center;background:#091523;bo
             </div>
 
             <div class="sale-stat">
-                <div class="sale-stat-label">إجمالي القطع المرتجعة</div>
+                <div class="sale-stat-label">القطع الموجودة بمخزن المرتجعات</div>
                 <div class="sale-stat-value" id="returnsUnits">0</div>
             </div>
         </div>
@@ -495,6 +543,22 @@ footer{margin-top:35px;padding:21px 15px;text-align:center;background:#091523;bo
                     <select id="returnSaleSelect" required>
                         <option value="">اختر عملية البيع</option>
                     </select>
+                </div>
+
+                <div class="field">
+                    <label for="returnOrderNo">رقم أوردر المرتجع</label>
+                    <input id="returnOrderNo" type="text" required placeholder="رقم الأوردر">
+                </div>
+
+                <div class="field">
+                    <label for="returnCustomer">اسم العميل</label>
+                    <input id="returnCustomer" type="text" required list="customerNamesList" placeholder="اسم العميل المرتجع" autocomplete="off">
+                    <datalist id="customerNamesList"></datalist>
+                </div>
+
+                <div class="field">
+                    <label for="returnPayMethod">طريقة الدفع في عملية البيع</label>
+                    <input id="returnPayMethod" type="text" readonly placeholder="تظهر بعد اختيار عملية البيع">
                 </div>
 
                 <div class="field">
@@ -544,21 +608,16 @@ footer{margin-top:35px;padding:21px 15px;text-align:center;background:#091523;bo
 
     <section class="panel">
         <div class="table-toolbar">
-            <h2 class="section-title">سجل المرتجعات</h2>
+            <h2 class="section-title">مخزن المرتجعات</h2>
             <input id="returnsSearch" class="search-input"
-                type="search" placeholder="بحث عن منتج أو كود">
+                type="search" placeholder="بحث بالمنتج أو الكود أو العميل أو رقم الأوردر">
         </div>
 
         <div class="table-wrapper">
             <table>
                 <thead>
                     <tr>
-                        <th>التاريخ</th>
-                        <th>المنتج</th>
-                        <th>الكود</th>
-                        <th>الكمية</th>
-                        <th>سبب الإرجاع</th>
-                        <th>المبلغ المسترد</th>
+                        <th>التاريخ</th><th>رقم الأوردر</th><th>العميل</th><th>المنتج</th><th>الكود</th><th>الكمية</th><th>السبب</th><th>طريقة الدفع</th><th>المبلغ المسترد</th><th>الحالة</th><th>إجراء</th>
                     </tr>
                 </thead>
                 <tbody id="returnsTableBody"></tbody>
@@ -571,6 +630,60 @@ footer{margin-top:35px;padding:21px 15px;text-align:center;background:#091523;bo
     </section>
 
 </section> 
+  <section class="page" data-page-section="exchanges">
+   <div class="page-topline"><h1>التبديل (الاكستشنج)</h1><p>تبديل مقاس أو قطعة لعميل اشترى من قبل، مع حساب فرق السعر.</p></div>
+   <div class="stats">
+    <div class="stat-card"><div class="stat-label">عدد عمليات التبديل</div><div class="stat-value" id="exchangesCount">0</div></div>
+    <div class="stat-card"><div class="stat-label">فروق دفعها العملاء</div><div class="stat-value" id="exchangesPaid">0 ج.م</div></div>
+    <div class="stat-card"><div class="stat-label">فروق تم ردها للعملاء</div><div class="stat-value" id="exchangesRefunded">0 ج.م</div></div>
+   </div>
+
+   <section class="panel">
+    <div class="panel-heading"><h2 class="section-title">تسجيل عملية تبديل</h2><p class="description">القطعة القديمة تدخل مخزن المرتجعات، والقطعة البديلة تُخصم من المخزن الرئيسي.</p></div>
+    <form id="exchangeForm">
+     <div class="form-grid">
+      <div class="field"><label for="exchangeOrderNo">رقم أوردر التبديل</label><input id="exchangeOrderNo" type="text" required placeholder="رقم الأوردر"></div>
+      <div class="field"><label for="exchangeCustomer">اسم العميل</label><input id="exchangeCustomer" type="text" required list="customerNamesList" placeholder="اسم العميل" autocomplete="off"></div>
+      <div class="field"><label for="exchangeSaleSelect">عملية البيع الأصلية</label><select id="exchangeSaleSelect" required><option value="">اختر عملية البيع</option></select></div>
+      <div class="field"><label for="exchangeReturnQty">الكمية المرتجعة</label><input id="exchangeReturnQty" type="number" min="1" step="1" required placeholder="أدخل الكمية"></div>
+      <div class="field">
+       <label for="exchangeReason">سبب التبديل</label>
+       <select id="exchangeReason" required>
+        <option value="">اختر السبب</option>
+        <option value="مقاس مختلف">مقاس مختلف</option>
+        <option value="تبديل بقطعة أخرى">تبديل بقطعة أخرى</option>
+        <option value="عيب في المنتج">عيب في المنتج</option>
+        <option value="سبب آخر">سبب آخر</option>
+       </select>
+      </div>
+      <div class="field"><label for="exchangeNewProduct">القطعة البديلة</label><select id="exchangeNewProduct" required><option value="">اختر القطعة البديلة</option></select></div>
+      <div class="field"><label for="exchangeNewQty">كمية البديل</label><input id="exchangeNewQty" type="number" min="1" step="1" required placeholder="أدخل الكمية"></div>
+      <div class="field"><label for="exchangeNewPrice">سعر القطعة البديلة</label><input id="exchangeNewPrice" type="number" min="0.01" step="0.01" required></div>
+      <div class="field">
+       <label for="exchangeMethod">طريقة دفع / رد الفرق</label>
+       <select id="exchangeMethod">
+        <option value="">لا يوجد فرق</option>
+        <option value="كاش">كاش</option>
+        <option value="فيزا">فيزا</option>
+       </select>
+      </div>
+     </div>
+     <div class="field"><label for="exchangeNotes">ملاحظات إضافية</label><textarea id="exchangeNotes" placeholder="اكتب أي ملاحظات عن التبديل"></textarea></div>
+     <div class="sale-preview" id="exchangePreview">اختر عملية البيع والقطعة البديلة لمعاينة فرق السعر.</div>
+     <div class="actions"><button type="submit" class="primary-btn">تأكيد التبديل</button></div>
+     <div id="exchangeMessage" class="message" role="status"></div>
+    </form>
+   </section>
+
+   <section class="panel">
+    <div class="table-toolbar"><h2 class="section-title">سجل التبديلات</h2><input id="exchangesSearch" class="search-input" type="search" placeholder="بحث بالعميل أو المنتج أو رقم الأوردر"></div>
+    <div class="table-wrapper">
+     <table><thead><tr><th>التاريخ</th><th>رقم الأوردر</th><th>العميل</th><th>المنتج المرتجع</th><th>المنتج البديل</th><th>الفرق</th><th>طريقة الدفع / الرد</th><th>السبب</th></tr></thead><tbody id="exchangesTableBody"></tbody></table>
+    </div>
+    <div class="table-footer"><span id="exchangesTableCount">عدد التبديلات: 0</span></div>
+   </section>
+  </section>
+
   <section class="page" data-page-section="history">
    <div class="page-topline"><h1>سجل المبيعات</h1><p>راجع عمليات البيع السابقة وإجمالي كل عملية.</p></div>
    <section class="panel">
@@ -661,10 +774,6 @@ footer{margin-top:35px;padding:21px 15px;text-align:center;background:#091523;bo
       </tbody>
      </table>
     </div>
-<div class="form-group" style="max-width: 280px; margin-bottom: 15px;">
-    <label for="salesReportMonth">اختار شهر التقرير</label>
-    <input type="month" id="salesReportMonth">
-</div>
     <div class="actions">
      <button type="button" class="secondary-btn" id="addReceiptRowButton">إضافة صنف</button>
      <button type="button" class="primary-btn" id="saveReceiptButton">حفظ إذن الاستلام كمسودة</button>
@@ -1186,8 +1295,7 @@ function showPage(name, updateHash = true) {
     const allowed = [
         "dashboard", "products", "receipts", "sales",  "salesReturns" , "history", "backup",
         "inventoryAudit", "stockMovements", "reports", "customersSuppliers",
-        "stockAlerts"
-    ];
+        "stockAlerts", "exchanges"];
 
     const target = allowed.includes(name) ? name : "dashboard";
 
@@ -1302,14 +1410,8 @@ function printProductBarcode(product) {
         <head>
             <meta charset="UTF-8">
             <title>باركود المنتج</title>
-            
-            .product-gender {
-    font-size: 14px;
-    font-weight: bold;
-    margin: 4px 0 10px;
-    color: #333;
-}
             <style>
+                .product-gender { font-size: 14px; font-weight: bold; margin: 4px 0 10px; color: #333; }
                 body {
                     font-family: Arial, sans-serif;
                     text-align: center;
@@ -1757,7 +1859,6 @@ function updateSalePreview() {
         " | المتاح: " + Number(p.quantity).toLocaleString("ar-EG") + " قطعة." + warning;
 }
  
-$("saleProduct").addEventListener("change", () => {
 $("saleBarcode").addEventListener("keydown", event => {
     if (event.key !== "Enter") return;
 
@@ -1786,13 +1887,7 @@ $("saleBarcode").addEventListener("keydown", event => {
     $("saleBarcode").value = "";
 });
 
-
-
-
-
-
-
- 
+$("saleProduct").addEventListener("change", () => {
     const p = findProduct($("saleProduct").value);
     $("saleUnitPrice").value = p ? p.salePrice : "";
     updateSalePreview();
@@ -4575,6 +4670,46 @@ monthInput.value = month;
             });
         });
  
+        let savedReturns = [];
+        let savedExchanges = [];
+
+        try {
+            savedReturns = JSON.parse(localStorage.getItem("gamy_inventory_returns_v1") || "[]");
+            savedExchanges = JSON.parse(localStorage.getItem("gamy_inventory_exchanges_v1") || "[]");
+            if (!Array.isArray(savedReturns)) savedReturns = [];
+            if (!Array.isArray(savedExchanges)) savedExchanges = [];
+        } catch (error) {
+            console.error("تعذر قراءة المرتجعات والتبديلات:", error);
+        }
+
+        savedReturns.forEach(function (r) {
+            if (!r || r.stockStatus !== "main" || !r.restockedAt) return;
+            movements.push({
+                date: r.restockedAt,
+                receiptId: r.orderNo || r.id || "—",
+                type: "إعادة من المرتجعات",
+                name: r.productName || "—",
+                code: r.productCode || "—",
+                size: "—",
+                color: "—",
+                quantity: Math.abs(Number(r.quantity) || 0)
+            });
+        });
+
+        savedExchanges.forEach(function (x) {
+            if (!x) return;
+            movements.push({
+                date: x.createdAt,
+                receiptId: x.orderNo || x.id || "—",
+                type: "تبديل (خروج بديل)",
+                name: x.newProductName || "—",
+                code: x.newProductCode || "—",
+                size: "—",
+                color: "—",
+                quantity: -Math.abs(Number(x.newQty) || 0)
+            });
+        });
+
         movements.sort(function (a, b) {
             return new Date(b.date).getTime() - new Date(a.date).getTime();
         });
@@ -4651,7 +4786,7 @@ monthInput.value = month;
  
     if (!layout || !toggle) return;
  
-    const KEY = "gamy_sidebar_collapsed";
+    const KEY = "gamy_menu_collapsed_v2";
  
     function setSidebarState(collapsed) {
         layout.classList.toggle("sidebar-collapsed", collapsed);
@@ -4666,10 +4801,10 @@ monthInput.value = month;
         } catch (error) {}
     }
  
-    let collapsed = false;
+    let collapsed = true;
  
     try {
-        collapsed = localStorage.getItem(KEY) === "true";
+        collapsed = localStorage.getItem(KEY) !== "false";
     } catch (error) {}
  
     setSidebarState(collapsed);
@@ -4921,6 +5056,555 @@ monthInput.value = month;
     renderContacts();
 })();
 </script>
+
+<script>
+/* سحب القائمة من حافة الشاشة + الإغلاق */
+(function () {
+  const layout = document.querySelector(".app-layout");
+  const sidebar = document.getElementById("mainSidebar");
+  const toggle = document.getElementById("sidebarToggle");
+  const edge = document.getElementById("menuEdge");
+  const handle = document.getElementById("menuDragHandle");
+  if (!layout || !sidebar || !toggle || !edge || !handle) return;
+
+  const isOpen = () => !layout.classList.contains("sidebar-collapsed");
+  const setOpen = want => { if (isOpen() !== want) toggle.click(); };
+
+  sidebar.querySelectorAll(".nav-item").forEach(b => b.addEventListener("click", () => setOpen(false)));
+  document.addEventListener("click", e => {
+    if (!isOpen() || sidebar.contains(e.target) || toggle.contains(e.target)) return;
+    setOpen(false);
+  });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") setOpen(false); });
+
+  let drag = null;
+  const width = () => sidebar.offsetWidth || 290;
+
+  function begin(e, opening) {
+    drag = { startX: e.clientX, opening, w: width(), t: opening ? width() : 0, moved: false };
+    e.currentTarget.setPointerCapture(e.pointerId);
+    sidebar.classList.add("dragging");
+    sidebar.style.transform = "translateX(" + drag.t + "px)";
+  }
+  function move(e) {
+    if (!drag) return;
+    const dx = e.clientX - drag.startX;           // موجب = يمين
+    if (Math.abs(dx) > 3) drag.moved = true;
+    drag.t = Math.min(Math.max(drag.opening ? drag.w + dx : dx, 0), drag.w);
+    sidebar.style.transform = "translateX(" + drag.t + "px)";
+  }
+  function end() {
+    if (!drag) return;
+    const shouldOpen = drag.opening ? drag.t < drag.w * 0.65 : drag.t < drag.w * 0.35;
+    sidebar.classList.remove("dragging");
+    sidebar.style.transform = "";
+    drag = null;
+    setOpen(shouldOpen);
+  }
+
+  edge.addEventListener("pointerdown", e => { if (!isOpen()) begin(e, true); });
+  handle.addEventListener("pointerdown", e => { if (isOpen()) begin(e, false); });
+  [edge, handle].forEach(el => {
+    el.addEventListener("pointermove", move);
+    el.addEventListener("pointerup", end);
+    el.addEventListener("pointercancel", end);
+  });
+})();
+</script>
  
+
+<script>
+/* مرتجعات المبيعات + التبديل */
+(function () {
+  const RETURNS_KEY = "gamy_inventory_returns_v1";
+  const EXCHANGES_KEY = "gamy_inventory_exchanges_v1";
+  const CONTACTS_KEY_X = "gamy_inventory_contacts_v1";
+  const el = id => document.getElementById(id);
+  if (!el("salesReturnForm") || !el("exchangeForm")) return;
+
+  const readList = key => {
+    try {
+      const v = JSON.parse(localStorage.getItem(key) || "[]");
+      return Array.isArray(v) ? v : [];
+    } catch (e) { return []; }
+  };
+
+  let returns = readList(RETURNS_KEY);
+  let exchanges = readList(EXCHANGES_KEY);
+
+  const dateText = v => {
+    const d = new Date(v);
+    return Number.isNaN(d.getTime()) ? "—" : d.toLocaleString("ar-EG");
+  };
+  const todayKey = () => {
+    const d = new Date();
+    return d.getFullYear() + String(d.getMonth() + 1).padStart(2, "0") + String(d.getDate()).padStart(2, "0");
+  };
+  const nextNo = (prefix, list) => {
+    let n = list.length + 1, no;
+    do { no = prefix + "-" + todayKey() + "-" + String(n).padStart(3, "0"); n++; }
+    while (list.some(x => x.orderNo === no));
+    return no;
+  };
+  const rand = () => Math.random().toString(16).slice(2, 8);
+
+  function persist(pairs) {
+    const old = pairs.map(([k]) => localStorage.getItem(k));
+    try {
+      pairs.forEach(([k, v]) => localStorage.setItem(k, JSON.stringify(v)));
+      return true;
+    } catch (e) {
+      pairs.forEach(([k], i) => {
+        try { old[i] === null ? localStorage.removeItem(k) : localStorage.setItem(k, old[i]); } catch (_) {}
+      });
+      return false;
+    }
+  }
+
+  const returnedQty = id => returns.filter(r => r.saleId === id)
+    .reduce((sum, r) => sum + Number(r.quantity || 0), 0);
+  const remaining = sale => Number(sale.quantity || 0) - returnedQty(sale.id);
+  const returnOrders = () => returns.filter(r => r.source !== "exchange");
+
+  function renderCustomerNames() {
+    const list = el("customerNamesList");
+    list.replaceChildren();
+    const names = readList(CONTACTS_KEY_X).filter(c => c && c.type === "customer" && c.name).map(c => c.name);
+    [...new Set(names)].forEach(n => {
+      const o = document.createElement("option");
+      o.value = n;
+      list.appendChild(o);
+    });
+  }
+
+  function fillSaleSelect(select) {
+    const old = select.value;
+    select.replaceChildren();
+    const first = document.createElement("option");
+    first.value = "";
+    first.textContent = "اختر عملية البيع";
+    select.appendChild(first);
+
+    [...sales]
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .filter(s => remaining(s) > 0)
+      .forEach(s => {
+        const o = document.createElement("option");
+        o.value = s.id;
+        o.textContent = dateText(s.createdAt) + " — " + (s.productName || "منتج") +
+          " — " + (s.productCode || "—") + " — " + (s.paymentMethod || "غير محدد") +
+          " — المتبقي للإرجاع: " + remaining(s);
+        select.appendChild(o);
+      });
+
+    if (select.options.length === 1) {
+      first.textContent = sales.length
+        ? "كل عمليات البيع تم إرجاعها بالكامل"
+        : "لا توجد عمليات بيع مسجلة — سجّل عملية بيع أولًا";
+    }
+
+    if ([...select.options].some(o => o.value === old)) select.value = old;
+  }
+
+  /* ================= المرتجعات ================= */
+  const saleOf = id => sales.find(s => s.id === id);
+
+  function updateReturnRefund() {
+    const s = saleOf(el("returnSaleSelect").value);
+    const q = Number(el("returnQuantity").value);
+    el("returnRefund").value = (s && Number.isInteger(q) && q > 0)
+      ? (q * Number(s.unitPrice || 0)).toFixed(2) : "";
+  }
+
+  el("returnSaleSelect").addEventListener("change", () => {
+    const s = saleOf(el("returnSaleSelect").value);
+    if (!s) {
+      el("returnQuantity").removeAttribute("max");
+      el("returnPayMethod").value = "";
+      el("returnRefund").value = "";
+      return;
+    }
+    el("returnQuantity").max = remaining(s);
+    el("returnQuantity").value = 1;
+    el("returnPayMethod").value = s.paymentMethod || "غير محدد";
+    updateReturnRefund();
+  });
+  el("returnQuantity").addEventListener("input", updateReturnRefund);
+  ["returnSaleSelect", "exchangeSaleSelect"].forEach(id => {
+    const select = el(id);
+    const refresh = () => { if (document.activeElement !== select || select.options.length <= 1) fillSaleSelect(select); };
+    select.addEventListener("mousedown", () => fillSaleSelect(select));
+    select.addEventListener("focus", refresh);
+  });
+
+  function renderReturns() {
+    const body = el("returnsTableBody");
+    const term = normalize(el("returnsSearch").value);
+    body.replaceChildren();
+
+    const filtered = [...returns]
+      .filter(r => [r.productName, r.productCode, r.customer, r.orderNo].some(v => normalize(v).includes(term)))
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    if (!filtered.length) emptyRow(body, 11, term ? "لا توجد نتائج مطابقة للبحث." : "لا توجد مرتجعات مسجلة حتى الآن.");
+
+    filtered.forEach(r => {
+      const inStock = r.stockStatus === "returns";
+      const tr = document.createElement("tr");
+      tr.append(
+        createCell(dateText(r.createdAt)),
+        createCell(r.orderNo || "—", "code-text"),
+        createCell(r.customer || "—"),
+        createCell(r.productName || "—", "product-name"),
+        createCell(r.productCode || "—", "code-text"),
+        createCell(Number(r.quantity || 0).toLocaleString("ar-EG")),
+        createCell(r.reason || "—"),
+        createCell(r.paymentMethod || r.refundMethod || "—"),
+        createCell(formatMoney(r.refund)),
+        createCell(inStock ? "في مخزن المرتجعات" : "أُعيد للمخزن الرئيسي")
+      );
+
+      const actionCell = document.createElement("td");
+      if (inStock) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "secondary-btn";
+        btn.textContent = "إعادة للمخزن الرئيسي";
+        btn.addEventListener("click", () => restock(r));
+        actionCell.appendChild(btn);
+      } else {
+        actionCell.textContent = "—";
+      }
+      tr.appendChild(actionCell);
+      body.appendChild(tr);
+    });
+
+    const units = returns.filter(r => r.stockStatus === "returns")
+      .reduce((t, r) => t + Number(r.quantity || 0), 0);
+
+    el("returnsTableCount").textContent = "عدد المرتجعات: " + filtered.length.toLocaleString("ar-EG");
+    el("returnsTotal").textContent = formatMoney(returns.reduce((t, r) => t + Number(r.refund || 0), 0));
+    el("returnsCount").textContent = returns.length.toLocaleString("ar-EG");
+    el("returnsUnits").textContent = units.toLocaleString("ar-EG");
+  }
+
+  function restock(record) {
+    const product = findProduct(record.productId);
+    if (!product) {
+      showMessage("returnMessage", "المنتج محذوف من قائمة المنتجات، لا يمكن إعادته للمخزن الرئيسي.", "error");
+      return;
+    }
+    if (!confirm("إعادة " + record.quantity + " قطعة من " + record.productName + " إلى المخزن الرئيسي؟")) return;
+
+    const oldQty = product.quantity;
+    product.quantity = Number(product.quantity || 0) + Number(record.quantity || 0);
+    record.stockStatus = "main";
+    record.restockedAt = new Date().toISOString();
+
+    if (!persist([[PRODUCT_KEY, products], [RETURNS_KEY, returns]])) {
+      product.quantity = oldQty;
+      record.stockStatus = "returns";
+      delete record.restockedAt;
+      showMessage("returnMessage", "تعذر الحفظ. لم يتم تغيير المخزون.", "error");
+      return;
+    }
+
+    renderProducts();
+    renderAll();
+    showMessage("returnMessage", "تمت إعادة القطع إلى المخزن الرئيسي.", "success");
+  }
+
+  el("returnsSearch").addEventListener("input", renderReturns);
+
+  el("salesReturnForm").addEventListener("submit", event => {
+    event.preventDefault();
+    const msg = "returnMessage";
+
+    const sale = saleOf(el("returnSaleSelect").value);
+    if (!sale) return showMessage(msg, "اختر عملية البيع أولًا.", "error");
+
+    const orderNo = el("returnOrderNo").value.trim();
+    if (!orderNo) return showMessage(msg, "اكتب رقم أوردر المرتجع.", "error");
+    if (returnOrders().some(r => normalize(r.orderNo) === normalize(orderNo))) {
+      return showMessage(msg, "رقم الأوردر مستخدم بالفعل.", "error");
+    }
+
+    const customer = el("returnCustomer").value.trim();
+    if (!customer) return showMessage(msg, "اكتب اسم العميل.", "error");
+
+    const quantity = Number(el("returnQuantity").value);
+    if (!Number.isInteger(quantity) || quantity <= 0) return showMessage(msg, "اكتب كمية مرتجعة صحيحة.", "error");
+    if (quantity > remaining(sale)) return showMessage(msg, "الكمية أكبر من المتاح للإرجاع: " + remaining(sale), "error");
+
+    const reason = el("returnReason").value;
+    if (!reason) return showMessage(msg, "اختر سبب الإرجاع.", "error");
+
+    const refund = Number(el("returnRefund").value);
+    const maxRefund = quantity * Number(sale.unitPrice || 0);
+    if (!Number.isFinite(refund) || refund < 0) return showMessage(msg, "اكتب مبلغ استرداد صحيح.", "error");
+    if (refund > maxRefund + 0.001) {
+      return showMessage(msg, "المبلغ المسترد أكبر من قيمة القطع المباعة (" + formatMoney(maxRefund) + ").", "error");
+    }
+
+    const record = {
+      id: "RET-" + Date.now() + "-" + rand(),
+      orderNo, customer,
+      saleId: sale.id,
+      invoiceId: sale.invoiceId || "",
+      productId: sale.productId || "",
+      productName: sale.productName || "",
+      productCode: sale.productCode || "",
+      quantity, reason,
+      paymentMethod: sale.paymentMethod || "",
+      refund,
+      notes: el("returnNotes").value.trim(),
+      source: "return",
+      stockStatus: "returns",
+      createdAt: new Date().toISOString()
+    };
+
+    returns.push(record);
+    if (!persist([[RETURNS_KEY, returns]])) {
+      returns.pop();
+      return showMessage(msg, "تعذر حفظ المرتجع. حاول مرة أخرى.", "error");
+    }
+
+    el("salesReturnForm").reset();
+    el("returnQuantity").removeAttribute("max");
+    el("returnPayMethod").value = "";
+    renderAll();
+    showMessage(msg,
+      "تم تسجيل المرتجع رقم " + orderNo + " للعميل " + customer + " في مخزن المرتجعات بتاريخ " + dateText(record.createdAt) + ".",
+      "success");
+  });
+
+  /* ================= التبديل ================= */
+  function fillNewProducts() {
+    const select = el("exchangeNewProduct");
+    const old = select.value;
+    select.replaceChildren();
+    const first = document.createElement("option");
+    first.value = "";
+    first.textContent = "اختر القطعة البديلة";
+    select.appendChild(first);
+
+    products.filter(p => Number(p.quantity) > 0).forEach(p => {
+      const o = document.createElement("option");
+      o.value = p.id;
+      o.textContent = p.name + " — " + p.code +
+        (p.size ? " — مقاس " + p.size : "") + (p.color ? " — " + p.color : "") +
+        " — المتاح: " + p.quantity;
+      select.appendChild(o);
+    });
+
+    if ([...select.options].some(o => o.value === old)) select.value = old;
+  }
+
+  function exchangeFigures() {
+    const sale = saleOf(el("exchangeSaleSelect").value);
+    const np = findProduct(el("exchangeNewProduct").value);
+    const q = Number(el("exchangeReturnQty").value);
+    const nq = Number(el("exchangeNewQty").value);
+    const price = Number(el("exchangeNewPrice").value);
+    if (!sale || !np || !(q > 0) || !(nq > 0) || !(price > 0)) return null;
+    const returnedValue = q * Number(sale.unitPrice || 0);
+    const newValue = nq * price;
+    return { sale, np, q, nq, price, returnedValue, newValue, difference: newValue - returnedValue };
+  }
+
+  function updateExchangePreview() {
+    const f = exchangeFigures();
+    const box = el("exchangePreview");
+    if (!f) { box.textContent = "اختر عملية البيع والقطعة البديلة لمعاينة فرق السعر."; return; }
+    const d = Math.round(f.difference * 100) / 100;
+    const diffText = d > 0 ? "العميل يدفع " + formatMoney(d)
+      : d < 0 ? "يتم رد " + formatMoney(Math.abs(d)) + " للعميل" : "لا يوجد فرق";
+    box.textContent = "قيمة المرتجع: " + formatMoney(f.returnedValue) +
+      " | قيمة البديل: " + formatMoney(f.newValue) + " | " + diffText;
+  }
+
+  el("exchangeSaleSelect").addEventListener("change", () => {
+    const s = saleOf(el("exchangeSaleSelect").value);
+    if (s) { el("exchangeReturnQty").max = remaining(s); el("exchangeReturnQty").value = 1; }
+    else el("exchangeReturnQty").removeAttribute("max");
+    updateExchangePreview();
+  });
+  el("exchangeNewProduct").addEventListener("change", () => {
+    const p = findProduct(el("exchangeNewProduct").value);
+    el("exchangeNewPrice").value = p ? p.salePrice : "";
+    if (p && !el("exchangeNewQty").value) el("exchangeNewQty").value = 1;
+    updateExchangePreview();
+  });
+  ["exchangeReturnQty", "exchangeNewQty", "exchangeNewPrice"].forEach(id =>
+    el(id).addEventListener("input", updateExchangePreview));
+
+  function renderExchanges() {
+    const body = el("exchangesTableBody");
+    const term = normalize(el("exchangesSearch").value);
+    body.replaceChildren();
+
+    const filtered = [...exchanges]
+      .filter(x => [x.customer, x.orderNo, x.returnedProductName, x.newProductName, x.returnedProductCode, x.newProductCode]
+        .some(v => normalize(v).includes(term)))
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    if (!filtered.length) emptyRow(body, 8, term ? "لا توجد نتائج مطابقة للبحث." : "لا توجد عمليات تبديل مسجلة حتى الآن.");
+
+    filtered.forEach(x => {
+      const d = Number(x.difference || 0);
+      const tr = document.createElement("tr");
+      tr.append(
+        createCell(dateText(x.createdAt)),
+        createCell(x.orderNo || "—", "code-text"),
+        createCell(x.customer || "—"),
+        createCell((x.returnedProductName || "—") + " × " + Number(x.returnedQty || 0).toLocaleString("ar-EG"), "product-name"),
+        createCell((x.newProductName || "—") + " × " + Number(x.newQty || 0).toLocaleString("ar-EG"), "product-name"),
+        createCell(d > 0 ? "دفع " + formatMoney(d) : d < 0 ? "رد " + formatMoney(Math.abs(d)) : "لا فرق"),
+        createCell(x.method || "—"),
+        createCell(x.reason || "—")
+      );
+      body.appendChild(tr);
+    });
+
+    el("exchangesTableCount").textContent = "عدد التبديلات: " + filtered.length.toLocaleString("ar-EG");
+    el("exchangesCount").textContent = exchanges.length.toLocaleString("ar-EG");
+    el("exchangesPaid").textContent = formatMoney(exchanges.reduce((t, x) => t + Math.max(0, Number(x.difference || 0)), 0));
+    el("exchangesRefunded").textContent = formatMoney(exchanges.reduce((t, x) => t + Math.max(0, -Number(x.difference || 0)), 0));
+  }
+
+  el("exchangesSearch").addEventListener("input", renderExchanges);
+
+  el("exchangeForm").addEventListener("submit", event => {
+    event.preventDefault();
+    const msg = "exchangeMessage";
+
+    const orderNo = el("exchangeOrderNo").value.trim();
+    if (!orderNo) return showMessage(msg, "اكتب رقم أوردر التبديل.", "error");
+    if (exchanges.some(x => normalize(x.orderNo) === normalize(orderNo))) {
+      return showMessage(msg, "رقم الأوردر مستخدم بالفعل.", "error");
+    }
+
+    const customer = el("exchangeCustomer").value.trim();
+    if (!customer) return showMessage(msg, "اكتب اسم العميل.", "error");
+
+    const sale = saleOf(el("exchangeSaleSelect").value);
+    if (!sale) return showMessage(msg, "اختر عملية البيع الأصلية.", "error");
+
+    const q = Number(el("exchangeReturnQty").value);
+    if (!Number.isInteger(q) || q <= 0) return showMessage(msg, "اكتب كمية مرتجعة صحيحة.", "error");
+    if (q > remaining(sale)) return showMessage(msg, "الكمية أكبر من المتاح للإرجاع: " + remaining(sale), "error");
+
+    const reason = el("exchangeReason").value;
+    if (!reason) return showMessage(msg, "اختر سبب التبديل.", "error");
+
+    const np = findProduct(el("exchangeNewProduct").value);
+    if (!np) return showMessage(msg, "اختر القطعة البديلة.", "error");
+    if (String(np.id) === String(sale.productId)) {
+      return showMessage(msg, "القطعة البديلة هي نفس القطعة المباعة. اختر مقاسًا أو منتجًا مختلفًا.", "error");
+    }
+
+    const nq = Number(el("exchangeNewQty").value);
+    if (!Number.isInteger(nq) || nq <= 0) return showMessage(msg, "اكتب كمية بديلة صحيحة.", "error");
+    if (nq > Number(np.quantity)) return showMessage(msg, "الكمية البديلة أكبر من المتاح بالمخزن: " + np.quantity, "error");
+
+    const price = Number(el("exchangeNewPrice").value);
+    if (!Number.isFinite(price) || price <= 0) return showMessage(msg, "اكتب سعرًا صحيحًا للقطعة البديلة.", "error");
+
+    const returnedValue = q * Number(sale.unitPrice || 0);
+    const newValue = nq * price;
+    const difference = Math.round((newValue - returnedValue) * 100) / 100;
+    const method = el("exchangeMethod").value;
+
+    if (difference !== 0 && !method) {
+      return showMessage(msg, "يوجد فرق سعر. اختر طريقة الدفع أو الرد: كاش أو فيزا.", "error");
+    }
+
+    const now = new Date().toISOString();
+    const exchangeId = "EX-" + Date.now() + "-" + rand();
+
+    const returnRecord = {
+      id: "RET-" + Date.now() + "-" + rand(),
+      orderNo, customer,
+      saleId: sale.id,
+      invoiceId: sale.invoiceId || "",
+      productId: sale.productId || "",
+      productName: sale.productName || "",
+      productCode: sale.productCode || "",
+      quantity: q,
+      reason: "تبديل: " + reason,
+      paymentMethod: sale.paymentMethod || "",
+      refund: 0,
+      notes: el("exchangeNotes").value.trim(),
+      source: "exchange",
+      exchangeId,
+      stockStatus: "returns",
+      createdAt: now
+    };
+
+    const exchangeRecord = {
+      id: exchangeId, orderNo, customer, createdAt: now, reason,
+      saleId: sale.id,
+      returnedProductName: sale.productName || "",
+      returnedProductCode: sale.productCode || "",
+      returnedQty: q,
+      newProductId: np.id,
+      newProductName: np.name,
+      newProductCode: np.code,
+      newQty: nq,
+      newUnitPrice: price,
+      returnedValue, newValue, difference,
+      method: difference === 0 ? "" : method,
+      notes: el("exchangeNotes").value.trim()
+    };
+
+    const oldQty = np.quantity;
+    np.quantity = Number(np.quantity) - nq;
+    returns.push(returnRecord);
+    exchanges.push(exchangeRecord);
+
+    if (!persist([[PRODUCT_KEY, products], [RETURNS_KEY, returns], [EXCHANGES_KEY, exchanges]])) {
+      np.quantity = oldQty;
+      returns.pop();
+      exchanges.pop();
+      return showMessage(msg, "تعذر حفظ التبديل. لم يتم تغيير المخزون.", "error");
+    }
+
+    el("exchangeForm").reset();
+    el("exchangeReturnQty").removeAttribute("max");
+    renderProducts();
+    renderAll();
+    showMessage(msg,
+      "تم التبديل رقم " + orderNo + ". دخلت " + q + " قطعة مخزن المرتجعات وخرجت " + nq + " قطعة من المخزن الرئيسي.",
+      "success");
+  });
+
+  /* ================= تهيئة وتحديث ================= */
+  function renderAll() {
+    renderCustomerNames();
+    fillSaleSelect(el("returnSaleSelect"));
+    fillSaleSelect(el("exchangeSaleSelect"));
+    fillNewProducts();
+
+    if (!el("returnOrderNo").value) el("returnOrderNo").value = nextNo("RET", returnOrders());
+    if (!el("exchangeOrderNo").value) el("exchangeOrderNo").value = nextNo("EXC", exchanges);
+
+    renderReturns();
+    renderExchanges();
+    updateExchangePreview();
+  }
+
+  const previousShowPage = showPage;
+  showPage = function (name, updateHash = true) {
+    previousShowPage(name, updateHash);
+    if (name === "salesReturns" || name === "exchanges") renderAll();
+  };
+
+  renderAll();
+})();
+</script>
+<script>
+/* تحديث التقارير */
+document.getElementById("refreshReportsButton").addEventListener("click", () => renderReports());
+</script>
 </body>
 </html>
