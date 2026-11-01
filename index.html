@@ -3825,88 +3825,34 @@ window.addEventListener("hashchange", () => {
     canvas.height = Math.round(height * ratio);
     context.setTransform(ratio, 0, 0, ratio, 0, 0);
   }
- 
-  function addSmoke(x, y) {
+
+function addSmoke(x, y) {
     if (!smokeEnabled) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
- 
-    const count = Math.max(1, Math.round(smokePower / 2));
+
+    const count = Math.max(5, Math.round(smokePower * 2));
     const colors = [[0, 170, 255], [255, 45, 75]];
- 
+
     for (let i = 0; i < count; i++) {
-      const color = colors[Math.floor(Math.random() * colors.length)];
- 
-      particles.push({
-        x: x + (Math.random() - 0.5) * 8,
-        y: y + (Math.random() - 0.5) * 8,
-        vx: (Math.random() - 0.5) * 2.6,
-        vy: (Math.random() - 0.5) * 2.6,
-        radius: 2 + Math.random() * (2 + smokePower * 0.35),
-        alpha: 0.75 + Math.random() * 0.2,
-        life: 1,
-        decay: 0.035 + Math.random() * 0.035,
-        color
-      });
-    }
- 
-    if (particles.length > 180) {
-      particles.splice(0, particles.length - 180);
-    }
-  }
- 
+        const color = colors[Math.floor(Math.random() * colors.length)];
 
-function animateSmoke() {
-    context.clearRect(0, 0, width, height);
-
-    particles = particles.filter(p => p.life > 0.03);
-
-    for (const p of particles) {
-        p.x += p.vx;
-        p.y += p.vy;
-
-        p.vx *= 0.97;
-        p.vy *= 0.97;
-        p.radius *= 0.992;
-        p.life -= p.decay;
-
-        const alpha = Math.max(0, p.alpha * p.life);
-        const [r, g, b] = p.color;
-
-        context.save();
-        context.translate(p.x, p.y);
-        context.rotate(Math.atan2(p.vy, p.vx));
-
-        const radius = Math.max(2, p.radius);
-
-        const gradient = context.createRadialGradient(
-            0, 0, radius * 0.05,
-            0, 0, radius * 2.5
-        );
-
-        gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${alpha * 0.20})`);
-        gradient.addColorStop(0.35, `rgba(${r}, ${g}, ${b}, ${alpha * 0.12})`);
-        gradient.addColorStop(0.7, `rgba(${r}, ${g}, ${b}, ${alpha * 0.04})`);
-        gradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
-
-        context.fillStyle = gradient;
-        context.shadowColor = `rgba(${r}, ${g}, ${b}, ${alpha * 0.3})`;
-        context.shadowBlur = radius * 1.5;
-
-        context.beginPath();
-        context.ellipse(0, 0, radius * 2.5, radius * 1.5, 0, 0, Math.PI * 2);
-        context.fill();
-
-        context.restore();
+        particles.push({
+            x: x + (Math.random() - 0.5) * 24,
+            y: y + (Math.random() - 0.5) * 24,
+            vx: (Math.random() - 0.5) * 1.8,
+            vy: -0.5 - Math.random() * 1.5,
+            radius: 12 + Math.random() * (smokePower * 2.5),
+            alpha: 1,
+            life: 1,
+            decay: 0.009 + Math.random() * 0.008,
+            color
+        });
     }
 
-    if (smokeEnabled || particles.length) {
-        frame = requestAnimationFrame(animateSmoke);
-    } else {
-        frame = 0;
-        context.clearRect(0, 0, width, height);
+    if (particles.length > 350) {
+        particles.splice(0, particles.length - 350);
     }
 }
-
 
  
   /* ترجمة النصوص التي تظهر ديناميكيًا */
