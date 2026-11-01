@@ -3854,55 +3854,60 @@ window.addEventListener("hashchange", () => {
     }
   }
  
-  function animateSmoke() {
+
+function animateSmoke() {
     context.clearRect(0, 0, width, height);
- 
+
     particles = particles.filter(p => p.life > 0.03);
- 
+
     for (const p of particles) {
-      p.x += p.vx;
-      p.y += p.vy;
-      p.vx *= 0.97;
-      p.vy *= 0.97;
-      p.radius *= 0.985;
-      p.life -= p.decay;
- 
-      const alpha = Math.max(0, p.alpha * p.life);
-      const [r, g, b] = p.color;
- 
-      context.beginPath();
-      context.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
-      context.shadowColor = `rgba(${r}, ${g}, ${b}, ${alpha})`;
-      context.shadowBlur = 5;
-      context.arc(p.x, p.y, Math.max(0.5, p.radius), 0, Math.PI * 2);
-      context.fill();
+        p.x += p.vx;
+        p.y += p.vy;
+
+        p.vx *= 0.97;
+        p.vy *= 0.97;
+        p.radius *= 0.992;
+        p.life -= p.decay;
+
+        const alpha = Math.max(0, p.alpha * p.life);
+        const [r, g, b] = p.color;
+
+        context.save();
+        context.translate(p.x, p.y);
+        context.rotate(Math.atan2(p.vy, p.vx));
+
+        const radius = Math.max(2, p.radius);
+
+        const gradient = context.createRadialGradient(
+            0, 0, radius * 0.05,
+            0, 0, radius * 2.5
+        );
+
+        gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${alpha * 0.20})`);
+        gradient.addColorStop(0.35, `rgba(${r}, ${g}, ${b}, ${alpha * 0.12})`);
+        gradient.addColorStop(0.7, `rgba(${r}, ${g}, ${b}, ${alpha * 0.04})`);
+        gradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
+
+        context.fillStyle = gradient;
+        context.shadowColor = `rgba(${r}, ${g}, ${b}, ${alpha * 0.3})`;
+        context.shadowBlur = radius * 1.5;
+
+        context.beginPath();
+        context.ellipse(0, 0, radius * 2.5, radius * 1.5, 0, 0, Math.PI * 2);
+        context.fill();
+
+        context.restore();
     }
- 
-    context.shadowBlur = 0;
- 
+
     if (smokeEnabled || particles.length) {
-      frame = requestAnimationFrame(animateSmoke);
+        frame = requestAnimationFrame(animateSmoke);
     } else {
-      frame = 0;
-      context.clearRect(0, 0, width, height);
+        frame = 0;
+        context.clearRect(0, 0, width, height);
     }
-  }
- 
-  window.addEventListener("resize", resizeCanvas);
- 
-  document.addEventListener("pointermove", event => {
-    if (event.pointerType === "touch" || !smokeEnabled) return;
- 
-    const now = performance.now();
-    if (now - lastSpawn < 12) return;
-    lastSpawn = now;
- 
-    addSmoke(event.clientX, event.clientY);
- 
-    if (!frame) frame = requestAnimationFrame(animateSmoke);
-  }, { passive: true });
- 
-  resizeCanvas();
+}
+
+
  
   /* ترجمة النصوص التي تظهر ديناميكيًا */
   const observer = new MutationObserver(records => {
