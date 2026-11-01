@@ -428,9 +428,20 @@ footer{margin-top:35px;padding:21px 15px;text-align:center;background:#091523;bo
         إضافة المنتج للفاتورة
     </button>
 </div>
+<div class="sale-preview" id="salePreview">اختار المنتج وحدد الكمية لمعاينة الحسابات.</div>
 
-<div class="sale-preview" id="salePreview">اختار المنتج وحدد الكمية لمعاينة الحسابات.</div> 
-     <div class="actions"><button class="primary-btn" type="submit">تسجيل عملية البيع</button><button class="secondary-btn" type="button" id="clearSaleFormButton">مسح بيانات البيع</button></div>
+<div class="field" style="margin-top:15px;">
+    <label for="salePaymentMethod">طريقة الدفع</label>
+    <select id="salePaymentMethod" required>
+        <option value="">اختر طريقة الدفع</option>
+        <option value="كاش">كاش</option>
+        <option value="فيزا">فيزا</option>
+        <option value="محفظة إلكترونية">محفظة إلكترونية</option>
+        <option value="تحويل بنكي">تحويل بنكي</option>
+        <option value="آجل">آجل (على الحساب)</option>
+    </select>
+</div> 
+    <div class="actions"><button class="primary-btn" type="submit">تسجيل عملية البيع</button><button class="secondary-btn" type="button" id="clearSaleFormButton">مسح بيانات البيع</button></div>
      <div id="saleMessage" class="message" role="status"></div>
     </form>
    </section>
@@ -564,9 +575,24 @@ footer{margin-top:35px;padding:21px 15px;text-align:center;background:#091523;bo
    <div class="page-topline"><h1>سجل المبيعات</h1><p>راجع عمليات البيع السابقة وإجمالي كل عملية.</p></div>
    <section class="panel">
     <div class="table-toolbar"><h2 class="section-title">عمليات البيع المسجلة</h2><input id="salesSearch" class="search-input" type="search" placeholder="بحث باسم المنتج أو الكود"></div>
-    <div class="table-wrapper">
-     <table><thead><tr><th>التاريخ والوقت</th><th>المنتج</th><th>الكود</th><th>الكمية</th><th>سعر القطعة</th><th>إجمالي البيع</th><th>الربح</th></tr></thead><tbody id="salesTableBody"></tbody></table>
-    </div>
+ <div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th>التاريخ والوقت</th>
+                <th>المنتج</th>
+                <th>الكود</th>
+                <th>طريقة الدفع</th>
+                <th>الكمية</th>
+                <th>سعر القطعة</th>
+                <th>إجمالي البيع</th>
+                <th>الربح</th>
+            </tr>
+        </thead>
+        <tbody id="salesTableBody"></tbody>
+    </table>
+</div>
+     
     <div class="table-footer"><span id="salesTableCount">عدد عمليات البيع: 0</span><span>الربح قبل مصاريف التشغيل</span></div>
    </section>
   </section>
@@ -2073,7 +2099,8 @@ function renderSales() {
                 createCell(Number.isNaN(date.getTime()) ? "—" : date.toLocaleString("ar-EG")),
                 createCell(s.productName || "منتج محذوف", "product-name"),
                 createCell(s.productCode || "—", "code-text"),
-                createCell(Number(s.quantity || 0).toLocaleString("ar-EG")),
+createCell(s.paymentMethod || "غير محدد"),
+createCell(Number(s.quantity || 0).toLocaleString("ar-EG")),
                 createCell(formatMoney(s.unitPrice)),
                 createCell(formatMoney(s.total)),
                 createCell(formatMoney(s.profit))
@@ -2152,13 +2179,22 @@ $("saleForm").addEventListener("submit", event => {
     }));
 
     const now = new Date().toISOString();
+const paymentMethod = $("salePaymentMethod").value;
+
+if (!paymentMethod) {
+    showMessage("saleMessage", "من فضلك اختر طريقة الدفع.", "error");
+    return;
+}
+ 
     const invoiceId =
         "INV-" + Date.now() + "-" + Math.random().toString(16).slice(2, 8);
 
     const newSales = checkedItems.map(({ item, product }) => ({
         id: Date.now().toString() + Math.random().toString(16).slice(2),
-        invoiceId,
-        productId: product.id,
+invoiceId,
+paymentMethod,
+productId: product.id,
+     
         productName: product.name,
         productCode: product.code,
         quantity: item.quantity,
@@ -2592,7 +2628,7 @@ function renderAuditTable() {
     );
  
     if (!filtered.length) {
-        emptyRow(body, 7, "لا توجد منتجات مطابقة للبحث.");
+     emptyRow(body, 8,"لا توجد منتجات مطابقة للبحث.");
     }
  
     filtered.forEach(p => {
