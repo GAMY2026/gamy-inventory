@@ -3788,18 +3788,20 @@ window.addEventListener("hashchange", () => {
     savePreference(SMOKE_POWER_KEY, String(smokePower));
   });
  
-  smokeButton.addEventListener("click", () => {
+ smokeButton.addEventListener("click", () => {
     smokeEnabled = !smokeEnabled;
     savePreference(SMOKE_KEY, smokeEnabled ? "on" : "off");
     updateSmokeButton();
- 
+
     if (!smokeEnabled) {
       particles = [];
       if (frame) cancelAnimationFrame(frame);
       frame = 0;
       if (context) context.clearRect(0, 0, width, height);
+    } else {
+      if (!frame) frame = requestAnimationFrame(animateSmoke);
     }
-  });
+});
  
   /* دخان سريع بألوان أزرق وأحمر */
   const canvas = document.createElement("canvas");
