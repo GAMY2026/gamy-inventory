@@ -3,6 +3,34 @@
 <head>
 <link rel="icon" type="image/svg+xml" href="./favicon.svg?v=999">
 <meta charset="UTF-8">
+<script>
+/* لو المتصفح يمنع التخزين (معاينة داخل صفحة مثلًا) نستخدم تخزينًا مؤقتًا في الذاكرة حتى لا يتعطل الدخول */
+(function () {
+  function broken(name) {
+    try { var st = window[name]; st.setItem("__t", "1"); st.removeItem("__t"); return false; }
+    catch (e) { return true; }
+  }
+  function memory() {
+    var d = {};
+    return {
+      getItem: function (k) { return Object.prototype.hasOwnProperty.call(d, k) ? d[k] : null; },
+      setItem: function (k, v) { d[k] = String(v); },
+      removeItem: function (k) { delete d[k]; },
+      clear: function () { d = {}; },
+      key: function (i) { return Object.keys(d)[i] || null; },
+      get length() { return Object.keys(d).length; }
+    };
+  }
+  var memo = false;
+  ["localStorage", "sessionStorage"].forEach(function (n) {
+    if (broken(n)) {
+      try { Object.defineProperty(window, n, { value: memory(), configurable: true }); } catch (e) {}
+      memo = true;
+    }
+  });
+  window.__memoryStorage = memo;
+})();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GAMY INVENTORY | إدارة المخازن</title>
  
@@ -267,31 +295,137 @@ footer{margin-top:35px;padding:21px 15px;text-align:center;background:#091523;bo
 #salesReturnForm .form-grid .field{margin-top:0}
 #exchangeForm>.field,#exchangeForm>.sale-preview{margin-top:18px}
 select option{background:#0d1b2b;color:#edf3fb}
+.home-hero{text-align:center;margin:30px 0 34px}
+.home-kicker{color:#ffe0a0;font-size:14px;font-weight:700;margin-bottom:8px}
+.home-title{font-size:40px;font-weight:800;letter-spacing:3px;color:#fff;margin-bottom:8px}
+.home-title span{color:var(--gamy-gold-light)}
+.home-hero p{color:#a8b8ca;font-size:14px}
+.home-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;max-width:1000px;margin:0 auto 20px}
+.home-card{display:flex;flex-direction:column;align-items:center;gap:8px;padding:38px 20px;text-align:center;color:#fff;
+  background:linear-gradient(145deg,#102034,#0b1726);border:1px solid #34485d;border-radius:18px;
+  box-shadow:0 9px 28px #0003;transition:transform .2s,border-color .2s,box-shadow .2s}
+.home-card:hover{transform:translateY(-5px);border-color:var(--gamy-gold);box-shadow:0 14px 34px rgba(0,0,0,.4)}
+.home-icon{font-size:46px;line-height:1}
+.home-en{font-size:20px;font-weight:800;letter-spacing:2px;color:var(--gamy-gold-light)}
+.home-ar{font-size:13px;color:#a8b8ca}
+.discuss-item{border:1px solid #2b4056;background:#112136;border-radius:10px;padding:14px;margin-bottom:12px}
+.discuss-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.discuss-author{color:var(--gamy-gold-light);font-weight:750}
+.discuss-date{color:var(--muted);font-size:11px}
+.discuss-text{color:#dbe6f2;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.9}
+.brand-wrap .brand{cursor:pointer}
+@media(max-width:760px){.home-grid{grid-template-columns:1fr}.home-title{font-size:30px}}
+/* ===== مظهر ERP احترافي (على طراز Odoo) ===== */
+.topbar{background:#0a1626;border-bottom:1px solid #1f3147;box-shadow:none}
+.topbar-inner{min-height:48px;padding:6px 0;gap:10px;flex-wrap:nowrap}
+.brand-wrap{gap:10px;min-width:0}
+.brand{font-size:16px;letter-spacing:1.5px;white-space:nowrap}
+.brand-subtitle{display:none}
+.apps-btn{width:36px;height:36px;border:0;border-radius:8px;background:transparent;color:#fff;display:grid;place-items:center;flex-shrink:0}
+.apps-btn:hover{background:rgba(255,255,255,.12)}
+.menu-toggle{min-width:0!important;min-height:36px!important;padding:0 10px!important;font-size:12px;border-color:#2c425b!important;background:transparent!important;flex-shrink:0}
+.crumb-sep{color:#52667c}
+.header-label{border:0!important;background:none!important;padding:0!important;color:#d5deea!important;font-size:14px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-chip{display:flex;align-items:center;gap:8px;color:#d5deea;font-size:12px;flex-shrink:0}
+.avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#e6c477,#b68c43);color:#101725;display:grid;place-items:center;font-weight:800}
+.user-name{direction:ltr;letter-spacing:.5px}
+
+.home-hero{margin:34px 0 22px}
+.home-title{font-size:30px;letter-spacing:4px}
+.home-apps{max-width:980px;margin:0 auto}
+.apps-search{display:block;max-width:420px;margin:0 auto 38px;text-align:center}
+.apps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:26px 14px}
+.app-tile{display:flex;flex-direction:column;align-items:center;gap:10px;background:none;border:0;color:#e5edf7;padding:10px 6px;border-radius:12px;transition:background .15s,transform .15s}
+.app-tile:hover{background:rgba(255,255,255,.07);transform:translateY(-3px)}
+.app-tile:focus-visible{outline:2px solid var(--gamy-gold);outline-offset:2px}
+.app-icon{width:72px;height:72px;border-radius:18px;display:grid;place-items:center;font-size:34px;background:linear-gradient(135deg,var(--c1),var(--c2));box-shadow:0 6px 16px rgba(0,0,0,.35)}
+.app-name{font-size:13px;font-weight:650;text-align:center;line-height:1.4}
+
+.page-topline{padding:4px 0 14px;border-bottom:1px solid #1f3147;margin-bottom:20px}
+.page-topline h1{font-size:21px;margin-bottom:2px}
+.panel{border-radius:10px;box-shadow:none;background:#0d1b2b}
+.stat-card{border-radius:10px;box-shadow:none}
+.primary-btn,.secondary-btn,.danger-btn{min-height:36px;padding:7px 14px;border-radius:6px}
+.field input,.field select,.search-input{height:38px;border-radius:6px}
+thead{background:#101f33}
+th{color:#9db0c4;font-size:11px;font-weight:700}
+tbody tr:nth-child(even){background:rgba(255,255,255,.02)}
+.badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:700;border:1px solid transparent}
+.badge-ok{background:#102d29;color:#8de0bf;border-color:#285d50}
+.badge-warn{background:#33290f;color:#f6d078;border-color:#6e5a22}
+.badge-danger{background:#351d27;color:#ffb2ba;border-color:#75404a}
+.badge-info{background:#13283a;color:#b9d9f2;border-color:#31516c}
+@media(max-width:600px){.user-name,.toggle-label,.crumb-sep{display:none}.header-label{font-size:12px!important}.brand{font-size:14px}}
+input[type=date],input[type=month]{color-scheme:dark}
+tr.row-out{background:rgba(255,107,120,.07)!important}
+/* ===== الدخول والصلاحيات ===== */
+.auth-overlay{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:18px;background:radial-gradient(ellipse at 85% 0%,#17283d 0%,transparent 45%),#07111f}
+.auth-card{width:100%;max-width:400px;background:#0d1b2b;border:1px solid #34475b;border-radius:16px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.auth-brand{text-align:center;font-size:22px;font-weight:800;letter-spacing:2px;color:#fff;margin-bottom:14px}
+.auth-brand span{color:var(--gamy-gold-light)}
+.auth-card h1{text-align:center;font-size:19px;color:var(--gamy-gold-light);margin-bottom:6px}
+.auth-hint{text-align:center;color:#a8b8ca;font-size:12px;margin-bottom:18px;line-height:1.8}
+body.auth-locked .topbar,body.auth-locked .app-layout,body.auth-locked footer,body.auth-locked #menuEdge{display:none!important}
+.logout-btn{background:transparent;border:1px solid #2c425b;color:#d5deea;border-radius:6px;padding:4px 10px;font-size:12px}
+.logout-btn:hover{background:rgba(255,255,255,.1)}
+.perm-block{margin-top:20px}
+.perm-title{color:#c4d1df;font-size:12px;font-weight:700;margin-bottom:10px}
+.perm-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.perm-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #2b4056;background:#112136;border-radius:8px;color:#dbe6f2;font-size:13px;cursor:pointer}
+.perm-item input{width:18px;height:18px;accent-color:var(--gamy-gold);flex-shrink:0}
+.perm-active{margin-top:10px}
+.perm-badge{margin:2px 0 2px 4px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:10001;background:#351d27;color:#ffb2ba;border:1px solid #75404a;border-radius:8px;padding:10px 18px;font-size:13px}
+body.no-costs [data-page-section="products"] table th:nth-child(4),body.no-costs [data-page-section="products"] table td:nth-child(4),
+body.no-costs [data-page-section="products"] table th:nth-child(7),body.no-costs [data-page-section="products"] table td:nth-child(7),
+body.no-costs [data-page-section="history"] table th:nth-child(8),body.no-costs [data-page-section="history"] table td:nth-child(8){display:none}
+body.no-costs .sale-stat:has(#todayProfitTotal){display:none}
+@media(max-width:600px){.perm-grid{grid-template-columns:1fr}}
 </style>
  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 </head>
-<body>
+<body class="auth-locked">
+
+<div id="authOverlay" class="auth-overlay">
+ <div class="auth-card">
+  <div class="auth-brand">GAMY <span>INVENTORY</span></div>
+  <h1 id="authTitle">تسجيل الدخول</h1>
+  <p id="authHint" class="auth-hint"></p>
+  <form id="authForm" novalidate>
+   <div class="field" id="authCodeField"><label for="authCode">الكود</label><input id="authCode" type="text" autocomplete="username" placeholder="كود الموظف، أو admin للمدير"></div>
+   <div class="field" style="margin-top:14px;"><label for="authSecret">الرمز السري</label><input id="authSecret" type="password" autocomplete="current-password"></div>
+   <div class="field" id="authConfirmField" style="margin-top:14px;" hidden><label for="authConfirm">تأكيد كلمة المرور</label><input id="authConfirm" type="password" autocomplete="new-password"></div>
+   <div class="actions"><button class="primary-btn" type="button" id="authSubmit" style="width:100%;">دخول</button></div>
+   <div id="authMessage" class="message" role="status"></div>
+  </form>
+ </div>
+</div>
+
  
 <header class="topbar">
  <div class="topbar-inner">
   <div class="brand-wrap">
+   <button type="button" class="apps-btn" id="appsButton" aria-label="كل التطبيقات" title="كل التطبيقات">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor" aria-hidden="true"><circle cx="3" cy="3" r="1.8"/><circle cx="9" cy="3" r="1.8"/><circle cx="15" cy="3" r="1.8"/><circle cx="3" cy="9" r="1.8"/><circle cx="9" cy="9" r="1.8"/><circle cx="15" cy="9" r="1.8"/><circle cx="3" cy="15" r="1.8"/><circle cx="9" cy="15" r="1.8"/><circle cx="15" cy="15" r="1.8"/></svg>
+   </button>
    <button type="button" class="sidebar-toggle menu-toggle" id="sidebarToggle" aria-label="فتح القائمة" aria-expanded="false">
     <span>☰</span><span class="toggle-label">القائمة</span>
    </button>
-   <div>
-    <div class="brand">GAMY <span>INVENTORY</span></div>
-    <div class="brand-subtitle">نظام إدارة المخازن والمبيعات</div>
-   </div>
+   <div class="brand">GAMY <span>INVENTORY</span></div>
+   <span class="crumb-sep">/</span>
+   <div class="header-label">الصفحة الرئيسية</div>
   </div>
-  <div class="header-label">لوحة التحكم</div>
+  <div class="user-chip"><span class="avatar" id="userAvatar">M</span><span class="user-name" id="userNameLabel">MOHAMED GAMAL</span><button type="button" class="logout-btn" id="logoutButton" title="تسجيل الخروج">خروج</button></div>
  </div>
 </header>
  
 <div class="app-layout">
 <aside class="sidebar" id="mainSidebar">
-  <div class="menu-header" id="menuDragHandle"><div class="menu-role">مدير</div><div class="menu-name">MOHAMED GAMAL</div></div>
+  <div class="menu-header" id="menuDragHandle"><div class="menu-role" id="menuRoleLabel">مدير</div><div class="menu-name" id="menuNameLabel">MOHAMED GAMAL</div></div>
   <nav class="sidebar-nav">
-   <button type="button" class="nav-item active" data-page="dashboard" data-title="لوحة التحكم">لوحة التحكم</button>
+   <button type="button" class="nav-item active" data-page="home" data-title="الصفحة الرئيسية">الصفحة الرئيسية</button>
+   <button type="button" class="nav-item" data-page="dashboard" data-title="لوحة التحكم">لوحة التحكم</button>
+   <button type="button" class="nav-item" data-page="discuss" data-title="Discuss">Discuss</button>
    <button type="button" class="nav-item" data-page="products" data-title="إدارة المنتجات">إدارة المنتجات</button>
    <button type="button" class="nav-item" data-page="receipts" data-title="استلامات البضاعة">استلامات البضاعة</button>
 <button type="button" class="nav-item" data-page="sales" data-title="تسجيل المبيعات">تسجيل المبيعات</button>
@@ -299,6 +433,7 @@ select option{background:#0d1b2b;color:#edf3fb}
 <button type="button" class="nav-item" data-page="exchanges" data-title="التبديل (الاكستشنج)">التبديل (الاكستشنج)</button>
    <button type="button" class="nav-item" data-page="history" data-title="سجل المبيعات">سجل المبيعات</button>
    <button type="button" class="nav-item" data-page="backup" data-title="النسخ الاحتياطي">النسخ الاحتياطي</button>
+   <button type="button" class="nav-item" data-page="employees" data-title="الموظفين">الموظفين</button>
    <button type="button" class="nav-item" data-page="inventoryAudit" data-title="جرد المخزن">جرد المخزن</button>
    <button type="button" class="nav-item" data-page="stockMovements" data-title="حركة المخزون">حركة المخزون</button>
    <button type="button" class="nav-item" data-page="reports" data-title="التقارير والإحصائيات">التقارير والإحصائيات</button>
@@ -309,7 +444,35 @@ select option{background:#0d1b2b;color:#edf3fb}
 <div id="menuEdge" aria-hidden="true"></div>
 <main class="app-content">
  
-  <section class="page active" data-page-section="dashboard">
+    <section class="page active" data-page-section="home">
+   <section class="home-hero">
+    <div class="home-kicker" id="homeGreeting">مرحبًا، مدير MOHAMED GAMAL</div>
+    <h1 class="home-title">GAMY <span>ERP</span></h1>
+   </section>
+   <div class="home-apps">
+    <input id="appsSearch" class="search-input apps-search" type="search" placeholder="ابحث عن تطبيق..." autocomplete="off">
+    <div class="apps-grid" id="appsGrid">
+    <button type="button" class="app-tile" data-page-link="dashboard" data-app-name="INVENTORY"><span class="app-icon" style="--c1:#714b67;--c2:#9b6a8e" aria-hidden="true">📦</span><span class="app-name">INVENTORY</span></button>
+    <button type="button" class="app-tile" data-page-link="sales" data-app-name="POINT OF SALE"><span class="app-icon" style="--c1:#1fa67a;--c2:#16805f" aria-hidden="true">🧾</span><span class="app-name">POINT OF SALE</span></button>
+    <button type="button" class="app-tile" data-page-link="discuss" data-app-name="DISCUSS"><span class="app-icon" style="--c1:#2f80ed;--c2:#1d5fc0" aria-hidden="true">💬</span><span class="app-name">DISCUSS</span></button>
+    <button type="button" class="app-tile" data-page-link="products" data-app-name="إدارة المنتجات"><span class="app-icon" style="--c1:#e8833a;--c2:#c45f1c" aria-hidden="true">🏷️</span><span class="app-name">إدارة المنتجات</span></button>
+    <button type="button" class="app-tile" data-page-link="receipts" data-app-name="استلامات البضاعة"><span class="app-icon" style="--c1:#00a0b0;--c2:#007a88" aria-hidden="true">📥</span><span class="app-name">استلامات البضاعة</span></button>
+    <button type="button" class="app-tile" data-page-link="salesReturns" data-app-name="مرتجعات المبيعات"><span class="app-icon" style="--c1:#d9534f;--c2:#b03a36" aria-hidden="true">↩️</span><span class="app-name">مرتجعات المبيعات</span></button>
+    <button type="button" class="app-tile" data-page-link="exchanges" data-app-name="التبديل"><span class="app-icon" style="--c1:#8e44ad;--c2:#6c3483" aria-hidden="true">🔄</span><span class="app-name">التبديل</span></button>
+    <button type="button" class="app-tile" data-page-link="history" data-app-name="سجل المبيعات"><span class="app-icon" style="--c1:#3d9970;--c2:#2b7a56" aria-hidden="true">📒</span><span class="app-name">سجل المبيعات</span></button>
+    <button type="button" class="app-tile" data-page-link="inventoryAudit" data-app-name="جرد المخزن"><span class="app-icon" style="--c1:#c9a04a;--c2:#a07d2c" aria-hidden="true">📋</span><span class="app-name">جرد المخزن</span></button>
+    <button type="button" class="app-tile" data-page-link="stockMovements" data-app-name="حركة المخزون"><span class="app-icon" style="--c1:#5b6ee1;--c2:#4150b8" aria-hidden="true">🚚</span><span class="app-name">حركة المخزون</span></button>
+    <button type="button" class="app-tile" data-page-link="reports" data-app-name="التقارير"><span class="app-icon" style="--c1:#e0559a;--c2:#b83a7a" aria-hidden="true">📊</span><span class="app-name">التقارير</span></button>
+    <button type="button" class="app-tile" data-page-link="customersSuppliers" data-app-name="العملاء والموردون"><span class="app-icon" style="--c1:#17a2b8;--c2:#117a8b" aria-hidden="true">👥</span><span class="app-name">العملاء والموردون</span></button>
+    <button type="button" class="app-tile" data-page-link="stockAlerts" data-app-name="تنبيهات المخزون"><span class="app-icon" style="--c1:#f0ad4e;--c2:#d08a1f" aria-hidden="true">🔔</span><span class="app-name">تنبيهات المخزون</span></button>
+    <button type="button" class="app-tile" data-page-link="backup" data-app-name="النسخ الاحتياطي"><span class="app-icon" style="--c1:#6c757d;--c2:#495057" aria-hidden="true">💾</span><span class="app-name">النسخ الاحتياطي</span></button>
+    <button type="button" class="app-tile" data-page-link="employees" data-app-name="الموظفين"><span class="app-icon" style="--c1:#5b8def;--c2:#3a64c4" aria-hidden="true">👤</span><span class="app-name">الموظفين</span></button>
+    </div>
+    <div id="appsEmpty" class="empty-state" hidden>لا توجد تطبيقات مطابقة.</div>
+   </div>
+  </section>
+
+  <section class="page" data-page-section="dashboard">
    <section class="welcome">
     <h1>إدارة المخازن والمبيعات</h1>
     <p>تابع المنتجات والكميات والمبيعات من مكان واحد.</p>
@@ -319,7 +482,7 @@ select option{background:#0d1b2b;color:#edf3fb}
     <div class="stat-card"><div class="stat-label">عدد أنواع المنتجات</div><div class="stat-value" id="productCount">0</div><div class="stat-caption">إجمالي المنتجات المسجلة</div></div>
     <div class="stat-card"><div class="stat-label">قيمة المخزون</div><div class="stat-value" id="stockValue">0 ج.م</div><div class="stat-caption">محسوبة بسعر الشراء</div></div>
     <div class="stat-card"><div class="stat-label">إجمالي القطع</div><div class="stat-value" id="totalUnits">0</div><div class="stat-caption">القطع الموجودة بالمخزن</div></div>
-    <div class="stat-card"><div class="stat-label">مخزون منخفض</div><div class="stat-value" id="lowStockCount">0</div><div class="stat-caption">5 قطع أو أقل</div></div>
+    <div class="stat-card"><div class="stat-label">مخزون منخفض</div><div class="stat-value" id="lowStockCount">0</div><div class="stat-caption" id="lowStockCardCaption">5 قطع أو أقل</div></div>
     <div class="stat-card"><div class="stat-label">مبيعات اليوم</div><div class="stat-value" id="dashSalesToday">0 ج.م</div><div class="stat-caption">إجمالي البيع اليوم</div></div>
     <div class="stat-card"><div class="stat-label">ربح اليوم التقديري</div><div class="stat-value" id="dashProfitToday">0 ج.م</div><div class="stat-caption">قبل مصاريف التشغيل</div></div>
    </div>
@@ -684,6 +847,87 @@ select option{background:#0d1b2b;color:#edf3fb}
    </section>
   </section>
 
+  <section class="page" data-page-section="discuss">
+   <div class="page-topline"><h1>Discuss</h1><p>اكتب ملاحظات ومناقشات الفريق في مكان واحد.</p></div>
+   <section class="panel">
+    <div class="panel-heading"><h2 class="section-title">إضافة ملاحظة</h2></div>
+    <form id="discussForm">
+     <div class="form-grid">
+      <div class="field"><label for="discussAuthor">الاسم</label><input id="discussAuthor" type="text" value="MOHAMED GAMAL" required></div>
+     </div>
+     <div class="field" style="margin-top:18px;"><label for="discussText">الرسالة</label><textarea id="discussText" required placeholder="اكتب ملاحظتك أو نقطة للنقاش"></textarea></div>
+     <div class="actions"><button type="submit" class="primary-btn">نشر</button></div>
+     <div id="discussMessage" class="message" role="status"></div>
+    </form>
+   </section>
+   <section class="panel">
+    <div class="panel-heading"><h2 class="section-title">المناقشات</h2></div>
+    <div id="discussList"></div>
+   </section>
+  </section>
+
+<section class="page" data-page-section="employees">
+   <div class="page-topline"><h1>الموظفين</h1><p>أضف الموظفين وحدّد لكل واحد الصفحات المسموح له باستخدامها.</p></div>
+
+   <div class="stats">
+    <div class="stat-card"><div class="stat-label">إجمالي الموظفين</div><div class="stat-value" id="employeesTotal">0</div></div>
+    <div class="stat-card"><div class="stat-label">حسابات نشطة</div><div class="stat-value" id="employeesActive">0</div></div>
+    <div class="stat-card"><div class="stat-label">حسابات موقوفة</div><div class="stat-value" id="employeesSuspended">0</div></div>
+   </div>
+
+   <section class="panel">
+    <div class="panel-heading"><h2 class="section-title" id="employeeFormTitle">إضافة موظف جديد</h2><p class="description">الموظف يدخل بالكود والرمز السري، ويشوف الصفحات اللي سمحت له بيها بس.</p></div>
+    <form id="employeeForm" novalidate>
+     <div class="form-grid">
+      <div class="field"><label for="employeeName">اسم الموظف</label><input id="employeeName" type="text" placeholder="الاسم بالكامل"></div>
+      <div class="field"><label for="employeeCode">الكود</label><input id="employeeCode" type="text" placeholder="مثال: EMP01" autocomplete="off"></div>
+      <div class="field"><label for="employeePosition">المنصب</label><input id="employeePosition" type="text" placeholder="مثال: كاشير"></div>
+      <div class="field"><label for="employeePin" id="employeePinLabel">الرمز السري</label><input id="employeePin" type="password" autocomplete="new-password" placeholder="٤ أحرف أو أرقام على الأقل"></div>
+     </div>
+
+     <div class="perm-block">
+      <div class="perm-title">الصلاحيات</div>
+      <div class="perm-grid">
+      <label class="perm-item"><input type="checkbox" data-perm="sell"><span>تسجيل المبيعات (نقطة البيع)</span></label>
+      <label class="perm-item"><input type="checkbox" data-perm="returns"><span>المرتجعات والتبديل</span></label>
+      <label class="perm-item"><input type="checkbox" data-perm="invoices"><span>مراجعة الفواتير (سجل المبيعات)</span></label>
+      <label class="perm-item"><input type="checkbox" data-perm="storage"><span>التخزين: المنتجات والجرد وحركة المخزون والتنبيهات</span></label>
+      <label class="perm-item"><input type="checkbox" data-perm="receiving"><span>استلام البضاعة</span></label>
+      <label class="perm-item"><input type="checkbox" data-perm="viewCosts"><span>إظهار أسعار الشراء والأرباح</span></label>
+      </div>
+      <label class="perm-item perm-active"><input type="checkbox" id="employeeActive" checked><span>الحساب نشط (يقدر يدخل)</span></label>
+      <p class="description" style="margin-top:10px;">صفحات للمدير فقط ولا يمكن إعطاؤها لموظف: لوحة التحكم، التقارير، النسخ الاحتياطي، العملاء والموردون، الموظفين.</p>
+     </div>
+
+     <div class="actions">
+      <button class="primary-btn" type="submit" id="saveEmployeeButton">حفظ الموظف</button>
+      <button class="secondary-btn" type="button" id="cancelEmployeeEdit" hidden>إلغاء التعديل</button>
+     </div>
+     <div id="employeeMessage" class="message" role="status"></div>
+    </form>
+   </section>
+
+   <section class="panel">
+    <div class="table-toolbar"><h2 class="section-title">قائمة الموظفين</h2><input id="employeesSearch" class="search-input" type="search" placeholder="بحث بالاسم أو الكود أو المنصب"></div>
+    <div class="table-wrapper">
+     <table><thead><tr><th>الاسم</th><th>الكود</th><th>المنصب</th><th>الصلاحيات</th><th>الحالة</th><th>الإجراءات</th></tr></thead><tbody id="employeesTableBody"></tbody></table>
+    </div>
+   </section>
+
+   <section class="panel">
+    <div class="panel-heading"><h2 class="section-title">تغيير كلمة مرور المدير</h2></div>
+    <form id="adminPasswordForm" novalidate>
+     <div class="form-grid">
+      <div class="field"><label for="currentAdminPassword">كلمة المرور الحالية</label><input id="currentAdminPassword" type="password" autocomplete="current-password"></div>
+      <div class="field"><label for="newAdminPassword">كلمة المرور الجديدة</label><input id="newAdminPassword" type="password" autocomplete="new-password"></div>
+      <div class="field"><label for="confirmAdminPassword">تأكيد كلمة المرور الجديدة</label><input id="confirmAdminPassword" type="password" autocomplete="new-password"></div>
+     </div>
+     <div class="actions"><button class="primary-btn" type="submit">تغيير كلمة المرور</button></div>
+     <div id="adminPasswordMessage" class="message" role="status"></div>
+    </form>
+   </section>
+  </section>
+
   <section class="page" data-page-section="history">
    <div class="page-topline"><h1>سجل المبيعات</h1><p>راجع عمليات البيع السابقة وإجمالي كل عملية.</p></div>
    <section class="panel">
@@ -857,15 +1101,42 @@ select option{background:#0d1b2b;color:#edf3fb}
   <section class="page" data-page-section="stockMovements">
    <div class="page-topline">
     <h1>حركة المخزون</h1>
-    <p>تابع الاستلامات المعتمدة وعمليات البيع، الأحدث أولًا.</p>
+    <p>سجل كامل لكل دخول وخروج من المخزن، الأحدث أولًا.</p>
    </div>
- 
+
+   <div class="stats">
+    <div class="stat-card"><div class="stat-label">إجمالي الداخل</div><div class="stat-value" id="movementsIn">0</div><div class="stat-caption">حسب الفلتر الحالي</div></div>
+    <div class="stat-card"><div class="stat-label">إجمالي الخارج</div><div class="stat-value" id="movementsOut">0</div><div class="stat-caption">حسب الفلتر الحالي</div></div>
+    <div class="stat-card"><div class="stat-label">صافي الحركة</div><div class="stat-value" id="movementsNet">0</div><div class="stat-caption">الداخل ناقص الخارج للمخزن الرئيسي</div></div>
+   </div>
+
    <section class="panel">
-    <div class="table-toolbar">
-     <input id="stockMovementSearch" class="search-input" type="search" placeholder="ابحث برقم الإذن أو اسم الصنف أو الكود">
-     <button type="button" class="secondary-btn" id="refreshStockMovementsButton">تحديث التقرير</button>
+    <div class="form-grid">
+     <div class="field"><label for="stockMovementSearch">بحث</label><input id="stockMovementSearch" type="search" placeholder="رقم العملية أو اسم الصنف أو الكود"></div>
+     <div class="field">
+      <label for="stockMovementType">نوع الحركة</label>
+      <select id="stockMovementType">
+        <option value="">كل الأنواع</option>
+        <option value="استلام">استلام</option>
+        <option value="بيع">بيع</option>
+        <option value="رصيد افتتاحي">رصيد افتتاحي</option>
+        <option value="إضافة يدوية">إضافة يدوية</option>
+        <option value="تعديل يدوي">تعديل يدوي</option>
+        <option value="إعادة من المرتجعات">إعادة من المرتجعات</option>
+        <option value="تبديل (خروج بديل)">تبديل (خروج بديل)</option>
+        <option value="مرتجع (مخزن المرتجعات)">مرتجع (مخزن المرتجعات)</option>
+        <option value="تبديل (دخول للمرتجعات)">تبديل (دخول للمرتجعات)</option>
+      </select>
+     </div>
+     <div class="field"><label for="stockMovementFrom">من تاريخ</label><input id="stockMovementFrom" type="date"></div>
+     <div class="field"><label for="stockMovementTo">إلى تاريخ</label><input id="stockMovementTo" type="date"></div>
     </div>
-    <div class="table-wrapper">
+    <div class="actions">
+     <button type="button" class="secondary-btn" id="refreshStockMovementsButton">تحديث التقرير</button>
+     <button type="button" class="secondary-btn" id="clearStockMovementFilters">مسح الفلاتر</button>
+     <button type="button" class="primary-btn" id="exportStockMovementsButton">تنزيل Excel</button>
+    </div>
+    <div class="table-wrapper" style="margin-top:16px;">
      <table>
       <thead>
        <tr><th>التاريخ</th><th>رقم العملية</th><th>النوع</th><th>اسم الصنف</th><th>الكود</th><th>المقاس</th><th>اللون</th><th>الكمية</th></tr>
@@ -876,7 +1147,7 @@ select option{background:#0d1b2b;color:#edf3fb}
     <div id="stockMovementsSummary" class="message" role="status"></div>
    </section>
   </section>
- 
+
   <section class="page" data-page-section="reports">
    <div class="page-topline">
     <h1>التقارير والإحصائيات</h1>
@@ -992,27 +1263,36 @@ select option{background:#0d1b2b;color:#edf3fb}
   </div>
 
   <div class="stats">
-    <div class="stat-card">
-      <div class="stat-label">إجمالي التنبيهات</div>
-      <div class="stat-value" id="stockAlertsCount">0</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">منتجات نفدت</div>
-      <div class="stat-value" id="outOfStockCount">0</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">مخزون منخفض</div>
-      <div class="stat-value" id="lowStockAlertsCount">0</div>
-    </div>
+    <div class="stat-card"><div class="stat-label">إجمالي التنبيهات</div><div class="stat-value" id="stockAlertsCount">0</div></div>
+    <div class="stat-card"><div class="stat-label">منتجات نفدت</div><div class="stat-value" id="outOfStockCount">0</div></div>
+    <div class="stat-card"><div class="stat-label">مخزون منخفض</div><div class="stat-value" id="lowStockAlertsCount">0</div></div>
   </div>
 
   <section class="panel">
     <div class="panel-heading">
       <h2 class="section-title">المنتجات التي تحتاج متابعة</h2>
-      <p class="description">تظهر المنتجات التي كميتها 5 قطع أو أقل.</p>
+      <p class="description" id="stockAlertsDescription">تظهر المنتجات التي كميتها 5 قطع أو أقل.</p>
     </div>
 
-    <div class="table-wrapper">
+    <div class="form-grid">
+      <div class="field"><label for="stockAlertSearch">بحث</label><input id="stockAlertSearch" type="search" placeholder="اسم المنتج أو الكود أو اللون أو المقاس"></div>
+      <div class="field">
+        <label for="stockAlertFilter">الحالة</label>
+        <select id="stockAlertFilter">
+          <option value="all">الكل</option>
+          <option value="out">نفد المخزون</option>
+          <option value="low">مخزون منخفض</option>
+        </select>
+      </div>
+      <div class="field"><label for="stockAlertThreshold">حد التنبيه (قطع)</label><input id="stockAlertThreshold" type="number" min="0" max="1000" step="1" value="5"></div>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="primary-btn" id="exportStockAlertsButton">تنزيل قائمة إعادة الطلب Excel</button>
+    </div>
+    <div id="stockAlertsMessage" class="message" role="status"></div>
+
+    <div class="table-wrapper" style="margin-top:16px;">
       <table>
         <thead>
           <tr>
@@ -1021,16 +1301,16 @@ select option{background:#0d1b2b;color:#edf3fb}
             <th>اللون</th>
             <th>المقاس</th>
             <th>الكمية الحالية</th>
+            <th>الكمية المقترحة للطلب</th>
             <th>حالة المخزون</th>
+            <th>إجراء</th>
           </tr>
         </thead>
         <tbody id="stockAlertsBody"></tbody>
       </table>
     </div>
 
-    <div id="stockAlertsEmpty" class="empty-state">
-      لا توجد منتجات تحتاج إلى تنبيه حاليًا.
-    </div>
+    <div id="stockAlertsEmpty" class="empty-state">لا توجد منتجات تحتاج إلى تنبيه حاليًا.</div>
   </section>
 </section>
 
@@ -1059,6 +1339,19 @@ select option{background:#0d1b2b;color:#edf3fb}
 /* الحفاظ على مفاتيح التخزين القديمة */
 const PRODUCT_KEY = "gamy_inventory_products_v1";
 const SALES_KEY = "gamy_inventory_sales_v1";
+const LOW_STOCK_KEY = "gamy_inventory_low_stock_threshold_v1";
+
+function getLowStockThreshold() {
+    try {
+        const raw = localStorage.getItem(LOW_STOCK_KEY);
+        if (raw === null) return 5;
+        const value = Number(raw);
+        return Number.isInteger(value) && value >= 0 ? value : 5;
+    } catch (error) {
+        return 5;
+    }
+}
+
 const $ = id => document.getElementById(id);
  let products = [];
 let sales = [];
@@ -1142,6 +1435,39 @@ function createCell(value, className = "") {
     return td;
 }
  
+const MANUAL_MOVEMENTS_KEY = "gamy_inventory_manual_movements_v1";
+
+function logManualMovement(type, product, quantity) {
+    if (!product || !Number.isFinite(quantity) || quantity === 0) return;
+    try {
+        const saved = JSON.parse(localStorage.getItem(MANUAL_MOVEMENTS_KEY) || "[]");
+        const list = Array.isArray(saved) ? saved : [];
+        list.push({
+            id: "MOV-" + Date.now() + "-" + Math.random().toString(16).slice(2, 8),
+            createdAt: new Date().toISOString(),
+            type,
+            productId: product.id,
+            name: product.name,
+            code: product.code,
+            size: product.size || "",
+            color: product.color || "",
+            quantity
+        });
+        localStorage.setItem(MANUAL_MOVEMENTS_KEY, JSON.stringify(list));
+    } catch (error) {
+        console.error("تعذر تسجيل حركة المخزون:", error);
+    }
+}
+
+function badgeCell(text, type) {
+    const td = document.createElement("td");
+    const span = document.createElement("span");
+    span.className = "badge badge-" + (type || "info");
+    span.textContent = text;
+    td.appendChild(span);
+    return td;
+}
+
 function emptyRow(body, columns, message) {
     const tr = document.createElement("tr");
     const td = document.createElement("td");
@@ -1295,7 +1621,7 @@ function showPage(name, updateHash = true) {
     const allowed = [
         "dashboard", "products", "receipts", "sales",  "salesReturns" , "history", "backup",
         "inventoryAudit", "stockMovements", "reports", "customersSuppliers",
-        "stockAlerts", "exchanges"];
+        "stockAlerts", "exchanges", "home", "discuss", "employees"];
 
     const target = allowed.includes(name) ? name : "dashboard";
 
@@ -1472,13 +1798,14 @@ function renderProducts() {
     const stockValue = products.reduce((sum, p) =>
         sum + Number(p.purchasePrice || 0) * Number(p.quantity || 0), 0
     );
-    const low = products.filter(p => Number(p.quantity || 0) <= 5).length;
+    const low = products.filter(p => Number(p.quantity || 0) <= getLowStockThreshold()).length;
  
     $("productCount").textContent = products.length.toLocaleString("ar-EG");
     $("stockValue").textContent = formatMoney(stockValue);
     $("totalUnits").textContent = units.toLocaleString("ar-EG");
     $("lowStockCount").textContent = low.toLocaleString("ar-EG");
     $("tableCount").textContent = "عدد المنتجات: " + filtered.length.toLocaleString("ar-EG");
+    $("lowStockCardCaption").textContent = getLowStockThreshold() + " قطع أو أقل";
  
     renderSaleOptions();
  
@@ -1567,61 +1894,158 @@ barcode.addEventListener("click", () => {
     renderDashboardSales();
     renderDashboardAnalytics();
     updateBackupSummary();
+renderStockAlerts();
 }
  
 $("searchInput").addEventListener("input", renderProducts);
 
-/* عرض تنبيهات المخزون */
+/* تنبيهات المخزون */
+function getStockAlertRows() {
+    const threshold = getLowStockThreshold();
+    const term = normalize($("stockAlertSearch").value);
+    const filter = $("stockAlertFilter").value;
+
+    return products
+        .filter(p => Number(p.quantity || 0) <= threshold)
+        .filter(p => {
+            const quantity = Number(p.quantity || 0);
+            if (filter === "out") return quantity <= 0;
+            if (filter === "low") return quantity > 0;
+            return true;
+        })
+        .filter(p => !term ||
+            normalize(p.name).includes(term) ||
+            normalize(p.code).includes(term) ||
+            normalize(p.color).includes(term) ||
+            normalize(p.size).includes(term))
+        .sort((a, b) =>
+            Number(a.quantity || 0) - Number(b.quantity || 0) ||
+            String(a.name).localeCompare(String(b.name), "ar"))
+        .map(p => ({
+            product: p,
+            quantity: Number(p.quantity || 0),
+            suggested: Math.max(threshold * 2 - Number(p.quantity || 0), 1)
+        }));
+}
+
 function renderStockAlerts() {
     const body = $("stockAlertsBody");
     if (!body) return;
 
+    const threshold = getLowStockThreshold();
+    const thresholdInput = $("stockAlertThreshold");
+    if (thresholdInput && document.activeElement !== thresholdInput) {
+        thresholdInput.value = String(threshold);
+    }
+
+    const everything = products.filter(p => Number(p.quantity || 0) <= threshold);
+    const outCount = everything.filter(p => Number(p.quantity || 0) <= 0).length;
+
+    $("stockAlertsCount").textContent = everything.length.toLocaleString("ar-EG");
+    $("outOfStockCount").textContent = outCount.toLocaleString("ar-EG");
+    $("lowStockAlertsCount").textContent = (everything.length - outCount).toLocaleString("ar-EG");
+    $("stockAlertsDescription").textContent =
+        "تظهر المنتجات التي كميتها " + threshold.toLocaleString("ar-EG") + " قطعة أو أقل. الكمية المقترحة = ضعف حد التنبيه ناقص الكمية الحالية.";
+
+    const rows = getStockAlertRows();
     body.replaceChildren();
 
-    const alerts = products.filter(p =>
-        Number(p.quantity || 0) <= 5
-    );
+    rows.forEach(({ product: p, quantity, suggested }) => {
+        const tr = document.createElement("tr");
+        if (quantity <= 0) tr.className = "row-out";
 
-    const outOfStock = alerts.filter(p =>
-        Number(p.quantity || 0) <= 0
-    );
-
-    const lowStock = alerts.filter(p =>
-        Number(p.quantity || 0) > 0 &&
-        Number(p.quantity || 0) <= 5
-    );
-
-    $("stockAlertsCount").textContent =
-        alerts.length.toLocaleString("ar-EG");
-
-    $("outOfStockCount").textContent =
-        outOfStock.length.toLocaleString("ar-EG");
-
-    $("lowStockAlertsCount").textContent =
-        lowStock.length.toLocaleString("ar-EG");
-
-    alerts.forEach(p => {
-        const row = document.createElement("tr");
-        const quantity = Number(p.quantity || 0);
-
-        const status = quantity <= 0
-            ? "نفد المخزون"
-            : "مخزون منخفض";
-
-        row.append(
+        tr.append(
             createCell(p.name, "product-name"),
             createCell(p.code, "code-text"),
             createCell(p.color || "—"),
             createCell(p.size || "—"),
             createCell(quantity.toLocaleString("ar-EG")),
-            createCell(status)
+            createCell(suggested.toLocaleString("ar-EG")),
+            badgeCell(quantity <= 0 ? "نفد المخزون" : "مخزون منخفض", quantity <= 0 ? "danger" : "warn")
         );
 
-        body.appendChild(row);
+        const actionCell = document.createElement("td");
+        const addButton = document.createElement("button");
+        addButton.type = "button";
+        addButton.className = "secondary-btn";
+        addButton.textContent = "إضافة كمية";
+        addButton.addEventListener("click", () => openStockModal(p.id));
+        actionCell.appendChild(addButton);
+        tr.appendChild(actionCell);
+
+        body.appendChild(tr);
     });
 
-    $("stockAlertsEmpty").hidden = alerts.length > 0;
+    $("stockAlertsEmpty").hidden = rows.length > 0;
+    $("stockAlertsEmpty").textContent = everything.length
+        ? "لا توجد نتائج مطابقة للبحث أو الفلتر."
+        : "لا توجد منتجات تحتاج إلى تنبيه حاليًا.";
 }
+
+$("stockAlertSearch").addEventListener("input", renderStockAlerts);
+$("stockAlertFilter").addEventListener("change", renderStockAlerts);
+
+$("stockAlertThreshold").addEventListener("change", () => {
+    const value = Number($("stockAlertThreshold").value);
+
+    if (!$("stockAlertThreshold").value.trim() || !Number.isInteger(value) || value < 0 || value > 1000) {
+        showMessage("stockAlertsMessage", "اكتب حد تنبيه صحيحًا (عدد صحيح من 0 إلى 1000).", "error");
+        $("stockAlertThreshold").value = String(getLowStockThreshold());
+        return;
+    }
+
+    try {
+        localStorage.setItem(LOW_STOCK_KEY, String(value));
+    } catch (error) {
+        showMessage("stockAlertsMessage", "تعذر حفظ حد التنبيه.", "error");
+        return;
+    }
+
+    renderProducts();
+    renderStockAlerts();
+    showMessage("stockAlertsMessage", "تم تحديث حد التنبيه إلى " + value + " قطعة.", "success");
+});
+
+$("exportStockAlertsButton").addEventListener("click", async () => {
+    const button = $("exportStockAlertsButton");
+    const rows = getStockAlertRows();
+
+    if (!rows.length) {
+        showMessage("stockAlertsMessage", "لا توجد منتجات لتنزيلها.", "error");
+        return;
+    }
+
+    button.disabled = true;
+    showMessage("stockAlertsMessage", "جاري تجهيز قائمة إعادة الطلب...", "info");
+
+    try {
+        const XLSX = await loadXlsxLibrary();
+        const data = [
+            ["اسم المنتج", "الكود", "الموديل", "النوع", "اللون", "المقاس", "الكمية الحالية", "الحالة",
+             "الكمية المقترحة للطلب", "سعر الشراء", "تكلفة الطلب المقترح"],
+            ...rows.map(({ product: p, quantity, suggested }) => [
+                p.name, p.code, p.model || "", p.gender || "", p.color || "", p.size || "",
+                quantity, quantity <= 0 ? "نفد المخزون" : "مخزون منخفض",
+                suggested, Number(p.purchasePrice || 0), suggested * Number(p.purchasePrice || 0)
+            ])
+        ];
+
+        const sheet = XLSX.utils.aoa_to_sheet(data);
+        sheet["!cols"] = [26, 16, 14, 12, 14, 12, 16, 16, 22, 14, 20].map(w => ({ wch: w }));
+        const workbook = XLSX.utils.book_new();
+        workbook.Workbook = { Views: [{ RTL: true }] };
+        XLSX.utils.book_append_sheet(workbook, sheet, "إعادة الطلب");
+        XLSX.writeFile(workbook, "GAMY-Reorder-List-" + getLocalDateForFilename() + ".xlsx", { bookType: "xlsx" });
+
+        showMessage("stockAlertsMessage", "تم تنزيل قائمة إعادة الطلب.", "success");
+    } catch (error) {
+        console.error("Stock alerts export error:", error);
+        showMessage("stockAlertsMessage", error.message || "تعذر تنزيل القائمة.", "error");
+    } finally {
+        button.disabled = false;
+    }
+});
+
 
 
 
@@ -1726,6 +2150,7 @@ $("productForm").addEventListener("submit", event => {
         }
  
         clearProductForm();
+        logManualMovement("تعديل يدوي", products[index], quantity - Number(previous.quantity || 0));
         showMessage("formMessage", "تم حفظ تعديلات المنتج بنجاح.", "success");
     } else {
         const newProduct = {
@@ -1741,6 +2166,7 @@ $("productForm").addEventListener("submit", event => {
         }
  
         clearProductForm();
+        logManualMovement("رصيد افتتاحي", newProduct, quantity);
         showMessage("formMessage", "تم حفظ المنتج بنجاح.", "success");
     }
  
@@ -1807,6 +2233,8 @@ $("stockForm").addEventListener("submit", event => {
  
     closeStockModal();
     renderProducts();
+    logManualMovement("إضافة يدوية", p, amount);
+    showMessage("stockAlertsMessage", "تمت إضافة " + amount + " قطعة إلى " + p.name + ".", "success");
     showMessage("formMessage", "تمت إضافة " + amount + " قطعة إلى المخزون.", "success");
 });
  
@@ -1855,7 +2283,7 @@ function updateSalePreview() {
  
     $("salePreview").textContent =
         "إجمالي البيع: " + formatMoney(quantity * price) +
-        " | الربح المتوقع: " + formatMoney(quantity * (price - p.purchasePrice)) +
+        (document.body.classList.contains("no-costs") ? "" : " | الربح المتوقع: " + formatMoney(quantity * (price - p.purchasePrice))) +
         " | المتاح: " + Number(p.quantity).toLocaleString("ar-EG") + " قطعة." + warning;
 }
  
@@ -2058,7 +2486,7 @@ function renderDashboardSales() {
  
 function renderDashboardAnalytics() {
     const totalProducts = products.length;
-    const lowStock = products.filter(p => Number(p.quantity || 0) <= 5).length;
+    const lowStock = products.filter(p => Number(p.quantity || 0) <= getLowStockThreshold()).length;
     const healthy = totalProducts - lowStock;
  
     const healthyPercent = totalProducts ? Math.round((healthy / totalProducts) * 100) : 0;
@@ -2075,12 +2503,12 @@ function renderDashboardAnalytics() {
  
     if ($("stockHealthCaption")) {
         $("stockHealthCaption").textContent =
-            healthy + " من " + totalProducts + " أنواع منتجات مخزونها أكثر من 5 قطع";
+            healthy + " من " + totalProducts + " أنواع منتجات مخزونها أكثر من " + getLowStockThreshold() + " قطع";
     }
  
     if ($("lowStockCaption")) {
         $("lowStockCaption").textContent =
-            lowStock + " من " + totalProducts + " أنواع منتجات مخزونها 5 قطع أو أقل";
+            lowStock + " من " + totalProducts + " أنواع منتجات مخزونها " + getLowStockThreshold() + " قطع أو أقل";
     }
  
     const chart = $("dashboardSalesChart");
@@ -2418,7 +2846,7 @@ $("exportBackupButton").addEventListener("click", async () => {
         const stockValue = products.reduce((sum, p) =>
             sum + Number(p.purchasePrice || 0) * Number(p.quantity || 0), 0
         );
-        const lowStock = products.filter(p => Number(p.quantity || 0) <= 5).length;
+        const lowStock = products.filter(p => Number(p.quantity || 0) <= getLowStockThreshold()).length;
         const todaySales = sales.filter(s => isToday(s.createdAt));
         const dailyRevenue = todaySales.reduce((sum, s) => sum + Number(s.total || 0), 0);
         const dailyProfit = todaySales.reduce((sum, s) => sum + Number(s.profit || 0), 0);
@@ -2968,7 +3396,7 @@ renderProducts();
 renderSales();
 updateSalePreview();
 updateBackupSummary();
-showPage(location.hash.slice(1) || "dashboard", false);
+showPage(location.hash.slice(1) || "home", false);
  /* ربط أزرار القائمة والتنقل بين الصفحات */
 document.querySelectorAll(".nav-item[data-page]").forEach(button => {
     button.addEventListener("click", () => showPage(button.dataset.page));
@@ -4585,196 +5013,234 @@ monthInput.value = month;
 </script>
  
 <script>
-/* حركة المخزون: الاستلامات المعتمدة + المبيعات، الأحدث أولًا */
+/* حركة المخزون: كل الدخول والخروج مع فلاتر وتصدير */
 (function () {
     const RECEIPTS_KEY = "gamy_inventory_receipts_v1";
- 
-    const tableBody = document.getElementById("stockMovementsBody");
-    const searchInput = document.getElementById("stockMovementSearch");
-    const refreshButton = document.getElementById("refreshStockMovementsButton");
-    const summary = document.getElementById("stockMovementsSummary");
- 
-    if (!tableBody || !searchInput || !refreshButton || !summary) return;
- 
-    function formatDate(value) {
-        if (!value) return "—";
-        const date = new Date(value);
-        if (Number.isNaN(date.getTime())) return "—";
-        return date.toLocaleString("ar-EG");
-    }
- 
-    function safeText(value) {
-        return String(value ?? "");
-    }
- 
-    function showSummary(text, type) {
-        summary.textContent = text;
-        summary.className = "message " + type;
-    }
- 
-    function renderStockMovements() {
-        tableBody.replaceChildren();
- 
-        let receipts;
- 
+    const RETURNS_KEY = "gamy_inventory_returns_v1";
+    const EXCHANGES_KEY = "gamy_inventory_exchanges_v1";
+    const el = id => document.getElementById(id);
+
+    const tableBody = el("stockMovementsBody");
+    const searchInput = el("stockMovementSearch");
+    const typeSelect = el("stockMovementType");
+    const fromInput = el("stockMovementFrom");
+    const toInput = el("stockMovementTo");
+    const summary = el("stockMovementsSummary");
+
+    if (!tableBody || !searchInput || !typeSelect || !fromInput || !toInput || !summary) return;
+
+    const readList = key => {
         try {
-            receipts = JSON.parse(localStorage.getItem(RECEIPTS_KEY) || "[]");
-            if (!Array.isArray(receipts)) throw new Error("invalid");
+            const value = JSON.parse(localStorage.getItem(key) || "[]");
+            return Array.isArray(value) ? value : [];
         } catch (error) {
-            showSummary("تعذرت قراءة سجل أذون الاستلام.", "error");
+            console.error("تعذر قراءة " + key, error);
+            return [];
+        }
+    };
+
+    const num = v => Number(v) || 0;
+    const text = v => (v === undefined || v === null || v === "") ? "—" : String(v);
+
+    const productFor = (id, code) =>
+        products.find(p => String(p.id) === String(id)) ||
+        products.find(p => normalize(p.code) === normalize(code)) || {};
+
+    const dayKey = value => {
+        const d = new Date(value);
+        if (Number.isNaN(d.getTime())) return "";
+        return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+    };
+
+    function buildMovements() {
+        const list = [];
+
+        readList(RECEIPTS_KEY).forEach(r => {
+            if (!r || r.status !== "approved") return;
+            (Array.isArray(r.items) ? r.items : []).forEach(item => list.push({
+                date: r.approvedAt || r.date, ref: r.id, type: "استلام", effect: "in",
+                name: item.name, code: item.code, size: item.size, color: item.color,
+                quantity: Math.abs(num(item.actualQuantity ?? item.quantity))
+            }));
+        });
+
+        sales.forEach(s => {
+            if (!s || !s.id) return;
+            const p = productFor(s.productId, s.productCode);
+            list.push({
+                date: s.createdAt, ref: s.invoiceId || s.id, type: "بيع", effect: "out",
+                name: s.productName || p.name, code: s.productCode || p.code,
+                size: p.size, color: p.color,
+                quantity: -Math.abs(num(s.quantity))
+            });
+        });
+
+        readList(MANUAL_MOVEMENTS_KEY).forEach(m => {
+            if (!m || !m.id) return;
+            const q = num(m.quantity);
+            list.push({
+                date: m.createdAt, ref: m.id, type: m.type || "تعديل يدوي", effect: q >= 0 ? "in" : "out",
+                name: m.name, code: m.code, size: m.size, color: m.color, quantity: q
+            });
+        });
+
+        readList(RETURNS_KEY).forEach(r => {
+            if (!r) return;
+            const p = productFor(r.productId, r.productCode);
+            const base = { ref: r.orderNo || r.id, name: r.productName || p.name, code: r.productCode || p.code, size: p.size, color: p.color };
+            const q = Math.abs(num(r.quantity));
+
+            if (r.stockStatus === "returns" || r.stockStatus === "main") {
+                list.push({ ...base, date: r.createdAt, effect: "none", quantity: q,
+                    type: r.source === "exchange" ? "تبديل (دخول للمرتجعات)" : "مرتجع (مخزن المرتجعات)" });
+            }
+            if (r.stockStatus === "main" && r.restockedAt) {
+                list.push({ ...base, date: r.restockedAt, effect: "in", quantity: q, type: "إعادة من المرتجعات" });
+            } else if (!r.stockStatus) {
+                list.push({ ...base, date: r.createdAt, effect: "in", quantity: q, type: "إعادة من المرتجعات" });
+            }
+        });
+
+        readList(EXCHANGES_KEY).forEach(x => {
+            if (!x) return;
+            const p = productFor(x.newProductId, x.newProductCode);
+            list.push({
+                date: x.createdAt, ref: x.orderNo || x.id, type: "تبديل (خروج بديل)", effect: "out",
+                name: x.newProductName || p.name, code: x.newProductCode || p.code,
+                size: p.size, color: p.color, quantity: -Math.abs(num(x.newQty))
+            });
+        });
+
+        return list.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    }
+
+    function filteredMovements() {
+        const query = normalize(searchInput.value);
+        const type = typeSelect.value;
+        const from = fromInput.value;
+        const to = toInput.value;
+
+        return buildMovements().filter(m => {
+            if (type && m.type !== type) return false;
+            const day = dayKey(m.date);
+            if (from && (!day || day < from)) return false;
+            if (to && (!day || day > to)) return false;
+            return !query || [m.ref, m.type, m.name, m.code, m.size, m.color]
+                .some(v => normalize(v).includes(query));
+        });
+    }
+
+    const signed = q => (q > 0 ? "+" : "") + q.toLocaleString("ar-EG");
+
+    function render() {
+        tableBody.replaceChildren();
+        const rows = filteredMovements();
+
+        rows.forEach(m => {
+            const tr = document.createElement("tr");
+            const d = new Date(m.date);
+            tr.append(
+                createCell(Number.isNaN(d.getTime()) ? "—" : d.toLocaleString("ar-EG")),
+                createCell(text(m.ref), "code-text"),
+                badgeCell(m.type, m.effect === "in" ? "ok" : m.effect === "out" ? "danger" : "info"),
+                createCell(text(m.name), "product-name"),
+                createCell(text(m.code), "code-text"),
+                createCell(text(m.size)),
+                createCell(text(m.color)),
+                createCell(signed(m.quantity))
+            );
+            tableBody.appendChild(tr);
+        });
+
+        if (!rows.length) {
+            const hasFilter = searchInput.value.trim() || typeSelect.value || fromInput.value || toInput.value;
+            emptyRow(tableBody, 8, hasFilter ? "لا توجد نتائج مطابقة للفلاتر." : "لا توجد حركات مخزون حتى الآن.");
+        }
+
+        const totalIn = rows.filter(m => m.effect === "in").reduce((t, m) => t + Math.abs(m.quantity), 0);
+        const totalOut = rows.filter(m => m.effect === "out").reduce((t, m) => t + Math.abs(m.quantity), 0);
+        const net = totalIn - totalOut;
+
+        el("movementsIn").textContent = totalIn.toLocaleString("ar-EG");
+        el("movementsOut").textContent = totalOut.toLocaleString("ar-EG");
+        el("movementsNet").textContent = signed(net);
+
+        summary.textContent = "عدد الحركات المعروضة: " + rows.length.toLocaleString("ar-EG") +
+            " | الداخل: " + totalIn.toLocaleString("ar-EG") +
+            " | الخارج: " + totalOut.toLocaleString("ar-EG") +
+            " | الصافي: " + signed(net);
+        summary.className = "message info";
+    }
+
+    [searchInput, typeSelect, fromInput, toInput].forEach(control => {
+        control.addEventListener("input", render);
+        control.addEventListener("change", render);
+    });
+
+    el("refreshStockMovementsButton").addEventListener("click", render);
+
+    el("clearStockMovementFilters").addEventListener("click", () => {
+        searchInput.value = "";
+        typeSelect.value = "";
+        fromInput.value = "";
+        toInput.value = "";
+        render();
+    });
+
+    el("exportStockMovementsButton").addEventListener("click", async () => {
+        const button = el("exportStockMovementsButton");
+        const rows = filteredMovements();
+
+        if (!rows.length) {
+            summary.textContent = "لا توجد حركات لتنزيلها.";
+            summary.className = "message error";
             return;
         }
- 
-        const movements = [];
- 
-        receipts.forEach(function (receipt) {
-            if (!receipt || receipt.status !== "approved") return;
- 
-            const items = Array.isArray(receipt.items) ? receipt.items : [];
- 
-            items.forEach(function (item) {
-                movements.push({
-                    date: receipt.approvedAt || receipt.date,
-                    receiptId: receipt.id || "—",
-                    type: "استلام",
-                    name: item.name || "—",
-                    code: item.code || "—",
-                    size: item.size || "—",
-                    color: item.color || "—",
-                    quantity: Number(item.actualQuantity ?? item.quantity ?? 0) || 0
-                });
-            });
-        });
- 
-        let savedSales = [];
- 
-        try {
-            savedSales = JSON.parse(localStorage.getItem(SALES_KEY) || "[]");
-            if (!Array.isArray(savedSales)) savedSales = [];
-        } catch (error) {
-            console.error("تعذر قراءة سجل المبيعات:", error);
-        }
- 
-        savedSales.forEach(function (sale) {
-            if (!sale || !sale.id) return;
- 
-            movements.push({
-                date: sale.createdAt,
-                receiptId: sale.id,
-                type: "بيع",
-                name: sale.productName || "—",
-                code: sale.productCode || "—",
-                size: "—",
-                color: "—",
-                quantity: -Math.abs(Number(sale.quantity) || 0)
-            });
-        });
- 
-        let savedReturns = [];
-        let savedExchanges = [];
+
+        button.disabled = true;
+        summary.textContent = "جاري تجهيز ملف Excel...";
+        summary.className = "message info";
 
         try {
-            savedReturns = JSON.parse(localStorage.getItem("gamy_inventory_returns_v1") || "[]");
-            savedExchanges = JSON.parse(localStorage.getItem("gamy_inventory_exchanges_v1") || "[]");
-            if (!Array.isArray(savedReturns)) savedReturns = [];
-            if (!Array.isArray(savedExchanges)) savedExchanges = [];
+            const XLSX = await loadXlsxLibrary();
+            const data = [
+                ["التاريخ", "رقم العملية", "النوع", "اسم الصنف", "الكود", "المقاس", "اللون", "الكمية", "يؤثر على المخزن الرئيسي"],
+                ...rows.map(m => {
+                    const d = new Date(m.date);
+                    return [
+                        Number.isNaN(d.getTime()) ? "" : d.toLocaleString("ar-EG"),
+                        m.ref || "", m.type, m.name || "", m.code || "",
+                        m.size || "", m.color || "", m.quantity,
+                        m.effect === "none" ? "لا" : "نعم"
+                    ];
+                })
+            ];
+
+            const sheet = XLSX.utils.aoa_to_sheet(data);
+            sheet["!cols"] = [24, 26, 26, 26, 16, 12, 14, 12, 22].map(w => ({ wch: w }));
+            const workbook = XLSX.utils.book_new();
+            workbook.Workbook = { Views: [{ RTL: true }] };
+            XLSX.utils.book_append_sheet(workbook, sheet, "حركة المخزون");
+            XLSX.writeFile(workbook, "GAMY-Stock-Movements-" + getLocalDateForFilename() + ".xlsx", { bookType: "xlsx" });
+
+            summary.textContent = "تم تنزيل تقرير حركة المخزون.";
+            summary.className = "message success";
         } catch (error) {
-            console.error("تعذر قراءة المرتجعات والتبديلات:", error);
+            console.error("Stock movements export error:", error);
+            summary.textContent = error.message || "تعذر تنزيل التقرير.";
+            summary.className = "message error";
+        } finally {
+            button.disabled = false;
         }
-
-        savedReturns.forEach(function (r) {
-            if (!r || r.stockStatus !== "main" || !r.restockedAt) return;
-            movements.push({
-                date: r.restockedAt,
-                receiptId: r.orderNo || r.id || "—",
-                type: "إعادة من المرتجعات",
-                name: r.productName || "—",
-                code: r.productCode || "—",
-                size: "—",
-                color: "—",
-                quantity: Math.abs(Number(r.quantity) || 0)
-            });
-        });
-
-        savedExchanges.forEach(function (x) {
-            if (!x) return;
-            movements.push({
-                date: x.createdAt,
-                receiptId: x.orderNo || x.id || "—",
-                type: "تبديل (خروج بديل)",
-                name: x.newProductName || "—",
-                code: x.newProductCode || "—",
-                size: "—",
-                color: "—",
-                quantity: -Math.abs(Number(x.newQty) || 0)
-            });
-        });
-
-        movements.sort(function (a, b) {
-            return new Date(b.date).getTime() - new Date(a.date).getTime();
-        });
- 
-        const query = searchInput.value.trim().toLowerCase();
- 
-        const filtered = movements.filter(function (movement) {
-            return [
-                movement.receiptId, movement.type, movement.name,
-                movement.code, movement.size, movement.color
-            ].some(function (value) {
-                return safeText(value).toLowerCase().includes(query);
-            });
-        });
- 
-        filtered.forEach(function (movement) {
-            const tr = document.createElement("tr");
- 
-            [
-                formatDate(movement.date),
-                movement.receiptId,
-                movement.type,
-                movement.name,
-                movement.code,
-                movement.size,
-                movement.color,
-                (movement.quantity > 0 ? "+" : "") + movement.quantity.toLocaleString("ar-EG")
-            ].forEach(function (value) {
-                const td = document.createElement("td");
-                td.textContent = safeText(value) || "—";
-                tr.appendChild(td);
-            });
- 
-            tableBody.appendChild(tr);
-        });
- 
-        if (!filtered.length) {
-            const tr = document.createElement("tr");
-            const td = document.createElement("td");
-            td.colSpan = 8;
-            td.className = "empty-state";
-            td.textContent = query ? "لا توجد نتائج مطابقة للبحث." : "لا توجد حركات مخزون حتى الآن.";
-            tr.appendChild(td);
-            tableBody.appendChild(tr);
-        }
- 
-        const net = filtered.reduce(function (total, movement) {
-            return total + movement.quantity;
-        }, 0);
- 
-        showSummary(
-            "عدد الحركات المعروضة: " + filtered.length.toLocaleString("ar-EG") +
-            " | صافي الكمية: " + net.toLocaleString("ar-EG"),
-            "info"
-        );
-    }
- 
-    searchInput.addEventListener("input", renderStockMovements);
-    refreshButton.addEventListener("click", renderStockMovements);
- 
-    document.querySelectorAll('.nav-item[data-page="stockMovements"]').forEach(function (btn) {
-        btn.addEventListener("click", renderStockMovements);
     });
- 
-    renderStockMovements();
+
+    const previousShowPage = showPage;
+    showPage = function (name, updateHash = true) {
+        previousShowPage(name, updateHash);
+        if (name === "stockMovements") render();
+    };
+
+    render();
 })();
 </script>
  
@@ -5261,7 +5727,7 @@ monthInput.value = month;
         createCell(r.reason || "—"),
         createCell(r.paymentMethod || r.refundMethod || "—"),
         createCell(formatMoney(r.refund)),
-        createCell(inStock ? "في مخزن المرتجعات" : "أُعيد للمخزن الرئيسي")
+        badgeCell(inStock ? "في مخزن المرتجعات" : "أُعيد للمخزن الرئيسي", inStock ? "warn" : "ok")
       );
 
       const actionCell = document.createElement("td");
@@ -5606,5 +6072,649 @@ monthInput.value = month;
 /* تحديث التقارير */
 document.getElementById("refreshReportsButton").addEventListener("click", () => renderReports());
 </script>
+<script>
+/* Discuss + الرجوع للرئيسية */
+(function () {
+  const KEY = "gamy_inventory_discuss_v1";
+  const el = id => document.getElementById(id);
+  let notes = [];
+
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY) || "[]");
+    notes = Array.isArray(saved) ? saved.filter(n => n && n.id && n.text) : [];
+  } catch (e) { notes = []; }
+
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(notes)); return true; }
+    catch (e) { return false; }
+  }
+
+  function render() {
+    const list = el("discussList");
+    list.replaceChildren();
+
+    if (!notes.length) {
+      const empty = document.createElement("div");
+      empty.className = "empty-state";
+      empty.textContent = "لا توجد مناقشات حتى الآن.";
+      list.appendChild(empty);
+      return;
+    }
+
+    [...notes].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).forEach(n => {
+      const item = document.createElement("div");
+      item.className = "discuss-item";
+
+      const head = document.createElement("div");
+      head.className = "discuss-head";
+
+      const author = document.createElement("span");
+      author.className = "discuss-author";
+      author.textContent = n.author || "—";
+
+      const date = document.createElement("span");
+      date.className = "discuss-date";
+      const d = new Date(n.createdAt);
+      date.textContent = Number.isNaN(d.getTime()) ? "" : d.toLocaleString("ar-EG");
+
+      const del = document.createElement("button");
+      del.type = "button";
+      del.className = "secondary-btn";
+      del.textContent = "حذف";
+      del.addEventListener("click", () => {
+        if (!confirm("هل تريد حذف هذه الملاحظة؟")) return;
+        const old = notes;
+        notes = notes.filter(x => x.id !== n.id);
+        if (!save()) { notes = old; showMessage("discussMessage", "تعذر الحذف.", "error"); return; }
+        render();
+      });
+
+      head.append(author, date, del);
+
+      const text = document.createElement("div");
+      text.className = "discuss-text";
+      text.textContent = n.text;
+
+      item.append(head, text);
+      list.appendChild(item);
+    });
+  }
+
+  el("discussForm").addEventListener("submit", event => {
+    event.preventDefault();
+    const author = el("discussAuthor").value.trim();
+    const text = el("discussText").value.trim();
+
+    if (!author || !text) {
+      showMessage("discussMessage", "اكتب الاسم والرسالة.", "error");
+      return;
+    }
+
+    notes.push({
+      id: Date.now().toString() + Math.random().toString(16).slice(2, 8),
+      author, text,
+      createdAt: new Date().toISOString()
+    });
+
+    if (!save()) {
+      notes.pop();
+      showMessage("discussMessage", "تعذر الحفظ. تحقق من مساحة التخزين.", "error");
+      return;
+    }
+
+    el("discussText").value = "";
+    render();
+    showMessage("discussMessage", "تم نشر الملاحظة.", "success");
+  });
+
+  const brand = document.querySelector(".brand-wrap .brand");
+  if (brand) brand.addEventListener("click", () => showPage("home"));
+
+  render();
+})();
+</script>
+<script>
+/* الصفحة الرئيسية: زر كل التطبيقات + بحث التطبيقات */
+(function () {
+  const apps = document.getElementById("appsButton");
+  if (apps) apps.addEventListener("click", () => showPage("home"));
+
+  const search = document.getElementById("appsSearch");
+  const tiles = [...document.querySelectorAll(".app-tile")];
+  const empty = document.getElementById("appsEmpty");
+  if (!search) return;
+
+  function filter() {
+    const term = search.value.trim().toLowerCase();
+    let visible = 0;
+    tiles.forEach(t => {
+      const show = (!term || (t.dataset.appName || "").toLowerCase().includes(term)) && t.dataset.denied !== "1";
+      t.hidden = !show;
+      if (show) visible++;
+    });
+    if (empty) empty.hidden = visible > 0;
+  }
+
+  search.addEventListener("input", filter);
+  search.addEventListener("keydown", e => {
+    if (e.key !== "Enter") return;
+    const first = tiles.find(t => !t.hidden);
+    if (first) first.click();
+  });
+})();
+</script>
+<script>
+/* الدخول والموظفون والصلاحيات */
+(function () {
+  "use strict";
+
+  const AUTH_KEY = "gamy_inventory_auth_v1";
+  const EMP_KEY = "gamy_inventory_employees_v1";
+  const SESSION_KEY = "gamy_inventory_session_v1";
+  const LOCK_KEY = "gamy_inventory_login_lock_v1";
+  const ADMIN_CODE = "admin";
+  const ADMIN_NAME = "MOHAMED GAMAL";
+  const el = id => document.getElementById(id);
+
+  const PERMS = [
+    ["sell", "تسجيل المبيعات"],
+    ["returns", "المرتجعات والتبديل"],
+    ["invoices", "مراجعة الفواتير"],
+    ["storage", "التخزين والجرد"],
+    ["receiving", "استلام البضاعة"],
+    ["viewCosts", "أسعار الشراء والأرباح"]
+  ];
+
+  /* كل صفحة ومين يقدر يدخلها: all = أي مستخدم، admin = المدير فقط، أو اسم صلاحية */
+  const PAGE_ACCESS = {
+    home: "all", discuss: "all",
+    sales: "sell",
+    salesReturns: "returns", exchanges: "returns",
+    history: "invoices",
+    products: "storage", inventoryAudit: "storage", stockMovements: "storage", stockAlerts: "storage",
+    receipts: "receiving",
+    dashboard: "admin", reports: "admin", backup: "admin", customersSuppliers: "admin", employees: "admin"
+  };
+
+  const readJSON = (key, fallback) => {
+    try {
+      const value = JSON.parse(localStorage.getItem(key));
+      return value === null || value === undefined ? fallback : value;
+    } catch (e) { return fallback; }
+  };
+  const writeJSON = (key, value) => {
+    try { localStorage.setItem(key, JSON.stringify(value)); return true; }
+    catch (e) { return false; }
+  };
+  const loadEmployees = () => {
+    const list = readJSON(EMP_KEY, []);
+    return Array.isArray(list) ? list.filter(e => e && e.id && e.code) : [];
+  };
+
+  let employees = loadEmployees();
+  let currentUser = null;
+  let editingId = null;
+
+  /* ---------- التشفير ---------- */
+  function cyrb53(str, seed = 0) {
+    let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+    for (let i = 0; i < str.length; i++) {
+      const ch = str.charCodeAt(i);
+      h1 = Math.imul(h1 ^ ch, 2654435761);
+      h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(16);
+  }
+
+  async function hashSecret(code, secret, method) {
+    const text = "gamy|" + String(code).trim().toLowerCase() + "|" + String(secret);
+    const canSubtle = !!(window.crypto && window.crypto.subtle && window.TextEncoder);
+    const use = method || (canSubtle ? "s" : "c");
+
+    if (use === "s") {
+      if (!canSubtle) throw new Error("هذا المتصفح لا يدعم التحقق من الرمز السري المحفوظ.");
+      const buffer = await window.crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+      return "s:" + [...new Uint8Array(buffer)].map(b => b.toString(16).padStart(2, "0")).join("");
+    }
+    return "c:" + cyrb53(text) + cyrb53(text, 7);
+  }
+
+  const verifySecret = (code, secret, stored) =>
+    hashSecret(code, secret, String(stored).startsWith("s:") ? "s" : "c").then(hash => hash === stored);
+
+  /* ---------- محاولات الدخول ---------- */
+  const lockSeconds = () => Math.max(0, Math.ceil(((readJSON(LOCK_KEY, {}).until || 0) - Date.now()) / 1000));
+  function registerFailure() {
+    const lock = readJSON(LOCK_KEY, { count: 0, until: 0 });
+    lock.count = (lock.count || 0) + 1;
+    if (lock.count >= 5) { lock.until = Date.now() + 30000; lock.count = 0; }
+    writeJSON(LOCK_KEY, lock);
+  }
+  const clearFailures = () => writeJSON(LOCK_KEY, { count: 0, until: 0 });
+
+  /* ---------- الصلاحيات ---------- */
+  function canAccess(page) {
+    if (!currentUser) return false;
+    const rule = PAGE_ACCESS[page];
+    if (!rule) return false;
+    if (currentUser.role === "admin") return true;
+    if (rule === "all") return true;
+    if (rule === "admin") return false;
+    return !!(currentUser.permissions && currentUser.permissions[rule]);
+  }
+
+  function toast(text) {
+    const box = document.createElement("div");
+    box.className = "toast";
+    box.textContent = text;
+    document.body.appendChild(box);
+    setTimeout(() => box.remove(), 3200);
+  }
+
+  function endSession() {
+    try { sessionStorage.removeItem(SESSION_KEY); } catch (e) {}
+    try { location.hash = ""; } catch (e) {}
+    location.reload();
+  }
+
+  function applyUI() {
+    const admin = !!currentUser && currentUser.role === "admin";
+    const employee = !!currentUser && !admin;
+
+    document.body.classList.toggle("is-employee", employee);
+    document.body.classList.toggle("no-costs", employee && !(currentUser.permissions && currentUser.permissions.viewCosts));
+
+    document.querySelectorAll(".nav-item[data-page]").forEach(button => {
+      button.hidden = !canAccess(button.dataset.page);
+    });
+    document.querySelectorAll(".app-tile[data-page-link]").forEach(tile => {
+      const denied = !canAccess(tile.dataset.pageLink);
+      tile.dataset.denied = denied ? "1" : "0";
+      tile.hidden = denied;
+    });
+
+    if (!currentUser) return;
+
+    const name = admin ? ADMIN_NAME : currentUser.name;
+    const role = admin ? "مدير" : (currentUser.position || "موظف");
+
+    el("userNameLabel").textContent = name;
+    el("userAvatar").textContent = String(name).trim().charAt(0).toUpperCase() || "U";
+    el("menuRoleLabel").textContent = role;
+    el("menuNameLabel").textContent = name;
+    el("homeGreeting").textContent = admin
+      ? "مرحبًا، مدير " + ADMIN_NAME
+      : "مرحبًا، " + name + (currentUser.position ? " — " + currentUser.position : "");
+
+    if (employee && el("discussAuthor")) el("discussAuthor").value = name;
+  }
+
+  function buildUser(code) {
+    if (String(code).toLowerCase() === ADMIN_CODE) {
+      const auth = readJSON(AUTH_KEY, null);
+      return auth && auth.adminHash ? { role: "admin", name: ADMIN_NAME, code: ADMIN_CODE, permissions: {} } : null;
+    }
+    employees = loadEmployees();
+    const e = employees.find(x => String(x.code).toLowerCase() === String(code).toLowerCase());
+    if (!e || e.active === false) return null;
+    return { role: "employee", id: e.id, name: e.name, code: e.code, position: e.position, permissions: e.permissions || {} };
+  }
+
+  function loginAs(user) {
+    currentUser = user;
+    try { sessionStorage.setItem(SESSION_KEY, JSON.stringify({ code: user.code })); } catch (e) {}
+    el("authOverlay").hidden = true;
+    document.body.classList.remove("auth-locked");
+    applyUI();
+    showPage(location.hash.slice(1) || "home", true);
+  }
+
+  function refreshCurrentUser() {
+    if (!currentUser || currentUser.role === "admin") return true;
+    const fresh = buildUser(currentUser.code);
+    if (!fresh) {
+      alert("تم إيقاف هذا الحساب أو حذفه. سيتم تسجيل خروجك.");
+      endSession();
+      return false;
+    }
+    currentUser = fresh;
+    applyUI();
+    return true;
+  }
+
+  /* ---------- شاشة الدخول ---------- */
+  const setupMode = () => { const auth = readJSON(AUTH_KEY, null); return !(auth && auth.adminHash); };
+
+  function renderAuthMode() {
+    const setup = setupMode();
+    el("authTitle").textContent = setup ? "إنشاء كلمة مرور المدير" : "تسجيل الدخول";
+    el("authHint").textContent = setup
+      ? "أول مرة تشغيل: اختر كلمة مرور للمدير (٤ أحرف على الأقل). ستدخل بها بالكود admin."
+      : "اكتب الكود والرمز السري. المدير يدخل بالكود admin.";
+    el("authCodeField").hidden = setup;
+    el("authConfirmField").hidden = !setup;
+    el("authSubmit").textContent = setup ? "حفظ والدخول" : "دخول";
+    el("authSecret").autocomplete = setup ? "new-password" : "current-password";
+    el("authSecret").value = "";
+    el("authConfirm").value = "";
+    if (window.__memoryStorage) {
+      el("authHint").textContent += " تنبيه: المتصفح يمنع حفظ البيانات في هذه الصفحة، لذلك لن تُحفظ بعد إغلاقها. افتح الملف مباشرة من المتصفح.";
+    }
+  }
+
+  let authBusy = false;
+
+  async function submitAuth() {
+    if (authBusy) return;
+    authBusy = true;
+    const msg = "authMessage";
+    const secret = el("authSecret").value;
+
+    try {
+      if (setupMode()) {
+        if (secret.length < 4) return showMessage(msg, "كلمة المرور لازم تكون ٤ أحرف على الأقل.", "error");
+        if (secret !== el("authConfirm").value) return showMessage(msg, "كلمتا المرور غير متطابقتين.", "error");
+
+        const adminHash = await hashSecret(ADMIN_CODE, secret);
+        if (!writeJSON(AUTH_KEY, { adminHash, createdAt: new Date().toISOString() })) {
+          return showMessage(msg, "تعذر حفظ كلمة المرور في المتصفح.", "error");
+        }
+        clearFailures();
+        loginAs(buildUser(ADMIN_CODE));
+        return;
+      }
+
+      const wait = lockSeconds();
+      if (wait > 0) return showMessage(msg, "محاولات كثيرة خاطئة. انتظر " + wait + " ثانية.", "error");
+
+      const code = el("authCode").value.trim();
+      if (!code || !secret) return showMessage(msg, "اكتب الكود والرمز السري.", "error");
+
+      let ok = false;
+      let user = null;
+
+      if (code.toLowerCase() === ADMIN_CODE) {
+        const auth = readJSON(AUTH_KEY, {});
+        ok = await verifySecret(ADMIN_CODE, secret, auth.adminHash);
+        user = ok ? buildUser(ADMIN_CODE) : null;
+      } else {
+        employees = loadEmployees();
+        const e = employees.find(x => String(x.code).toLowerCase() === code.toLowerCase());
+        if (e && e.active === false) return showMessage(msg, "هذا الحساب موقوف. تواصل مع المدير.", "error");
+        ok = !!e && await verifySecret(e.code, secret, e.pinHash);
+        user = ok ? buildUser(e.code) : null;
+      }
+
+      if (!ok || !user) {
+        registerFailure();
+        return showMessage(msg, "الكود أو الرمز السري غير صحيح.", "error");
+      }
+
+      clearFailures();
+      loginAs(user);
+    } catch (error) {
+      console.error("Login error:", error);
+      showMessage(msg, error.message || "تعذر تسجيل الدخول.", "error");
+    } finally {
+      authBusy = false;
+    }
+  }
+
+  el("authForm").addEventListener("submit", event => { event.preventDefault(); submitAuth(); });
+  el("authSubmit").addEventListener("click", submitAuth);
+  [el("authCode"), el("authSecret"), el("authConfirm")].forEach(input =>
+    input.addEventListener("keydown", event => {
+      if (event.key === "Enter") { event.preventDefault(); submitAuth(); }
+    }));
+
+  window.addEventListener("error", event => {
+    if (!el("authOverlay").hidden) {
+      showMessage("authMessage", "حدث خطأ في الصفحة: " + (event.message || "غير معروف"), "error");
+    }
+  });
+
+  el("logoutButton").addEventListener("click", endSession);
+
+  /* ---------- حماية التنقل بين الصفحات ---------- */
+  const previousShowPage = showPage;
+  showPage = function (name, updateHash = true) {
+    if (!currentUser) return;
+    if (!refreshCurrentUser()) return;
+
+    let target = Object.prototype.hasOwnProperty.call(PAGE_ACCESS, name) ? name : "home";
+    if (!canAccess(target)) {
+      toast("ليس لديك صلاحية لفتح هذه الصفحة.");
+      target = "home";
+      updateHash = true;
+    }
+
+    previousShowPage(target, updateHash);
+    if (target === "employees") renderEmployees();
+  };
+
+  /* ---------- إدارة الموظفين ---------- */
+  const form = el("employeeForm");
+  const permBoxes = () => [...form.querySelectorAll("input[data-perm]")];
+
+  function saveEmployees() {
+    return writeJSON(EMP_KEY, employees);
+  }
+
+  function resetEmployeeForm() {
+    form.reset();
+    editingId = null;
+    el("employeeFormTitle").textContent = "إضافة موظف جديد";
+    el("employeePinLabel").textContent = "الرمز السري";
+    el("saveEmployeeButton").textContent = "حفظ الموظف";
+    el("cancelEmployeeEdit").hidden = true;
+  }
+
+  function renderEmployees() {
+    const body = el("employeesTableBody");
+    const term = normalize(el("employeesSearch").value);
+    body.replaceChildren();
+
+    employees = loadEmployees();
+
+    const filtered = employees.filter(e =>
+      [e.name, e.code, e.position].some(v => normalize(v).includes(term)));
+
+    if (!filtered.length) {
+      emptyRow(body, 6, term ? "لا توجد نتائج مطابقة للبحث." : "لا يوجد موظفون مسجلون حتى الآن.");
+    }
+
+    filtered.forEach(e => {
+      const tr = document.createElement("tr");
+      const labels = PERMS.filter(([key]) => e.permissions && e.permissions[key]).map(([, label]) => label);
+
+      const permCell = document.createElement("td");
+      permCell.style.whiteSpace = "normal";
+      if (!labels.length) {
+        const none = document.createElement("span");
+        none.className = "badge badge-info";
+        none.textContent = "بدون صلاحيات";
+        permCell.appendChild(none);
+      }
+      labels.forEach(label => {
+        const badge = document.createElement("span");
+        badge.className = "badge badge-ok perm-badge";
+        badge.textContent = label;
+        permCell.appendChild(badge);
+      });
+
+      tr.append(
+        createCell(e.name, "product-name"),
+        createCell(e.code, "code-text"),
+        createCell(e.position || "—"),
+        permCell,
+        badgeCell(e.active === false ? "موقوف" : "نشط", e.active === false ? "danger" : "ok")
+      );
+
+      const actions = document.createElement("td");
+
+      const edit = document.createElement("button");
+      edit.type = "button";
+      edit.className = "secondary-btn";
+      edit.textContent = "تعديل";
+      edit.addEventListener("click", () => startEdit(e.id));
+
+      const toggle = document.createElement("button");
+      toggle.type = "button";
+      toggle.className = "secondary-btn";
+      toggle.style.marginInlineStart = "6px";
+      toggle.textContent = e.active === false ? "تفعيل" : "إيقاف";
+      toggle.addEventListener("click", () => {
+        const target = employees.find(x => x.id === e.id);
+        if (!target) return;
+        target.active = target.active === false;
+        if (!saveEmployees()) { target.active = !target.active; showMessage("employeeMessage", "تعذر الحفظ.", "error"); return; }
+        renderEmployees();
+        showMessage("employeeMessage", target.active ? "تم تفعيل الحساب." : "تم إيقاف الحساب. لن يستطيع الدخول.", "success");
+      });
+
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.className = "danger-btn";
+      remove.style.marginInlineStart = "6px";
+      remove.textContent = "حذف";
+      remove.addEventListener("click", () => {
+        if (!confirm("هل تريد حذف الموظف " + e.name + "؟")) return;
+        const old = employees;
+        employees = employees.filter(x => x.id !== e.id);
+        if (!saveEmployees()) { employees = old; showMessage("employeeMessage", "تعذر الحذف.", "error"); return; }
+        if (editingId === e.id) resetEmployeeForm();
+        renderEmployees();
+        showMessage("employeeMessage", "تم حذف الموظف.", "success");
+      });
+
+      actions.append(edit, toggle, remove);
+      tr.appendChild(actions);
+      body.appendChild(tr);
+    });
+
+    el("employeesTotal").textContent = employees.length.toLocaleString("ar-EG");
+    el("employeesActive").textContent = employees.filter(e => e.active !== false).length.toLocaleString("ar-EG");
+    el("employeesSuspended").textContent = employees.filter(e => e.active === false).length.toLocaleString("ar-EG");
+  }
+
+  function startEdit(id) {
+    const e = employees.find(x => x.id === id);
+    if (!e) return;
+
+    editingId = e.id;
+    el("employeeName").value = e.name;
+    el("employeeCode").value = e.code;
+    el("employeePosition").value = e.position || "";
+    el("employeePin").value = "";
+    el("employeeActive").checked = e.active !== false;
+    permBoxes().forEach(box => { box.checked = !!(e.permissions && e.permissions[box.dataset.perm]); });
+
+    el("employeeFormTitle").textContent = "تعديل بيانات الموظف";
+    el("employeePinLabel").textContent = "رمز سري جديد (اتركه فارغًا للإبقاء على الحالي)";
+    el("saveEmployeeButton").textContent = "حفظ التعديلات";
+    el("cancelEmployeeEdit").hidden = false;
+    form.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  el("cancelEmployeeEdit").addEventListener("click", resetEmployeeForm);
+  el("employeesSearch").addEventListener("input", renderEmployees);
+
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    const msg = "employeeMessage";
+
+    const name = el("employeeName").value.trim();
+    const code = el("employeeCode").value.trim();
+    const position = el("employeePosition").value.trim();
+    const pin = el("employeePin").value;
+
+    if (!name || !code || !position) return showMessage(msg, "اكتب اسم الموظف وكوده ومنصبه.", "error");
+    if (/\s/.test(code)) return showMessage(msg, "الكود لا يحتوي على مسافات.", "error");
+    if (code.toLowerCase() === ADMIN_CODE) return showMessage(msg, "هذا الكود محجوز للمدير.", "error");
+
+    employees = loadEmployees();
+    if (employees.some(e => e.id !== editingId && String(e.code).toLowerCase() === code.toLowerCase())) {
+      return showMessage(msg, "هذا الكود مستخدم لموظف آخر.", "error");
+    }
+
+    const editing = editingId ? employees.find(e => e.id === editingId) : null;
+    if (editingId && !editing) return showMessage(msg, "لم يتم العثور على الموظف.", "error");
+
+    if (!editing && pin.length < 4) return showMessage(msg, "الرمز السري لازم يكون ٤ أحرف على الأقل.", "error");
+    if (pin && pin.length < 4) return showMessage(msg, "الرمز السري لازم يكون ٤ أحرف على الأقل.", "error");
+    if (editing && !pin && String(editing.code).toLowerCase() !== code.toLowerCase()) {
+      return showMessage(msg, "غيّرت الكود، اكتب الرمز السري من جديد.", "error");
+    }
+
+    const permissions = {};
+    permBoxes().forEach(box => { permissions[box.dataset.perm] = box.checked; });
+
+    try {
+      const pinHash = pin ? await hashSecret(code, pin) : editing.pinHash;
+      const record = {
+        id: editing ? editing.id : "EMP-" + Date.now() + "-" + Math.random().toString(16).slice(2, 8),
+        name, code, position, pinHash, permissions,
+        active: el("employeeActive").checked,
+        createdAt: editing ? editing.createdAt : new Date().toISOString()
+      };
+
+      const old = employees;
+      employees = editing ? employees.map(e => e.id === editing.id ? record : e) : [...employees, record];
+
+      if (!saveEmployees()) {
+        employees = old;
+        return showMessage(msg, "تعذر حفظ الموظف. تحقق من مساحة التخزين.", "error");
+      }
+
+      resetEmployeeForm();
+      renderEmployees();
+      showMessage(msg, editing ? "تم حفظ تعديلات الموظف." : "تمت إضافة الموظف. يدخل بالكود " + code + ".", "success");
+    } catch (error) {
+      console.error(error);
+      showMessage(msg, error.message || "تعذر حفظ الموظف.", "error");
+    }
+  });
+
+  el("adminPasswordForm").addEventListener("submit", async event => {
+    event.preventDefault();
+    const msg = "adminPasswordMessage";
+    const current = el("currentAdminPassword").value;
+    const next = el("newAdminPassword").value;
+
+    try {
+      const auth = readJSON(AUTH_KEY, {});
+      if (!(await verifySecret(ADMIN_CODE, current, auth.adminHash))) {
+        return showMessage(msg, "كلمة المرور الحالية غير صحيحة.", "error");
+      }
+      if (next.length < 4) return showMessage(msg, "كلمة المرور الجديدة لازم تكون ٤ أحرف على الأقل.", "error");
+      if (next !== el("confirmAdminPassword").value) return showMessage(msg, "كلمتا المرور الجديدتان غير متطابقتين.", "error");
+
+      auth.adminHash = await hashSecret(ADMIN_CODE, next);
+      if (!writeJSON(AUTH_KEY, auth)) return showMessage(msg, "تعذر حفظ كلمة المرور.", "error");
+
+      el("adminPasswordForm").reset();
+      showMessage(msg, "تم تغيير كلمة مرور المدير.", "success");
+    } catch (error) {
+      showMessage(msg, error.message || "تعذر تغيير كلمة المرور.", "error");
+    }
+  });
+
+  /* ---------- التشغيل ---------- */
+  renderEmployees();
+
+  let restored = null;
+  try { restored = JSON.parse(sessionStorage.getItem(SESSION_KEY)); } catch (e) {}
+  const sessionUser = restored && restored.code ? buildUser(restored.code) : null;
+
+  if (sessionUser) {
+    loginAs(sessionUser);
+  } else {
+    renderAuthMode();
+  }
+})();
+</script>
+
 </body>
 </html>
