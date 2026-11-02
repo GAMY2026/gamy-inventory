@@ -478,6 +478,7 @@ body.pos-mode .topbar,body.pos-mode footer,body.pos-mode #menuEdge,body.pos-mode
   body.printing-receipt .receipt-paper{width:80mm;padding:0}
   @page{margin:4mm}
 }
+.invoice-customer{min-width:170px;height:34px}
 </style>
  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 </head>
@@ -529,7 +530,7 @@ body.pos-mode .topbar,body.pos-mode footer,body.pos-mode #menuEdge,body.pos-mode
 <button type="button" class="nav-item" data-page="sales" data-title="تسجيل المبيعات">تسجيل المبيعات</button>
 <button type="button" class="nav-item" data-page="salesReturns" data-title="مرتجعات المبيعات">مرتجعات المبيعات</button>
 <button type="button" class="nav-item" data-page="exchanges" data-title="التبديل (الاكستشنج)">التبديل (الاكستشنج)</button>
-   <button type="button" class="nav-item" data-page="history" data-title="سجل المبيعات">سجل المبيعات</button>
+   <button type="button" class="nav-item" data-page="history" data-title="مراجعة الفواتير">مراجعة الفواتير</button>
    <button type="button" class="nav-item" data-page="backup" data-title="النسخ الاحتياطي">النسخ الاحتياطي</button>
    <button type="button" class="nav-item" data-page="employees" data-title="الموظفين">الموظفين</button>
    <button type="button" class="nav-item" data-page="inventoryAudit" data-title="جرد المخزن">جرد المخزن</button>
@@ -558,7 +559,7 @@ body.pos-mode .topbar,body.pos-mode footer,body.pos-mode #menuEdge,body.pos-mode
     <button type="button" class="app-tile" data-page-link="receipts" data-app-name="استلامات البضاعة"><span class="app-icon" style="--c1:#00a0b0;--c2:#007a88" aria-hidden="true">📥</span><span class="app-name">استلامات البضاعة</span></button>
     <button type="button" class="app-tile" data-page-link="salesReturns" data-app-name="مرتجعات المبيعات"><span class="app-icon" style="--c1:#d9534f;--c2:#b03a36" aria-hidden="true">↩️</span><span class="app-name">مرتجعات المبيعات</span></button>
     <button type="button" class="app-tile" data-page-link="exchanges" data-app-name="التبديل"><span class="app-icon" style="--c1:#8e44ad;--c2:#6c3483" aria-hidden="true">🔄</span><span class="app-name">التبديل</span></button>
-    <button type="button" class="app-tile" data-page-link="history" data-app-name="سجل المبيعات"><span class="app-icon" style="--c1:#3d9970;--c2:#2b7a56" aria-hidden="true">📒</span><span class="app-name">سجل المبيعات</span></button>
+    <button type="button" class="app-tile" data-page-link="history" data-app-name="مراجعة الفواتير"><span class="app-icon" style="--c1:#3d9970;--c2:#2b7a56" aria-hidden="true">📒</span><span class="app-name">مراجعة الفواتير</span></button>
     <button type="button" class="app-tile" data-page-link="inventoryAudit" data-app-name="جرد المخزن"><span class="app-icon" style="--c1:#c9a04a;--c2:#a07d2c" aria-hidden="true">📋</span><span class="app-name">جرد المخزن</span></button>
     <button type="button" class="app-tile" data-page-link="stockMovements" data-app-name="حركة المخزون"><span class="app-icon" style="--c1:#5b6ee1;--c2:#4150b8" aria-hidden="true">🚚</span><span class="app-name">حركة المخزون</span></button>
     <button type="button" class="app-tile" data-page-link="reports" data-app-name="التقارير"><span class="app-icon" style="--c1:#e0559a;--c2:#b83a7a" aria-hidden="true">📊</span><span class="app-name">التقارير</span></button>
@@ -745,6 +746,10 @@ body.pos-mode .topbar,body.pos-mode footer,body.pos-mode #menuEdge,body.pos-mode
 </div>
 <div class="sale-preview" id="salePreview">اختار المنتج وحدد الكمية لمعاينة الحسابات.</div>
 
+<div class="field" style="margin-top:15px;">
+    <label for="saleCustomer">اسم العميل (اختياري)</label>
+    <input id="saleCustomer" type="text" list="customerNamesList" placeholder="اسم العميل" autocomplete="off">
+</div>
 <div class="field" style="margin-top:15px;">
     <label for="salePaymentMethod">طريقة الدفع</label>
     <select id="salePaymentMethod" required>
@@ -1068,9 +1073,49 @@ body.pos-mode .topbar,body.pos-mode footer,body.pos-mode #menuEdge,body.pos-mode
   </section>
 
   <section class="page" data-page-section="history">
-   <div class="page-topline"><h1>سجل المبيعات</h1><p>راجع عمليات البيع السابقة وإجمالي كل عملية.</p></div>
+   <div class="page-topline"><h1>مراجعة الفواتير</h1><p>راجع فواتير اليوم أو أي فترة، واكتب اسم العميل لكل فاتورة.</p></div>
+
+   <section class="panel" id="invoicesPanel">
+    <div class="panel-heading"><h2 class="section-title">الفواتير</h2><p class="description">الافتراضي فواتير اليوم. غيّر التاريخ أو اضغط "الكل" لعرض كل الفواتير.</p></div>
+    <div class="sale-summary">
+     <div class="sale-stat"><div class="sale-stat-label">عدد الفواتير</div><div class="sale-stat-value" id="invoiceCount">0</div></div>
+     <div class="sale-stat"><div class="sale-stat-label">إجمالي المبيعات</div><div class="sale-stat-value" id="invoiceTotal">0 ج.م</div></div>
+     <div class="sale-stat"><div class="sale-stat-label">كاش</div><div class="sale-stat-value" id="invoiceCash">0 ج.م</div></div>
+     <div class="sale-stat"><div class="sale-stat-label">فيزا</div><div class="sale-stat-value" id="invoiceVisa">0 ج.م</div></div>
+     <div class="sale-stat"><div class="sale-stat-label">طرق أخرى</div><div class="sale-stat-value" id="invoiceOther">0 ج.م</div></div>
+    </div>
+    <div class="form-grid">
+     <div class="field"><label for="invoiceFrom">من تاريخ</label><input id="invoiceFrom" type="date"></div>
+     <div class="field"><label for="invoiceTo">إلى تاريخ</label><input id="invoiceTo" type="date"></div>
+     <div class="field">
+      <label for="invoicePayment">طريقة الدفع</label>
+      <select id="invoicePayment">
+       <option value="">الكل</option>
+       <option value="كاش">كاش</option>
+       <option value="فيزا">فيزا</option>
+       <option value="محفظة إلكترونية">محفظة إلكترونية</option>
+       <option value="تحويل بنكي">تحويل بنكي</option>
+       <option value="آجل">آجل</option>
+      </select>
+     </div>
+     <div class="field"><label for="invoiceSearch">بحث</label><input id="invoiceSearch" type="search" placeholder="رقم الفاتورة أو العميل أو الكاشير أو المنتج"></div>
+    </div>
+    <div class="actions">
+     <button type="button" class="secondary-btn" id="invoiceToday">اليوم</button>
+     <button type="button" class="secondary-btn" id="invoiceMonth">هذا الشهر</button>
+     <button type="button" class="secondary-btn" id="invoiceAll">الكل</button>
+    </div>
+    <div id="invoiceMessage" class="message" role="status"></div>
+    <div class="table-wrapper" style="margin-top:16px;">
+     <table>
+      <thead><tr><th>التاريخ والوقت</th><th>رقم الفاتورة</th><th>العميل</th><th>الكاشير</th><th>طريقة الدفع</th><th>عدد القطع</th><th>الإجمالي</th><th>الربح</th><th>إجراء</th></tr></thead>
+      <tbody id="invoicesBody"></tbody>
+     </table>
+    </div>
+    <div class="table-footer"><span id="invoicesCount">عدد الفواتير: 0</span><span>اكتب اسم العميل في الخانة واضغط Enter لحفظه</span></div>
+   </section>
    <section class="panel">
-    <div class="table-toolbar"><h2 class="section-title">عمليات البيع المسجلة</h2><input id="salesSearch" class="search-input" type="search" placeholder="بحث باسم المنتج أو الكود"></div>
+    <div class="table-toolbar"><h2 class="section-title">تفاصيل الأصناف المباعة</h2><input id="salesSearch" class="search-input" type="search" placeholder="بحث باسم المنتج أو الكود"></div>
  <div class="table-wrapper">
     <table>
         <thead>
@@ -2860,6 +2905,7 @@ createCell(Number(s.quantity || 0).toLocaleString("ar-EG")),
     renderDashboardSales();
     renderDashboardAnalytics();
     updateBackupSummary();
+if (typeof window.renderInvoices === "function") window.renderInvoices();
 }
  
 $("salesSearch").addEventListener("input", renderSales);
@@ -2940,6 +2986,8 @@ if (!paymentMethod) {
         id: Date.now().toString() + Math.random().toString(16).slice(2),
 invoiceId,
 paymentMethod,
+customerName: $("saleCustomer").value.trim(),
+cashierName: $("userNameLabel") ? $("userNameLabel").textContent : "",
 productId: product.id,
      
         productName: product.name,
@@ -7017,6 +7065,186 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
     previousShowPage(name, updateHash);
     if (name === "home") update();
   };
+})();
+</script>
+<script>
+/* مراجعة الفواتير: فواتير اليوم أو أي فترة + اسم العميل + الإيصال */
+(function () {
+  const el = id => document.getElementById(id);
+  if (!el("invoicesBody")) return;
+
+  const num = v => Number(v) || 0;
+  const dayKey = value => {
+    const d = new Date(value);
+    if (Number.isNaN(d.getTime())) return "";
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  };
+  const todayKey = () => dayKey(new Date());
+  const monthStartKey = () => { const d = new Date(); return dayKey(new Date(d.getFullYear(), d.getMonth(), 1)); };
+
+  let touched = false;
+
+  function groupInvoices() {
+    const map = new Map();
+
+    sales.forEach(s => {
+      if (!s || !s.id) return;
+      const key = s.invoiceId || ("SALE-" + s.id);
+      let group = map.get(key);
+
+      if (!group) {
+        group = {
+          key, invoiceId: s.invoiceId || "", date: s.createdAt,
+          customer: "", cashier: "", payment: s.paymentMethod || "",
+          units: 0, total: 0, profit: 0, lines: []
+        };
+        map.set(key, group);
+      }
+
+      group.lines.push(s);
+      group.units += num(s.quantity);
+      group.total += num(s.total);
+      group.profit += num(s.profit);
+      if (!group.customer && s.customerName) group.customer = s.customerName;
+      if (!group.cashier && s.cashierName) group.cashier = s.cashierName;
+      if (new Date(s.createdAt).getTime() < new Date(group.date).getTime()) group.date = s.createdAt;
+    });
+
+    return [...map.values()];
+  }
+
+  function filteredInvoices() {
+    const from = el("invoiceFrom").value;
+    const to = el("invoiceTo").value;
+    const method = el("invoicePayment").value;
+    const term = normalize(el("invoiceSearch").value);
+
+    return groupInvoices()
+      .filter(g => {
+        const day = dayKey(g.date);
+        if (from && (!day || day < from)) return false;
+        if (to && (!day || day > to)) return false;
+        if (method && g.payment !== method) return false;
+        if (!term) return true;
+        return [g.invoiceId, g.customer, g.cashier, ...g.lines.flatMap(l => [l.productName, l.productCode])]
+          .some(v => normalize(v).includes(term));
+      })
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }
+
+  function saveCustomer(group, name) {
+    const old = group.lines.map(l => l.customerName);
+    group.lines.forEach(l => { l.customerName = name; });
+
+    try {
+      localStorage.setItem(SALES_KEY, JSON.stringify(sales));
+    } catch (error) {
+      group.lines.forEach((l, i) => { l.customerName = old[i]; });
+      showMessage("invoiceMessage", "تعذر حفظ اسم العميل.", "error");
+      return;
+    }
+
+    group.customer = name;
+    showMessage("invoiceMessage", name ? "تم حفظ اسم العميل للفاتورة." : "تم مسح اسم العميل من الفاتورة.", "success");
+  }
+
+  function render() {
+    const body = el("invoicesBody");
+    body.replaceChildren();
+
+    const list = filteredInvoices();
+
+    list.forEach(g => {
+      const tr = document.createElement("tr");
+      const d = new Date(g.date);
+
+      const customerCell = document.createElement("td");
+      const input = document.createElement("input");
+      input.type = "text";
+      input.className = "search-input invoice-customer";
+      input.setAttribute("list", "customerNamesList");
+      input.setAttribute("aria-label", "اسم العميل");
+      input.placeholder = "اكتب اسم العميل";
+      input.value = g.customer;
+      input.addEventListener("change", () => saveCustomer(g, input.value.trim()));
+      customerCell.appendChild(input);
+
+      const actionCell = document.createElement("td");
+      const receipt = document.createElement("button");
+      receipt.type = "button";
+      receipt.className = "secondary-btn";
+      receipt.textContent = "الإيصال";
+      if (!g.invoiceId) {
+        receipt.disabled = true;
+        receipt.title = "بيع قديم بدون رقم فاتورة";
+      }
+      receipt.addEventListener("click", () => {
+        if (typeof window.showReceipt === "function") window.showReceipt(g.invoiceId);
+      });
+      actionCell.appendChild(receipt);
+
+      tr.append(
+        createCell(Number.isNaN(d.getTime()) ? "—" : d.toLocaleString("ar-EG")),
+        createCell(g.invoiceId || "بيع سابق", "code-text"),
+        customerCell,
+        createCell(g.cashier || "—"),
+        createCell(g.payment || "غير محدد"),
+        createCell(g.units.toLocaleString("ar-EG")),
+        createCell(formatMoney(g.total)),
+        createCell(formatMoney(g.profit)),
+        actionCell
+      );
+      body.appendChild(tr);
+    });
+
+    if (!list.length) {
+      const hasFilter = el("invoiceSearch").value.trim() || el("invoicePayment").value;
+      emptyRow(body, 9, hasFilter ? "لا توجد فواتير مطابقة." : "لا توجد فواتير في هذه الفترة.");
+    }
+
+    const total = list.reduce((sum, g) => sum + g.total, 0);
+    const by = method => list.filter(g => g.payment === method).reduce((sum, g) => sum + g.total, 0);
+    const cash = by("كاش");
+    const visa = by("فيزا");
+
+    el("invoiceCount").textContent = list.length.toLocaleString("ar-EG");
+    el("invoiceTotal").textContent = formatMoney(total);
+    el("invoiceCash").textContent = formatMoney(cash);
+    el("invoiceVisa").textContent = formatMoney(visa);
+    el("invoiceOther").textContent = formatMoney(total - cash - visa);
+    el("invoicesCount").textContent = "عدد الفواتير: " + list.length.toLocaleString("ar-EG");
+  }
+
+  function setRange(from, to) {
+    touched = true;
+    el("invoiceFrom").value = from;
+    el("invoiceTo").value = to;
+    render();
+  }
+
+  el("invoiceToday").addEventListener("click", () => setRange(todayKey(), todayKey()));
+  el("invoiceMonth").addEventListener("click", () => setRange(monthStartKey(), todayKey()));
+  el("invoiceAll").addEventListener("click", () => setRange("", ""));
+
+  [el("invoiceFrom"), el("invoiceTo")].forEach(input =>
+    input.addEventListener("change", () => { touched = true; render(); }));
+  el("invoicePayment").addEventListener("change", render);
+  el("invoiceSearch").addEventListener("input", render);
+
+  window.renderInvoices = render;
+
+  const previousShowPage = showPage;
+  showPage = function (name, updateHash = true) {
+    previousShowPage(name, updateHash);
+    if (name === "history") {
+      if (!touched) { el("invoiceFrom").value = todayKey(); el("invoiceTo").value = todayKey(); }
+      render();
+    }
+  };
+
+  el("invoiceFrom").value = todayKey();
+  el("invoiceTo").value = todayKey();
+  render();
 })();
 </script>
 <script>
