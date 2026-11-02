@@ -381,6 +381,79 @@ body.no-costs [data-page-section="products"] table th:nth-child(7),body.no-costs
 body.no-costs [data-page-section="history"] table th:nth-child(8),body.no-costs [data-page-section="history"] table td:nth-child(8){display:none}
 body.no-costs .sale-stat:has(#todayProfitTotal){display:none}
 @media(max-width:600px){.perm-grid{grid-template-columns:1fr}}
+/* ===== نقطة البيع ===== */
+.image-preview-row{display:flex;align-items:center;gap:10px;margin-top:8px}
+.image-preview-row img{width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid #30445a}
+/* شاشة البيع المستقلة (شكل Odoo POS) */
+:root{--pos-purple:#6c27c7;--pos-purple-dark:#561fa0}
+body.pos-mode{overflow:hidden}
+body.pos-mode .topbar,body.pos-mode footer,body.pos-mode #menuEdge,body.pos-mode .sidebar,body.pos-mode #smokeCanvas{display:none!important}
+[data-page-section="pos"]{position:fixed;inset:0;z-index:700;background:#f1f2f4;color:#2b2f36}
+[data-page-section="pos"].active{display:flex;flex-direction:column}
+.pos-top{display:flex;flex-direction:row-reverse;align-items:center;gap:10px;padding:8px 14px;background:var(--pos-purple);color:#fff;flex-shrink:0}
+.pos-top-spacer{flex:1}
+.pos-top-btn{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:6px;padding:6px 12px;font-size:13px;font-weight:700}
+.pos-top-btn:hover{background:rgba(255,255,255,.25)}
+.pos-session{background:rgba(255,255,255,.18);border-radius:999px;padding:3px 12px;font-size:12px;font-weight:800;letter-spacing:1px}
+.pos-user{font-size:13px;font-weight:700;direction:ltr}
+.pos-search{display:flex;align-items:center;gap:6px;background:#fff;border-radius:6px;padding:0 10px;width:min(340px,40vw)}
+.pos-search input{border:0;outline:0;background:transparent;height:34px;width:100%;color:#2b2f36;font-size:13px}
+.pos-body{flex:1;display:flex;flex-direction:row-reverse;min-height:0}
+.pos-cart{width:340px;flex-shrink:0;display:flex;flex-direction:column;background:#fff;border-right:1px solid #dcdfe4}
+.pos-cart-scroll{flex:1;overflow-y:auto;padding:6px 12px}
+.pos-empty{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#6b7280;font-size:14px}
+.pos-empty-icon{font-size:56px;opacity:.55}
+.pos-line{padding:10px 0;border-bottom:1px solid #eceef1}
+.pos-line-head{display:flex;justify-content:space-between;gap:10px}
+.pos-line-title{font-size:13px;font-weight:700;color:#2b2f36}
+.pos-line-total{font-size:13px;font-weight:800;color:var(--pos-purple);white-space:nowrap}
+.pos-line-controls{display:flex;align-items:center;gap:6px;margin-top:8px}
+.pos-qty-btn{width:28px;height:28px;border:1px solid #cfd3da;border-radius:6px;background:#fff;color:#2b2f36;font-size:16px;line-height:1}
+.pos-qty-btn:hover{background:#f1f2f4}
+.pos-qty{min-width:22px;text-align:center;font-weight:800}
+.pos-times{color:#6b7280}
+.pos-line-price{width:80px;height:28px;padding:0 6px;border:1px solid #cfd3da;border-radius:6px;background:#fff;color:#2b2f36;font-size:12px}
+.pos-line-remove{margin-inline-start:auto;border:0;background:transparent;font-size:15px;opacity:.7}
+.pos-line-remove:hover{opacity:1}
+.pos-cart-bottom{padding:10px 12px 12px;border-top:1px solid #dcdfe4;background:#fafafb}
+.pos-total-row{display:flex;justify-content:space-between;font-size:13px;color:#4b5563;margin-bottom:4px}
+.pos-total-row.total{font-size:18px;color:#2b2f36;font-weight:800;margin-bottom:10px}
+.pos-methods{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.pos-method{padding:6px 10px;border:1px solid #cfd3da;border-radius:6px;background:#fff;color:#374151;font-size:12px;font-weight:650}
+.pos-method.active{background:var(--pos-purple);border-color:var(--pos-purple);color:#fff}
+.pos-cart-bottom .message{margin:0 0 8px}
+.pos-pay{width:100%;min-height:52px;display:flex;align-items:center;justify-content:center;gap:10px;border:0;border-radius:4px;background:var(--pos-purple);color:#fff;font-size:15px;font-weight:800}
+.pos-pay:hover:not(:disabled){background:var(--pos-purple-dark)}
+.pos-pay:disabled{opacity:.55}
+.pos-tools{display:flex;gap:10px;margin-top:10px}
+.pos-tool{width:38px;height:34px;border:1px solid #dcdfe4;border-radius:6px;background:#fff;color:var(--pos-purple);font-size:18px;line-height:1}
+.pos-tool.danger{color:#dc2626}
+.pos-products{flex:1;min-width:0;display:flex;flex-direction:column}
+.pos-tabs{display:flex;gap:4px;padding:8px 10px;overflow-x:auto;background:#fff;border-bottom:1px solid #dcdfe4;flex-shrink:0}
+.pos-tab{flex-shrink:0;min-width:70px;padding:8px 16px;border:1px solid #d5d8de;border-radius:4px;background:#eceef1;color:#374151;font-size:12px;font-weight:700}
+.pos-tab:hover{background:#e2e5ea}
+.pos-tab.active{background:#fff;border-color:var(--pos-purple);color:var(--pos-purple)}
+.pos-grid{flex:1;overflow-y:auto;padding:10px;display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:8px;align-content:start}
+.pos-card{position:relative;display:flex;flex-direction:column;gap:4px;padding:0 0 8px;text-align:right;color:#2b2f36;background:#fff;border:1px solid #e1e4e8;border-radius:4px;overflow:hidden;transition:box-shadow .15s,border-color .15s}
+.pos-card:hover:not(:disabled){border-color:var(--pos-purple);box-shadow:0 4px 14px rgba(108,39,199,.2)}
+.pos-card.out{opacity:.5;cursor:not-allowed}
+.pos-img{height:96px;background:#fff;display:grid;place-items:center;overflow:hidden}
+.pos-img img{width:100%;height:100%;object-fit:contain}
+.pos-img.placeholder{background:#f3f4f6;font-size:40px}
+.pos-corner{position:absolute;top:0;right:0;width:26px;height:26px;background:var(--pos-purple);clip-path:polygon(0 0,100% 0,100% 100%)}
+.pos-name{padding:0 8px;font-size:11px;line-height:1.5;color:#4b5563;overflow-wrap:anywhere}
+.pos-price{padding:0 8px;font-size:13px;font-weight:800;color:var(--pos-purple)}
+.pos-stockline{padding:0 8px;font-size:10px;color:#6b7280}
+.pos-stockline.low{color:#dc2626;font-weight:700}
+.pos-nothing{grid-column:1/-1;text-align:center;padding:50px 10px;color:#6b7280}
+.pos-customer{display:flex;align-items:center;gap:8px;margin:0 10px 10px;padding:0 12px;background:#fff;border:1px solid #dcdfe4;border-radius:6px;flex-shrink:0}
+.pos-customer input{border:0;outline:0;background:transparent;height:38px;width:100%;color:#2b2f36;font-size:13px}
+@media(max-width:800px){
+  .pos-body{flex-direction:column-reverse}
+  .pos-cart{width:100%;max-height:48vh;border-right:0;border-top:1px solid #dcdfe4}
+  .pos-search{width:46vw}
+  .pos-session,.pos-user{display:none}
+}
 </style>
  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 </head>
@@ -428,6 +501,7 @@ body.no-costs .sale-stat:has(#todayProfitTotal){display:none}
    <button type="button" class="nav-item" data-page="discuss" data-title="Discuss">Discuss</button>
    <button type="button" class="nav-item" data-page="products" data-title="إدارة المنتجات">إدارة المنتجات</button>
    <button type="button" class="nav-item" data-page="receipts" data-title="استلامات البضاعة">استلامات البضاعة</button>
+<button type="button" class="nav-item" data-page="pos" data-title="بيع المنتجات">بيع المنتجات</button>
 <button type="button" class="nav-item" data-page="sales" data-title="تسجيل المبيعات">تسجيل المبيعات</button>
 <button type="button" class="nav-item" data-page="salesReturns" data-title="مرتجعات المبيعات">مرتجعات المبيعات</button>
 <button type="button" class="nav-item" data-page="exchanges" data-title="التبديل (الاكستشنج)">التبديل (الاكستشنج)</button>
@@ -453,7 +527,7 @@ body.no-costs .sale-stat:has(#todayProfitTotal){display:none}
     <input id="appsSearch" class="search-input apps-search" type="search" placeholder="ابحث عن تطبيق..." autocomplete="off">
     <div class="apps-grid" id="appsGrid">
     <button type="button" class="app-tile" data-page-link="dashboard" data-app-name="INVENTORY"><span class="app-icon" style="--c1:#714b67;--c2:#9b6a8e" aria-hidden="true">📦</span><span class="app-name">INVENTORY</span></button>
-    <button type="button" class="app-tile" data-page-link="sales" data-app-name="POINT OF SALE"><span class="app-icon" style="--c1:#1fa67a;--c2:#16805f" aria-hidden="true">🧾</span><span class="app-name">POINT OF SALE</span></button>
+    <button type="button" class="app-tile" data-page-link="pos" data-app-name="POINT OF SALE"><span class="app-icon" style="--c1:#1fa67a;--c2:#16805f" aria-hidden="true">🧾</span><span class="app-name">POINT OF SALE</span></button>
     <button type="button" class="app-tile" data-page-link="discuss" data-app-name="DISCUSS"><span class="app-icon" style="--c1:#2f80ed;--c2:#1d5fc0" aria-hidden="true">💬</span><span class="app-name">DISCUSS</span></button>
     <button type="button" class="app-tile" data-page-link="products" data-app-name="إدارة المنتجات"><span class="app-icon" style="--c1:#e8833a;--c2:#c45f1c" aria-hidden="true">🏷️</span><span class="app-name">إدارة المنتجات</span></button>
     <button type="button" class="app-tile" data-page-link="receipts" data-app-name="استلامات البضاعة"><span class="app-icon" style="--c1:#00a0b0;--c2:#007a88" aria-hidden="true">📥</span><span class="app-name">استلامات البضاعة</span></button>
@@ -555,6 +629,11 @@ body.no-costs .sale-stat:has(#todayProfitTotal){display:none}
       <div class="field"><label for="purchasePrice">سعر الشراء بالجنيه</label><input id="purchasePrice" type="number" min="0.01" step="0.01" required></div>
       <div class="field"><label for="salePrice">سعر البيع بالجنيه</label><input id="salePrice" type="number" min="0.01" step="0.01" required></div>
       <div class="field"><label for="productQuantity">الكمية الموجودة</label><input id="productQuantity" type="number" min="0" step="1" required></div>
+      <div class="field">
+       <label for="productImage">صورة المنتج (اختياري)</label>
+       <input id="productImage" type="file" accept="image/*">
+       <div class="image-preview-row"><img id="productImagePreview" alt="معاينة الصورة" hidden><button type="button" class="secondary-btn" id="removeProductImage" hidden>إزالة الصورة</button></div>
+      </div>
      </div>
      <div class="actions">
       <button class="primary-btn" type="submit" id="saveProductButton">حفظ المنتج</button>
@@ -926,6 +1005,40 @@ body.no-costs .sale-stat:has(#todayProfitTotal){display:none}
      <div id="adminPasswordMessage" class="message" role="status"></div>
     </form>
    </section>
+  </section>
+
+<section class="page" data-page-section="pos">
+   <header class="pos-top">
+    <button type="button" class="pos-top-btn" id="posBack">⟵ النظام</button>
+    <span class="pos-session">GAMY POS</span>
+    <div class="pos-top-spacer"></div>
+    <div class="pos-search"><span aria-hidden="true">🔍</span><input id="posSearch" type="search" placeholder="ابحث عن منتج أو امسح الباركود" autocomplete="off"></div>
+    <span class="pos-user" id="posUserLabel"></span>
+    <button type="button" class="pos-top-btn" id="posFullscreen" title="ملء الشاشة" aria-label="ملء الشاشة">⛶</button>
+   </header>
+
+   <div class="pos-body">
+    <aside class="pos-cart">
+     <div class="pos-cart-scroll" id="posCartLines"></div>
+     <div class="pos-cart-bottom">
+      <div class="pos-total-row"><span>عدد القطع</span><strong id="posCartUnits">0</strong></div>
+      <div class="pos-total-row total"><span>الإجمالي</span><strong id="posCartTotal">0 ج.م</strong></div>
+      <div class="pos-methods" id="posMethods"></div>
+      <div id="posMessage" class="message" role="status"></div>
+      <button type="button" class="pos-pay" id="posPayButton" disabled><span id="posPayLabel">دفع 0.00 ج.م</span><span aria-hidden="true">➜</span></button>
+      <div class="pos-tools">
+       <button type="button" class="pos-tool danger" id="posClearCart" title="تفريغ السلة" aria-label="تفريغ السلة">🗑</button>
+       <button type="button" class="pos-tool" id="posNewOrder" title="طلب جديد" aria-label="طلب جديد">＋</button>
+      </div>
+     </div>
+    </aside>
+
+    <div class="pos-products">
+     <div class="pos-tabs" id="posTabs"></div>
+     <div class="pos-grid" id="posGrid"></div>
+     <div class="pos-customer"><span aria-hidden="true">🔍</span><input id="posCustomer" type="text" list="posCustomerList" placeholder="ابحث عن عميل أو اكتب اسمه" autocomplete="off"><datalist id="posCustomerList"></datalist></div>
+    </div>
+   </div>
   </section>
 
   <section class="page" data-page-section="history">
@@ -1358,6 +1471,7 @@ let sales = [];
 let invoiceCart = [];
 let editingProductId = null;
 let stockProductId = null;
+let pendingProductImage;
 function readStorageArray(key) {
     try {
         const raw = localStorage.getItem(key);
@@ -1379,6 +1493,7 @@ products = readStorageArray(PRODUCT_KEY)
         size: String(p.size || ""),
         model: String(p.model || ""),
         gender: String(p.gender || ""),
+        image: String(p.image || ""),
         purchasePrice: Math.max(0, Number(p.purchasePrice) || 0),
         salePrice: Math.max(0, Number(p.salePrice) || 0),
         quantity: Math.max(0, Number(p.quantity) || 0)
@@ -1621,7 +1736,7 @@ function showPage(name, updateHash = true) {
     const allowed = [
         "dashboard", "products", "receipts", "sales",  "salesReturns" , "history", "backup",
         "inventoryAudit", "stockMovements", "reports", "customersSuppliers",
-        "stockAlerts", "exchanges", "home", "discuss", "employees"];
+        "stockAlerts", "exchanges", "home", "discuss", "employees", "pos"];
 
     const target = allowed.includes(name) ? name : "dashboard";
 
@@ -1895,6 +2010,7 @@ barcode.addEventListener("click", () => {
     renderDashboardAnalytics();
     updateBackupSummary();
 renderStockAlerts();
+if (typeof window.renderPos === "function") window.renderPos();
 }
  
 $("searchInput").addEventListener("input", renderProducts);
@@ -2052,7 +2168,74 @@ $("exportStockAlertsButton").addEventListener("click", async () => {
  
  
 /* نموذج إضافة وتعديل المنتجات */
+function showProductImage(src) {
+    const img = $("productImagePreview");
+    const remove = $("removeProductImage");
+    if (src) {
+        img.src = src;
+        img.hidden = false;
+        remove.hidden = false;
+    } else {
+        img.removeAttribute("src");
+        img.hidden = true;
+        remove.hidden = true;
+    }
+}
+
+function resetProductImageUI() {
+    pendingProductImage = undefined;
+    $("productImage").value = "";
+    showProductImage("");
+}
+
+function compressImage(file) {
+    return new Promise((resolve, reject) => {
+        if (!file || !String(file.type).startsWith("image/")) {
+            reject(new Error("اختر ملف صورة."));
+            return;
+        }
+        const reader = new FileReader();
+        reader.onerror = () => reject(new Error("تعذر قراءة الصورة."));
+        reader.onload = () => {
+            const img = new Image();
+            img.onerror = () => reject(new Error("تعذر فتح الصورة."));
+            img.onload = () => {
+                const scale = Math.min(1, 320 / Math.max(img.width, img.height));
+                const canvas = document.createElement("canvas");
+                canvas.width = Math.max(1, Math.round(img.width * scale));
+                canvas.height = Math.max(1, Math.round(img.height * scale));
+                const context = canvas.getContext("2d");
+                context.fillStyle = "#ffffff";
+                context.fillRect(0, 0, canvas.width, canvas.height);
+                context.drawImage(img, 0, 0, canvas.width, canvas.height);
+                resolve(canvas.toDataURL("image/jpeg", 0.8));
+            };
+            img.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+$("productImage").addEventListener("change", async () => {
+    const file = $("productImage").files && $("productImage").files[0];
+    if (!file) return;
+    try {
+        pendingProductImage = await compressImage(file);
+        showProductImage(pendingProductImage);
+    } catch (error) {
+        showMessage("formMessage", error.message || "تعذر تجهيز الصورة.", "error");
+        $("productImage").value = "";
+    }
+});
+
+$("removeProductImage").addEventListener("click", () => {
+    pendingProductImage = "";
+    $("productImage").value = "";
+    showProductImage("");
+});
+
 function clearProductForm() {
+    resetProductImageUI();
     $("productForm").reset();
     editingProductId = null;
  
@@ -2079,6 +2262,8 @@ function startEditProduct(id) {
     $("purchasePrice").value = p.purchasePrice;
     $("salePrice").value = p.salePrice;
     $("productQuantity").value = p.quantity;
+    pendingProductImage = undefined;
+    showProductImage(p.image || "");
  
     $("productFormTitle").textContent = "تعديل بيانات المنتج";
     $("productFormDescription").textContent = "عدّل البيانات ثم احفظ التغييرات.";
@@ -2131,7 +2316,9 @@ $("productForm").addEventListener("submit", event => {
         return;
     }
  
-    const values = { name, code, color, size, model, gender, purchasePrice, salePrice, quantity };
+    const existingProduct = editingProductId !== null ? findProduct(editingProductId) : null;
+    const image = pendingProductImage !== undefined ? pendingProductImage : ((existingProduct && existingProduct.image) || "");
+    const values = { name, code, color, size, model, gender, purchasePrice, salePrice, quantity, image };
  
     if (editingProductId !== null) {
         const index = products.findIndex(p => String(p.id) === String(editingProductId));
@@ -2978,6 +3165,7 @@ function validateImportedProducts(list) {
         const size = String(p.size || "");
         const model = String(p.model || "");
         const gender = String(p.gender || "");
+        const image = typeof p.image === "string" && p.image.startsWith("data:image/") ? p.image : "";
         const purchasePrice = Number(p.purchasePrice);
         const salePrice = Number(p.salePrice);
         const quantity = Number(p.quantity);
@@ -2999,7 +3187,7 @@ function validateImportedProducts(list) {
         ids.add(id);
         codes.add(normalizedCode);
  
-        return { id, name, code, color, size, model, gender, purchasePrice, salePrice, quantity };
+        return { id, name, code, color, size, model, gender, image, purchasePrice, salePrice, quantity };
     });
 }
  
@@ -3788,20 +3976,18 @@ window.addEventListener("hashchange", () => {
     savePreference(SMOKE_POWER_KEY, String(smokePower));
   });
  
- smokeButton.addEventListener("click", () => {
+  smokeButton.addEventListener("click", () => {
     smokeEnabled = !smokeEnabled;
     savePreference(SMOKE_KEY, smokeEnabled ? "on" : "off");
     updateSmokeButton();
-
+ 
     if (!smokeEnabled) {
       particles = [];
       if (frame) cancelAnimationFrame(frame);
       frame = 0;
       if (context) context.clearRect(0, 0, width, height);
-    } else {
-      if (!frame) frame = requestAnimationFrame(animateSmoke);
     }
-});
+  });
  
   /* دخان سريع بألوان أزرق وأحمر */
   const canvas = document.createElement("canvas");
@@ -3827,35 +4013,84 @@ window.addEventListener("hashchange", () => {
     canvas.height = Math.round(height * ratio);
     context.setTransform(ratio, 0, 0, ratio, 0, 0);
   }
-
-function addSmoke(x, y) {
+ 
+  function addSmoke(x, y) {
     if (!smokeEnabled) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    const count = Math.max(5, Math.round(smokePower * 2));
+ 
+    const count = Math.max(1, Math.round(smokePower / 2));
     const colors = [[0, 170, 255], [255, 45, 75]];
-
+ 
     for (let i = 0; i < count; i++) {
-        const color = colors[Math.floor(Math.random() * colors.length)];
-
-        particles.push({
-            x: x + (Math.random() - 0.5) * 24,
-            y: y + (Math.random() - 0.5) * 24,
-            vx: (Math.random() - 0.5) * 1.8,
-            vy: -0.5 - Math.random() * 1.5,
-            radius: 12 + Math.random() * (smokePower * 2.5),
-            alpha: 1,
-            life: 1,
-            decay: 0.009 + Math.random() * 0.008,
-            color
-        });
+      const color = colors[Math.floor(Math.random() * colors.length)];
+ 
+      particles.push({
+        x: x + (Math.random() - 0.5) * 8,
+        y: y + (Math.random() - 0.5) * 8,
+        vx: (Math.random() - 0.5) * 2.6,
+        vy: (Math.random() - 0.5) * 2.6,
+        radius: 2 + Math.random() * (2 + smokePower * 0.35),
+        alpha: 0.75 + Math.random() * 0.2,
+        life: 1,
+        decay: 0.035 + Math.random() * 0.035,
+        color
+      });
     }
-
-    if (particles.length > 350) {
-        particles.splice(0, particles.length - 350);
+ 
+    if (particles.length > 180) {
+      particles.splice(0, particles.length - 180);
     }
-}
-
+  }
+ 
+  function animateSmoke() {
+    context.clearRect(0, 0, width, height);
+ 
+    particles = particles.filter(p => p.life > 0.03);
+ 
+    for (const p of particles) {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vx *= 0.97;
+      p.vy *= 0.97;
+      p.radius *= 0.985;
+      p.life -= p.decay;
+ 
+      const alpha = Math.max(0, p.alpha * p.life);
+      const [r, g, b] = p.color;
+ 
+      context.beginPath();
+      context.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+      context.shadowColor = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+      context.shadowBlur = 5;
+      context.arc(p.x, p.y, Math.max(0.5, p.radius), 0, Math.PI * 2);
+      context.fill();
+    }
+ 
+    context.shadowBlur = 0;
+ 
+    if (smokeEnabled || particles.length) {
+      frame = requestAnimationFrame(animateSmoke);
+    } else {
+      frame = 0;
+      context.clearRect(0, 0, width, height);
+    }
+  }
+ 
+  window.addEventListener("resize", resizeCanvas);
+ 
+  document.addEventListener("pointermove", event => {
+    if (event.pointerType === "touch" || !smokeEnabled) return;
+ 
+    const now = performance.now();
+    if (now - lastSpawn < 12) return;
+    lastSpawn = now;
+ 
+    addSmoke(event.clientX, event.clientY);
+ 
+    if (!frame) frame = requestAnimationFrame(animateSmoke);
+  }, { passive: true });
+ 
+  resizeCanvas();
  
   /* ترجمة النصوص التي تظهر ديناميكيًا */
   const observer = new MutationObserver(records => {
@@ -6157,6 +6392,397 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
 })();
 </script>
 <script>
+/* شاشة بيع المنتجات (POS) مستقلة بشكل Odoo */
+(function () {
+  const el = id => document.getElementById(id);
+  if (!el("posGrid") || !el("posCartLines")) return;
+
+  const METHODS = ["كاش", "فيزا", "محفظة إلكترونية", "تحويل بنكي", "آجل"];
+  const UNCATEGORIZED = "بدون تصنيف";
+  const CONTACTS_KEY_POS = "gamy_inventory_contacts_v1";
+
+  let cart = [];
+  let category = "all";
+  let method = "كاش";
+
+  const categoryOf = p => p.model || UNCATEGORIZED;
+  const say = (text, type) => showMessage("posMessage", text, type);
+
+  /* ---------- التبويبات ---------- */
+  function renderTabs() {
+    const tabs = el("posTabs");
+    tabs.replaceChildren();
+
+    const names = [...new Set(products.map(categoryOf))];
+    if (category !== "all" && !names.includes(category)) category = "all";
+
+    const make = (key, label, extra) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "pos-tab" + (extra ? " " + extra : "") + (key === category ? " active" : "");
+      button.textContent = label;
+      button.addEventListener("click", () => { category = key; renderPos(); });
+      tabs.appendChild(button);
+    };
+
+    make("all", "🏠", "home");
+    names.forEach(name => make(name, name));
+  }
+
+  /* ---------- كروت المنتجات ---------- */
+  function renderGrid() {
+    const grid = el("posGrid");
+    const term = normalize(el("posSearch").value);
+    grid.replaceChildren();
+
+    const list = products.filter(p =>
+      (category === "all" || categoryOf(p) === category) &&
+      (!term || [p.name, p.code, p.color, p.size].some(v => normalize(v).includes(term))));
+
+    if (!list.length) {
+      const empty = document.createElement("div");
+      empty.className = "pos-nothing";
+      empty.textContent = products.length ? "لا توجد منتجات مطابقة." : "لا توجد منتجات. أضف منتجات من صفحة إدارة المنتجات.";
+      grid.appendChild(empty);
+      return;
+    }
+
+    list.forEach(p => {
+      const quantity = Number(p.quantity || 0);
+      const low = quantity <= getLowStockThreshold();
+
+      const card = document.createElement("button");
+      card.type = "button";
+      card.className = "pos-card" + (quantity <= 0 ? " out" : "");
+      card.disabled = quantity <= 0;
+
+      const corner = document.createElement("span");
+      corner.className = "pos-corner";
+
+      const imageBox = document.createElement("div");
+      imageBox.className = "pos-img";
+      if (p.image) {
+        const img = document.createElement("img");
+        img.src = p.image;
+        img.alt = p.name;
+        imageBox.appendChild(img);
+      } else {
+        imageBox.classList.add("placeholder");
+        imageBox.textContent = "👕";
+      }
+
+      const name = document.createElement("div");
+      name.className = "pos-name";
+      name.textContent = (p.code ? "[" + p.code + "] " : "") + p.name +
+        (p.size || p.color ? " (" + [p.size, p.color].filter(Boolean).join("، ") + ")" : "");
+
+      const price = document.createElement("div");
+      price.className = "pos-price";
+      price.textContent = Number(p.salePrice).toFixed(2) + " ج.م";
+
+      const stock = document.createElement("div");
+      stock.className = "pos-stockline" + (low ? " low" : "");
+      stock.textContent = quantity <= 0 ? "نفد المخزون" : "المتاح: " + quantity.toLocaleString("ar-EG");
+
+      card.append(imageBox, corner, name, price, stock);
+      card.addEventListener("click", () => addToCart(p.id));
+      grid.appendChild(card);
+    });
+  }
+
+  /* ---------- السلة ---------- */
+  function addToCart(productId) {
+    const product = findProduct(productId);
+    if (!product) return;
+
+    const line = cart.find(l => l.productId === product.id);
+    const next = (line ? line.quantity : 0) + 1;
+
+    if (next > Number(product.quantity)) {
+      say("المتاح من " + product.name + " هو " + product.quantity + " فقط.", "error");
+      return;
+    }
+
+    if (line) line.quantity = next;
+    else cart.push({ productId: product.id, quantity: 1, unitPrice: Number(product.salePrice) });
+
+    clearMessage("posMessage");
+    renderCart();
+  }
+
+  function renderCart() {
+    cart = cart.filter(l => findProduct(l.productId));
+    const box = el("posCartLines");
+    box.replaceChildren();
+
+    if (!cart.length) {
+      const empty = document.createElement("div");
+      empty.className = "pos-empty";
+      const icon = document.createElement("div");
+      icon.className = "pos-empty-icon";
+      icon.textContent = "🛒";
+      const text = document.createElement("div");
+      text.textContent = "ابدأ بإضافة المنتجات";
+      empty.append(icon, text);
+      box.appendChild(empty);
+    }
+
+    cart.forEach(line => {
+      const product = findProduct(line.productId);
+      const row = document.createElement("div");
+      row.className = "pos-line";
+
+      const head = document.createElement("div");
+      head.className = "pos-line-head";
+
+      const title = document.createElement("div");
+      title.className = "pos-line-title";
+      title.textContent = product.name + (product.size || product.color
+        ? " (" + [product.size, product.color].filter(Boolean).join("، ") + ")" : "");
+
+      const total = document.createElement("div");
+      total.className = "pos-line-total";
+      total.textContent = formatMoney(line.quantity * line.unitPrice);
+
+      head.append(title, total);
+
+      const controls = document.createElement("div");
+      controls.className = "pos-line-controls";
+
+      const minus = document.createElement("button");
+      minus.type = "button";
+      minus.className = "pos-qty-btn";
+      minus.textContent = "−";
+      minus.addEventListener("click", () => {
+        line.quantity -= 1;
+        if (line.quantity <= 0) cart = cart.filter(l => l !== line);
+        renderCart();
+      });
+
+      const qty = document.createElement("span");
+      qty.className = "pos-qty";
+      qty.textContent = line.quantity.toLocaleString("ar-EG");
+
+      const plus = document.createElement("button");
+      plus.type = "button";
+      plus.className = "pos-qty-btn";
+      plus.textContent = "+";
+      plus.addEventListener("click", () => {
+        if (line.quantity + 1 > Number(product.quantity)) {
+          say("المتاح من " + product.name + " هو " + product.quantity + " فقط.", "error");
+          return;
+        }
+        line.quantity += 1;
+        renderCart();
+      });
+
+      const times = document.createElement("span");
+      times.className = "pos-times";
+      times.textContent = "×";
+
+      const price = document.createElement("input");
+      price.type = "number";
+      price.min = "0.01";
+      price.step = "0.01";
+      price.className = "pos-line-price";
+      price.value = String(line.unitPrice);
+      price.setAttribute("aria-label", "سعر القطعة");
+      price.addEventListener("change", () => {
+        const value = Number(price.value);
+        if (!Number.isFinite(value) || value <= 0) {
+          say("اكتب سعرًا صحيحًا أكبر من صفر.", "error");
+          price.value = String(line.unitPrice);
+          return;
+        }
+        line.unitPrice = value;
+        renderCart();
+      });
+
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.className = "pos-line-remove";
+      remove.textContent = "🗑";
+      remove.setAttribute("aria-label", "حذف من السلة");
+      remove.addEventListener("click", () => {
+        cart = cart.filter(l => l !== line);
+        renderCart();
+      });
+
+      controls.append(minus, qty, plus, times, price, remove);
+      row.append(head, controls);
+      box.appendChild(row);
+    });
+
+    const units = cart.reduce((sum, l) => sum + l.quantity, 0);
+    const total = cart.reduce((sum, l) => sum + l.quantity * l.unitPrice, 0);
+
+    el("posCartUnits").textContent = units.toLocaleString("ar-EG");
+    el("posCartTotal").textContent = formatMoney(total);
+    el("posPayButton").disabled = !cart.length;
+    el("posPayLabel").textContent = "دفع " + Number(total).toFixed(2) + " ج.م";
+  }
+
+  function renderMethods() {
+    const box = el("posMethods");
+    box.replaceChildren();
+    METHODS.forEach(name => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "pos-method" + (name === method ? " active" : "");
+      button.textContent = name;
+      button.addEventListener("click", () => { method = name; renderMethods(); });
+      box.appendChild(button);
+    });
+  }
+
+  function renderCustomers() {
+    const list = el("posCustomerList");
+    list.replaceChildren();
+    let contacts = [];
+    try {
+      const saved = JSON.parse(localStorage.getItem(CONTACTS_KEY_POS) || "[]");
+      contacts = Array.isArray(saved) ? saved : [];
+    } catch (e) {}
+    [...new Set(contacts.filter(c => c && c.type === "customer" && c.name).map(c => c.name))].forEach(name => {
+      const option = document.createElement("option");
+      option.value = name;
+      list.appendChild(option);
+    });
+  }
+
+  function renderPos() {
+    el("posUserLabel").textContent = el("userNameLabel") ? el("userNameLabel").textContent : "";
+    renderTabs();
+    renderGrid();
+    renderCart();
+    renderMethods();
+    renderCustomers();
+  }
+  window.renderPos = renderPos;
+
+  /* ---------- الدفع ---------- */
+  function pay() {
+    if (!cart.length) { say("السلة فارغة.", "error"); return; }
+
+    const checked = [];
+    for (const line of cart) {
+      const product = findProduct(line.productId);
+      if (!product) { say("أحد المنتجات لم يعد موجودًا.", "error"); return; }
+      if (!Number.isInteger(line.quantity) || line.quantity <= 0 || line.quantity > Number(product.quantity)) {
+        say("الرصيد غير كافٍ للمنتج: " + product.name + " — المتاح: " + product.quantity, "error");
+        return;
+      }
+      if (!Number.isFinite(line.unitPrice) || line.unitPrice <= 0) {
+        say("يوجد سعر غير صحيح في السلة.", "error");
+        return;
+      }
+      checked.push({ line, product });
+    }
+
+    const customerName = el("posCustomer").value.trim();
+    const oldProductsStorage = localStorage.getItem(PRODUCT_KEY);
+    const oldSalesStorage = localStorage.getItem(SALES_KEY);
+    const oldQuantities = checked.map(({ product }) => ({ product, quantity: product.quantity }));
+
+    const now = new Date().toISOString();
+    const invoiceId = "INV-" + Date.now() + "-" + Math.random().toString(16).slice(2, 8);
+
+    const newSales = checked.map(({ line, product }) => ({
+      id: Date.now().toString() + Math.random().toString(16).slice(2),
+      invoiceId,
+      paymentMethod: method,
+      customerName,
+      productId: product.id,
+      productName: product.name,
+      productCode: product.code,
+      quantity: line.quantity,
+      unitPrice: line.unitPrice,
+      unitCost: Number(product.purchasePrice),
+      total: line.quantity * line.unitPrice,
+      profit: line.quantity * (line.unitPrice - Number(product.purchasePrice)),
+      createdAt: now
+    }));
+
+    checked.forEach(({ line, product }) => { product.quantity -= line.quantity; });
+    sales.push(...newSales);
+
+    try {
+      localStorage.setItem(PRODUCT_KEY, JSON.stringify(products));
+      localStorage.setItem(SALES_KEY, JSON.stringify(sales));
+    } catch (error) {
+      oldQuantities.forEach(({ product, quantity }) => { product.quantity = quantity; });
+      sales = sales.filter(sale => !newSales.some(n => n.id === sale.id));
+
+      try {
+        if (oldProductsStorage === null) localStorage.removeItem(PRODUCT_KEY); else localStorage.setItem(PRODUCT_KEY, oldProductsStorage);
+        if (oldSalesStorage === null) localStorage.removeItem(SALES_KEY); else localStorage.setItem(SALES_KEY, oldSalesStorage);
+      } catch (restoreError) {
+        console.error("تعذر استرجاع التخزين السابق:", restoreError);
+      }
+
+      say("تعذر حفظ الفاتورة. لم يتم اعتماد العملية.", "error");
+      return;
+    }
+
+    const total = newSales.reduce((sum, s) => sum + s.total, 0);
+    cart = [];
+    el("posCustomer").value = "";
+    renderProducts();
+    renderSales();
+    renderPos();
+    say("تم الدفع " + formatMoney(total) + " (" + method + ") — فاتورة " + invoiceId + ".", "success");
+  }
+
+  el("posPayButton").addEventListener("click", pay);
+
+  function resetOrder(askFirst) {
+    if (askFirst && cart.length && !confirm("هل تريد تفريغ السلة؟")) return;
+    cart = [];
+    el("posCustomer").value = "";
+    clearMessage("posMessage");
+    renderCart();
+  }
+
+  el("posClearCart").addEventListener("click", () => resetOrder(true));
+  el("posNewOrder").addEventListener("click", () => { resetOrder(true); el("posSearch").focus(); });
+
+  el("posSearch").addEventListener("input", renderGrid);
+  el("posSearch").addEventListener("keydown", event => {
+    if (event.key !== "Enter") return;
+    event.preventDefault();
+
+    const code = el("posSearch").value.trim();
+    if (!code) return;
+
+    const product = products.find(p => String(p.code).trim() === code);
+    if (!product) { say("لا يوجد منتج بهذا الكود.", "error"); return; }
+
+    el("posSearch").value = "";
+    renderGrid();
+    addToCart(product.id);
+  });
+
+  el("posBack").addEventListener("click", () => showPage("home"));
+
+  el("posFullscreen").addEventListener("click", () => {
+    try {
+      if (document.fullscreenElement) document.exitFullscreen();
+      else document.documentElement.requestFullscreen();
+    } catch (e) {}
+  });
+
+  const previousShowPage = showPage;
+  showPage = function (name, updateHash = true) {
+    previousShowPage(name, updateHash);
+    document.body.classList.toggle("pos-mode", name === "pos");
+    if (name === "pos") renderPos();
+  };
+
+  renderPos();
+})();
+</script>
+
+<script>
 /* الدخول والموظفون والصلاحيات */
 (function () {
   "use strict";
@@ -6181,7 +6807,7 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
   /* كل صفحة ومين يقدر يدخلها: all = أي مستخدم، admin = المدير فقط، أو اسم صلاحية */
   const PAGE_ACCESS = {
     home: "all", discuss: "all",
-    sales: "sell",
+    sales: "sell", pos: "sell",
     salesReturns: "returns", exchanges: "returns",
     history: "invoices",
     products: "storage", inventoryAudit: "storage", stockMovements: "storage", stockAlerts: "storage",
