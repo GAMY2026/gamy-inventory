@@ -1229,7 +1229,16 @@ html[data-theme="light"] .image-preview-row img{border-color:#cfd6e2}
     <div class="panel-heading"><h2 class="section-title">تسجيل دفعة من عميل</h2><p class="description">الدفعة بتقلل المستحق على العميل. مينفعش تزيد عن الرصيد.</p></div>
     <form id="accountForm" novalidate>
      <div class="form-grid">
-      <div class="field"><label for="accountCustomer">العميل</label><select id="accountCustomer"><option value="">اختر العميل</option></select></div>
+<div class="field">
+  <label for="accountCustomerName">اسم العميل</label>
+  <input id="accountCustomerName" type="text" placeholder="اكتب اسم العميل">
+</div>
+
+<div class="field">
+  <label for="accountCustomerPhone">رقم التليفون</label>
+  <input id="accountCustomerPhone" type="tel" placeholder="اكتب رقم التليفون">
+</div>
+       
       <div class="field"><label for="accountAmount">المبلغ</label><input id="accountAmount" type="number" min="0.01" step="0.01" placeholder="المبلغ المدفوع"></div>
       <div class="field">
        <label for="accountMethod">طريقة الدفع</label>
@@ -7812,11 +7821,22 @@ if ([...select.options].some(o => o.value === old)) {
   el("accountForm").addEventListener("submit", event => {
     event.preventDefault();
     const msg = "accountMessage";
+    const customerName = el("accountCustomerName").value.trim();
+const customerPhone = el("accountCustomerPhone").value.trim();
 
-    const key = el("accountCustomer").value;
-    const account = buildAccounts().find(a => a.key === key);
-    if (!account) return showMessage(msg, "اختر العميل أولًا.", "error");
+if (!customerName) {
+  return showMessage(msg, "اكتب اسم العميل أولًا.", "error");
+}
 
+if (!customerPhone) {
+  return showMessage(msg, "اكتب رقم تليفون العميل.", "error");
+}
+
+const account = buildAccounts().find(a => a.key === keyOf(customerName));
+
+if (!account) {
+  return showMessage(msg, "العميل غير موجود في الحسابات. تأكد من تسجيل فاتورة آجلة له أولًا.", "error");
+}
     const amount = round2(Number(el("accountAmount").value));
     if (!Number.isFinite(amount) || amount <= 0) return showMessage(msg, "اكتب مبلغ دفعة صحيحًا أكبر من صفر.", "error");
     if (amount > account.balance + 0.009) {
@@ -7829,8 +7849,9 @@ if ([...select.options].some(o => o.value === old)) {
     const record = {
       id: "PAYREC-" + Date.now() + "-" + Math.random().toString(16).slice(2, 8),
       receiptNo: nextReceiptNo(),
-      customerName: account.name,
-      amount, method,
+      customerName: customerName,
+customerPhone: customerPhone,
+amount, method,   
       notes: el("accountNotes").value.trim(),
       createdAt: new Date().toISOString()
     };
