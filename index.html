@@ -7735,14 +7735,25 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
     }
 
     /* قائمة العملاء في نموذج الدفعة */
-    const select = el("accountCustomer");
-    const old = select.value;
-    select.replaceChildren();
-    const first = document.createElement("option");
-    first.value = "";
-    first.textContent = debtors.length ? "اختر العميل" : "لا توجد مديونيات";
-    select.appendChild(first);
-    debtors.forEach(a => {
+const select = el("accountCustomer");
+const old = select.value;
+select.replaceChildren();
+
+const first = document.createElement("option");
+first.value = "";
+first.textContent = accounts.length ? "اختر العميل" : "لا يوجد عملاء";
+select.appendChild(first);
+
+accounts.forEach(a => {
+    const option = document.createElement("option");
+    option.value = a.key;
+    option.textContent = labelOf(a) + " — المستحق: " + formatMoney(a.balance);
+    select.appendChild(option);
+});
+
+if ([...select.options].some(o => o.value === old)) {
+    select.value = old;
+}   
       const option = document.createElement("option");
       option.value = a.key;
       option.textContent = labelOf(a) + " — المستحق: " + formatMoney(a.balance);
