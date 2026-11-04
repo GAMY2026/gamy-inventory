@@ -7637,7 +7637,12 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
         date: r.createdAt, type: "مرتجع", ref: r.orderNo || r.id, debit: 0, credit: num(r.refund)
       });
     });
-
+/* إضافة العملاء المسجلين حتى لو بدون مديونية */
+readList(CONTACTS_KEY_A).forEach(c => {
+    if (!c || c.type !== "customer" || !c.name) return;
+    account(c.name);
+});
+    
     /* الدفعات */
     payments.forEach(p => {
       if (!p) return;
