@@ -7727,11 +7727,11 @@ readList(CONTACTS_KEY_A).forEach(c => {
       pay.textContent = "تسجيل دفعة";
       pay.disabled = a.balance <= 0.009;
       pay.addEventListener("click", () => {
-        el("accountCustomer").value = a.key;
+        el("accountCustomerName").value = labelOf(a);
+el("accountCustomerPhone").value = phoneOf(a);
         el("accountAmount").value = a.balance.toFixed(2);
         el("accountAmount").focus();
       });
-
       const statement = document.createElement("button");
       statement.type = "button";
       statement.className = "secondary-btn";
