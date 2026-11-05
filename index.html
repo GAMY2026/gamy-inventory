@@ -613,6 +613,20 @@ html[data-theme="light"] .auth-brand{color:#1f2937}
 html[data-theme="light"] .auth-hint{color:#6b7280}
 html[data-theme="light"] .receipt-auto{color:#4b5563}
 html[data-theme="light"] .image-preview-row img{border-color:#cfd6e2}
+/* ===== مراحل إضافية ===== */
+.pos-discount{display:flex;align-items:center;gap:6px;margin:6px 0 4px;font-size:13px;color:#4b5563}
+.pos-discount span{flex:1;font-weight:650}
+.pos-discount select,.pos-discount input{height:30px;border:1px solid #cfd3da;border-radius:6px;background:#fff;color:#2b2f36;font-size:12px;padding:0 6px}
+.pos-discount input{width:80px}
+.pos-discount-error{color:#dc2626;font-size:11px;min-height:0}
+body.no-discount .pos-discount{display:none}
+.shift-table tr.shift-total td{font-weight:800;color:var(--gamy-gold-light)}
+@media print{
+  body.printing-shift .topbar,body.printing-shift footer,body.printing-shift .sidebar,body.printing-shift #menuEdge,
+  body.printing-shift #smokeCanvas,body.printing-shift .no-print,body.printing-shift .page-topline{display:none!important}
+  body.printing-shift,body.printing-shift .panel,body.printing-shift table,body.printing-shift tr,body.printing-shift td,body.printing-shift th{background:#fff!important;color:#000!important;box-shadow:none!important;border-color:#999!important}
+  body.printing-shift .app-layout{display:block!important;width:100%!important;margin:0!important}
+}
 </style>
  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 </head>
@@ -673,6 +687,9 @@ html[data-theme="light"] .image-preview-row img{border-color:#cfd6e2}
 <button type="button" class="nav-item" data-page="exchanges" data-title="التبديل (الاكستشنج)">التبديل (الاكستشنج)</button>
    <button type="button" class="nav-item" data-page="history" data-title="مراجعة الفواتير">مراجعة الفواتير</button>
    <button type="button" class="nav-item" data-page="accounts" data-title="حسابات العملاء">حسابات العملاء</button>
+   <button type="button" class="nav-item" data-page="closing" data-title="إقفال الوردية">إقفال الوردية</button>
+   <button type="button" class="nav-item" data-page="expenses" data-title="المصاريف وصافي الربح">المصاريف وصافي الربح</button>
+   <button type="button" class="nav-item" data-page="activity" data-title="سجل النشاط">سجل النشاط</button>
    <button type="button" class="nav-item" data-page="backup" data-title="النسخ الاحتياطي">النسخ الاحتياطي</button>
    <button type="button" class="nav-item" data-page="employees" data-title="الموظفين">الموظفين</button>
    <button type="button" class="nav-item" data-page="inventoryAudit" data-title="جرد المخزن">جرد المخزن</button>
@@ -703,6 +720,9 @@ html[data-theme="light"] .image-preview-row img{border-color:#cfd6e2}
     <button type="button" class="app-tile" data-page-link="exchanges" data-app-name="التبديل"><span class="app-icon" style="--c1:#8e44ad;--c2:#6c3483" aria-hidden="true">🔄</span><span class="app-name">التبديل</span></button>
     <button type="button" class="app-tile" data-page-link="history" data-app-name="مراجعة الفواتير"><span class="app-icon" style="--c1:#3d9970;--c2:#2b7a56" aria-hidden="true">📒</span><span class="app-name">مراجعة الفواتير</span></button>
     <button type="button" class="app-tile" data-page-link="accounts" data-app-name="حسابات العملاء"><span class="app-icon" style="--c1:#e5484d;--c2:#b32d31" aria-hidden="true">💳</span><span class="app-name">حسابات العملاء</span></button>
+    <button type="button" class="app-tile" data-page-link="closing" data-app-name="إقفال الوردية"><span class="app-icon" style="--c1:#0ea5a4;--c2:#0b7c7b" aria-hidden="true">🧮</span><span class="app-name">إقفال الوردية</span></button>
+    <button type="button" class="app-tile" data-page-link="expenses" data-app-name="المصاريف وصافي الربح"><span class="app-icon" style="--c1:#f59e0b;--c2:#c27803" aria-hidden="true">💰</span><span class="app-name">المصاريف وصافي الربح</span></button>
+    <button type="button" class="app-tile" data-page-link="activity" data-app-name="سجل النشاط"><span class="app-icon" style="--c1:#64748b;--c2:#475569" aria-hidden="true">📜</span><span class="app-name">سجل النشاط</span></button>
     <button type="button" class="app-tile" data-page-link="inventoryAudit" data-app-name="جرد المخزن"><span class="app-icon" style="--c1:#c9a04a;--c2:#a07d2c" aria-hidden="true">📋</span><span class="app-name">جرد المخزن</span></button>
     <button type="button" class="app-tile" data-page-link="stockMovements" data-app-name="حركة المخزون"><span class="app-icon" style="--c1:#5b6ee1;--c2:#4150b8" aria-hidden="true">🚚</span><span class="app-name">حركة المخزون</span></button>
     <button type="button" class="app-tile" data-page-link="reports" data-app-name="التقارير"><span class="app-icon" style="--c1:#e0559a;--c2:#b83a7a" aria-hidden="true">📊</span><span class="app-name">التقارير</span></button>
@@ -813,6 +833,21 @@ html[data-theme="light"] .image-preview-row img{border-color:#cfd6e2}
     </form>
    </section>
  
+   <section class="panel" id="importPanel">
+    <div class="panel-heading"><h2 class="section-title">استيراد منتجات من Excel</h2><p class="description">حمّل النموذج واملاه، وارفعه هنا. الأعمدة: اسم المنتج، كود المنتج، اللون، المقاس، الموديل، النوع، سعر الشراء، سعر البيع، الكمية. (يحتاج إنترنت لقراءة الملف)</p></div>
+    <div class="form-grid">
+     <div class="field"><label for="importFile">ملف Excel أو CSV</label><input id="importFile" type="file" accept=".xlsx,.xls,.csv"></div>
+     <div class="field"><label for="importMode">لو الكود موجود بالفعل</label>
+      <select id="importMode"><option value="skip">تخطّيه (لا تغيّر الموجود)</option><option value="update">حدّث بياناته وأسعاره وأضف الكمية</option></select></div>
+    </div>
+    <div class="actions">
+     <button type="button" class="secondary-btn" id="importTemplate">تنزيل نموذج Excel</button>
+     <button type="button" class="primary-btn" id="importConfirm" disabled>تأكيد الاستيراد</button>
+    </div>
+    <div id="importPreview" class="sale-preview" hidden></div>
+    <div id="productImportMessage" class="message" role="status"></div>
+   </section>
+
    <section class="panel">
     <div class="table-toolbar"><h2 class="section-title">قائمة المنتجات</h2><input id="searchInput" class="search-input" type="search" placeholder="بحث بالاسم أو الكود أو اللون"></div>
     <div class="table-wrapper">
@@ -1146,6 +1181,8 @@ html[data-theme="light"] .image-preview-row img{border-color:#cfd6e2}
       <label class="perm-item"><input type="checkbox" data-perm="storage"><span>التخزين: المنتجات والجرد وحركة المخزون والتنبيهات</span></label>
       <label class="perm-item"><input type="checkbox" data-perm="receiving"><span>استلام البضاعة</span></label>
       <label class="perm-item"><input type="checkbox" data-perm="accounts"><span>حسابات العملاء الآجل: عرض المديونيات وتسجيل الدفعات</span></label>
+      <label class="perm-item"><input type="checkbox" data-perm="closing"><span>إقفال الوردية وتقرير آخر اليوم</span></label>
+      <label class="perm-item"><input type="checkbox" data-perm="discount"><span>إعطاء خصم في شاشة البيع</span></label>
       <label class="perm-item"><input type="checkbox" data-perm="viewCosts"><span>إظهار أسعار الشراء والأرباح</span></label>
       </div>
       <label class="perm-item perm-active"><input type="checkbox" id="employeeActive" checked><span>الحساب نشط (يقدر يدخل)</span></label>
@@ -1196,6 +1233,14 @@ html[data-theme="light"] .image-preview-row img{border-color:#cfd6e2}
      <div class="pos-cart-scroll" id="posCartLines"></div>
      <div class="pos-cart-bottom">
       <div class="pos-total-row"><span>عدد القطع</span><strong id="posCartUnits">0</strong></div>
+      <div class="pos-total-row"><span>المجموع</span><strong id="posCartSubtotal">0 ج.م</strong></div>
+      <div class="pos-discount" id="posDiscountBox">
+       <span>الخصم</span>
+       <select id="posDiscountType" aria-label="نوع الخصم"><option value="percent">٪ نسبة</option><option value="amount">ج.م مبلغ</option></select>
+       <input id="posDiscountValue" type="number" min="0" step="0.01" placeholder="0" aria-label="قيمة الخصم">
+      </div>
+      <div class="pos-discount-error" id="posDiscountError"></div>
+      <div class="pos-total-row" id="posDiscountRow"><span>قيمة الخصم</span><strong id="posCartDiscount">0 ج.م</strong></div>
       <div class="pos-total-row total"><span>الإجمالي</span><strong id="posCartTotal">0 ج.م</strong></div>
       <div class="pos-methods" id="posMethods"></div>
       <div id="posMessage" class="message" role="status"></div>
@@ -1229,16 +1274,7 @@ html[data-theme="light"] .image-preview-row img{border-color:#cfd6e2}
     <div class="panel-heading"><h2 class="section-title">تسجيل دفعة من عميل</h2><p class="description">الدفعة بتقلل المستحق على العميل. مينفعش تزيد عن الرصيد.</p></div>
     <form id="accountForm" novalidate>
      <div class="form-grid">
-<div class="field">
-  <label for="accountCustomerName">اسم العميل</label>
-  <input id="accountCustomerName" type="text" placeholder="اكتب اسم العميل">
-</div>
-
-<div class="field">
-  <label for="accountCustomerPhone">رقم التليفون</label>
-  <input id="accountCustomerPhone" type="tel" placeholder="اكتب رقم التليفون">
-</div>
-       
+      <div class="field"><label for="accountCustomer">العميل</label><select id="accountCustomer"><option value="">اختر العميل</option></select></div>
       <div class="field"><label for="accountAmount">المبلغ</label><input id="accountAmount" type="number" min="0.01" step="0.01" placeholder="المبلغ المدفوع"></div>
       <div class="field">
        <label for="accountMethod">طريقة الدفع</label>
@@ -1284,6 +1320,101 @@ html[data-theme="light"] .image-preview-row img{border-color:#cfd6e2}
       <tbody id="statementBody"></tbody>
      </table>
     </div>
+   </section>
+  </section>
+
+  <section class="page" data-page-section="expenses">
+   <div class="page-topline"><h1>المصاريف وصافي الربح</h1><p>سجّل مصاريف التشغيل وشوف الربح الصافي لكل شهر بعد المرتجعات.</p></div>
+   <section class="panel">
+    <div class="form-grid"><div class="field"><label for="expenseMonth">الشهر</label><input id="expenseMonth" type="month"></div></div>
+    <div class="stats" style="margin-top:18px;">
+     <div class="stat-card"><div class="stat-label">صافي المبيعات</div><div class="stat-value" id="expenseRevenue">0 ج.م</div><div class="stat-caption">بعد المرتجعات والتبديل</div></div>
+     <div class="stat-card"><div class="stat-label">إجمالي الربح</div><div class="stat-value" id="expenseGrossProfit">0 ج.م</div><div class="stat-caption">قبل المصاريف</div></div>
+     <div class="stat-card"><div class="stat-label">المصاريف</div><div class="stat-value" id="expenseTotal">0 ج.م</div></div>
+     <div class="stat-card"><div class="stat-label">صافي الربح</div><div class="stat-value" id="expenseNetProfit">0 ج.م</div><div class="stat-caption">الربح ناقص المصاريف</div></div>
+    </div>
+   </section>
+   <section class="panel">
+    <div class="panel-heading"><h2 class="section-title">تسجيل مصروف</h2></div>
+    <form id="expenseForm" novalidate>
+     <div class="form-grid">
+      <div class="field"><label for="expenseDate">التاريخ</label><input id="expenseDate" type="date"></div>
+      <div class="field"><label for="expenseCategory">نوع المصروف</label>
+       <select id="expenseCategory"><option value="">اختر النوع</option>
+        <option value="إيجار">إيجار</option>
+        <option value="مرتبات">مرتبات</option>
+        <option value="كهرباء ومياه">كهرباء ومياه</option>
+        <option value="مواصلات">مواصلات</option>
+        <option value="صيانة">صيانة</option>
+        <option value="مشتريات تشغيل">مشتريات تشغيل</option>
+        <option value="تسويق وإعلانات">تسويق وإعلانات</option>
+        <option value="ضرائب ورسوم">ضرائب ورسوم</option>
+        <option value="أخرى">أخرى</option>
+       </select></div>
+      <div class="field"><label for="expenseAmount">المبلغ</label><input id="expenseAmount" type="number" min="0.01" step="0.01" placeholder="المبلغ بالجنيه"></div>
+      <div class="field"><label for="expenseMethod">طريقة الدفع</label>
+       <select id="expenseMethod"><option value="كاش">كاش</option><option value="فيزا">فيزا</option><option value="تحويل بنكي">تحويل بنكي</option><option value="محفظة إلكترونية">محفظة إلكترونية</option></select></div>
+     </div>
+     <div class="field" style="margin-top:18px;"><label for="expenseNotes">ملاحظات</label><input id="expenseNotes" type="text" placeholder="اختياري"></div>
+     <div class="actions"><button class="primary-btn" type="submit">حفظ المصروف</button></div>
+     <div id="expenseMessage" class="message" role="status"></div>
+    </form>
+   </section>
+   <section class="panel">
+    <div class="panel-heading"><h2 class="section-title">المصاريف حسب النوع</h2></div>
+    <div class="table-wrapper"><table><thead><tr><th>النوع</th><th>الإجمالي</th></tr></thead><tbody id="expenseCategoriesBody"></tbody></table></div>
+   </section>
+   <section class="panel">
+    <div class="panel-heading"><h2 class="section-title">مصاريف الشهر</h2></div>
+    <div class="table-wrapper"><table><thead><tr><th>التاريخ</th><th>النوع</th><th>المبلغ</th><th>طريقة الدفع</th><th>ملاحظات</th><th>سجّله</th><th>إجراء</th></tr></thead><tbody id="expensesBody"></tbody></table></div>
+    <div class="table-footer"><span id="expensesCount">عدد المصاريف: 0</span></div>
+   </section>
+  </section>
+
+  <section class="page" data-page-section="activity">
+   <div class="page-topline"><h1>سجل النشاط</h1><p>كل عملية مهمة اتعملت في النظام: مين عملها ومتى وإيه اللي اتغير.</p></div>
+   <section class="panel">
+    <div class="form-grid">
+     <div class="field"><label for="activitySearch">بحث</label><input id="activitySearch" type="search" placeholder="اسم المستخدم أو التفاصيل"></div>
+     <div class="field"><label for="activityAction">نوع العملية</label><select id="activityAction"><option value="">كل الأنواع</option></select></div>
+     <div class="field"><label for="activityFrom">من تاريخ</label><input id="activityFrom" type="date"></div>
+     <div class="field"><label for="activityTo">إلى تاريخ</label><input id="activityTo" type="date"></div>
+    </div>
+    <div class="actions">
+     <button type="button" class="secondary-btn" id="activityClear">مسح الفلاتر</button>
+     <button type="button" class="primary-btn" id="activityExport">تنزيل Excel</button>
+    </div>
+    <div id="activityMessage" class="message" role="status"></div>
+    <div class="table-wrapper" style="margin-top:16px;">
+     <table><thead><tr><th>التاريخ</th><th>المستخدم</th><th>العملية</th><th>التفاصيل</th></tr></thead><tbody id="activityBody"></tbody></table>
+    </div>
+    <div class="table-footer"><span id="activityCount">عدد السجلات: 0</span><span>السجل بيحتفظ بآخر 3000 عملية</span></div>
+   </section>
+  </section>
+
+  <section class="page" data-page-section="closing">
+   <div class="page-topline no-print"><h1>إقفال الوردية</h1><p>تقرير آخر اليوم بالمبيعات وطرق الدفع، ومقارنة الكاش المتوقع بالكاش الفعلي في الدرج.</p></div>
+   <section class="panel no-print">
+    <div class="form-grid">
+     <div class="field"><label for="closingDate">التاريخ</label><input id="closingDate" type="date"></div>
+     <div class="field"><label for="closingCashier">الكاشير</label><select id="closingCashier"><option value="">كل الكاشير</option></select></div>
+     <div class="field"><label for="closingOpening">الكاش الافتتاحي في الدرج</label><input id="closingOpening" type="number" min="0" step="0.01" placeholder="0"></div>
+     <div class="field"><label for="closingActual">الكاش الفعلي (بعد العد)</label><input id="closingActual" type="number" min="0" step="0.01" placeholder="اكتب الكاش الموجود فعلًا"></div>
+    </div>
+    <div class="field" style="margin-top:18px;"><label for="closingNotes">ملاحظات</label><input id="closingNotes" type="text" placeholder="اختياري"></div>
+    <div class="actions">
+     <button type="button" class="primary-btn" id="closingSave">حفظ إقفال الوردية</button>
+     <button type="button" class="secondary-btn" id="closingPrint">طباعة التقرير</button>
+    </div>
+    <div id="closingMessage" class="message" role="status"></div>
+   </section>
+   <section class="panel" id="shiftReport">
+    <div class="panel-heading"><h2 class="section-title" id="shiftReportTitle">تقرير الوردية</h2></div>
+    <div class="table-wrapper"><table class="shift-table"><thead><tr><th>البند</th><th>القيمة</th></tr></thead><tbody id="shiftReportBody"></tbody></table></div>
+   </section>
+   <section class="panel no-print">
+    <div class="panel-heading"><h2 class="section-title">سجل الإقفالات</h2></div>
+    <div class="table-wrapper"><table><thead><tr><th>التاريخ</th><th>الكاشير</th><th>صافي المبيعات</th><th>الكاش المتوقع</th><th>الكاش الفعلي</th><th>الفرق</th><th>أقفلها</th><th>وقت الحفظ</th></tr></thead><tbody id="closingHistoryBody"></tbody></table></div>
    </section>
   </section>
 
@@ -1562,6 +1693,8 @@ html[data-theme="light"] .image-preview-row img{border-color:#cfd6e2}
     <div class="stat-card"><div class="stat-label">إجمالي الوحدات بالمخزن</div><div class="stat-value" id="reportsTotalUnits">0</div></div>
     <div class="stat-card"><div class="stat-label">قيمة المخزون بسعر الشراء</div><div class="stat-value" id="reportsStockCost">0 ج.م</div></div>
     <div class="stat-card"><div class="stat-label">صافي المبيعات الشهرية (بعد المرتجعات)</div><div class="stat-value" id="reportsSalesCount">0 ج.م</div></div>
+    <div class="stat-card"><div class="stat-label">مصاريف الشهر</div><div class="stat-value" id="reportsExpenses">0 ج.م</div></div>
+    <div class="stat-card"><div class="stat-label">صافي ربح الشهر</div><div class="stat-value" id="reportsNetProfit">0 ج.م</div><div class="stat-caption">الربح بعد المرتجعات ناقص المصاريف</div></div>
    </div>
  
    <section class="panel">
@@ -2035,7 +2168,7 @@ function showPage(name, updateHash = true) {
     const allowed = [
         "dashboard", "products", "receipts", "sales",  "salesReturns" , "history", "backup",
         "inventoryAudit", "stockMovements", "reports", "customersSuppliers",
-        "stockAlerts", "exchanges", "home", "discuss", "employees", "pos", "accounts"];
+        "stockAlerts", "exchanges", "home", "discuss", "employees", "pos", "accounts", "expenses", "activity", "closing"];
 
     const target = allowed.includes(name) ? name : "dashboard";
 
@@ -2637,6 +2770,7 @@ $("productForm").addEventListener("submit", event => {
  
         clearProductForm();
         logManualMovement("تعديل يدوي", products[index], quantity - Number(previous.quantity || 0));
+        logActivity("تعديل منتج", describeProductChange(previous, products[index]));
         showMessage("formMessage", "تم حفظ تعديلات المنتج بنجاح.", "success");
     } else {
         const newProduct = {
@@ -2653,6 +2787,7 @@ $("productForm").addEventListener("submit", event => {
  
         clearProductForm();
         logManualMovement("رصيد افتتاحي", newProduct, quantity);
+        logActivity("منتج جديد", name + " (" + code + ") — كمية " + quantity + " — شراء " + purchasePrice + " — بيع " + salePrice);
         showMessage("formMessage", "تم حفظ المنتج بنجاح.", "success");
     }
  
@@ -2720,6 +2855,7 @@ $("stockForm").addEventListener("submit", event => {
     closeStockModal();
     renderProducts();
     logManualMovement("إضافة يدوية", p, amount);
+    logActivity("إضافة كمية", p.name + " (" + p.code + ") — +" + amount + " ← الرصيد " + p.quantity);
     showMessage("stockAlertsMessage", "تمت إضافة " + amount + " قطعة إلى " + p.name + ".", "success");
     showMessage("formMessage", "تمت إضافة " + amount + " قطعة إلى المخزون.", "success");
 });
@@ -2743,6 +2879,7 @@ function deleteProduct(id) {
  
     renderProducts();
     renderSales();
+    logActivity("حذف منتج", p.name + " (" + p.code + ") — كان رصيده " + p.quantity);
     showMessage("formMessage", "تم حذف المنتج.", "success");
 }
  
@@ -2936,6 +3073,7 @@ function getSalesAdjustments() {
         list.push({
             date: r.createdAt,
             kind: "return",
+            cashier: sale.cashierName || "",
             invoiceId: r.invoiceId || sale.invoiceId || "",
             payment: r.paymentMethod || sale.paymentMethod || "",
             revenue: -refund,
@@ -2958,6 +3096,7 @@ function getSalesAdjustments() {
         list.push({
             date: x.createdAt,
             kind: "exchange",
+            cashier: sale.cashierName || "",
             invoiceId: sale.invoiceId || "",
             payment: x.method || sale.paymentMethod || "",
             revenue: Number(x.difference) || 0,
@@ -2973,6 +3112,40 @@ function adjustmentsTotal(field, predicate) {
     return getSalesAdjustments()
         .filter(a => predicate(a.date))
         .reduce((sum, a) => sum + Number(a[field] || 0), 0);
+}
+
+const ACTIVITY_KEY = "gamy_inventory_activity_v1";
+
+function logActivity(action, details, meta) {
+    try {
+        const saved = JSON.parse(localStorage.getItem(ACTIVITY_KEY) || "[]");
+        const list = Array.isArray(saved) ? saved : [];
+        const label = document.getElementById("userNameLabel");
+        const employee = document.body.classList.contains("is-employee");
+        list.push({
+            id: "ACT-" + Date.now() + "-" + Math.random().toString(16).slice(2, 7),
+            createdAt: new Date().toISOString(),
+            user: (meta && meta.user) || (label ? label.textContent : ""),
+            role: (meta && meta.role) || (employee ? "موظف" : "مدير"),
+            action,
+            details: String(details || "")
+        });
+        if (list.length > 3000) list.splice(0, list.length - 3000);
+        localStorage.setItem(ACTIVITY_KEY, JSON.stringify(list));
+    } catch (error) {
+        console.error("تعذر تسجيل النشاط:", error);
+    }
+}
+
+function describeProductChange(previous, current) {
+    const fields = [["name", "الاسم"], ["code", "الكود"], ["color", "اللون"], ["size", "المقاس"], ["model", "الموديل"],
+        ["gender", "النوع"], ["purchasePrice", "سعر الشراء"], ["salePrice", "سعر البيع"], ["quantity", "الكمية"]];
+    const parts = fields
+        .filter(([key]) => String(previous[key] === undefined ? "" : previous[key]) !== String(current[key] === undefined ? "" : current[key]))
+        .map(([key, label]) => label + ": من " + (previous[key] === "" || previous[key] === undefined ? "—" : previous[key]) +
+            " إلى " + (current[key] === "" || current[key] === undefined ? "—" : current[key]));
+    if ((previous.image || "") !== (current.image || "")) parts.push("الصورة تغيّرت");
+    return (current.name || "") + " (" + (current.code || "") + ")" + (parts.length ? " — " + parts.join(" | ") : " — بدون تغيير");
 }
 
 function isToday(value) {
@@ -3335,6 +3508,8 @@ productId: product.id,
     renderSales();
     clearSaleForm();
 
+    logActivity("فاتورة بيع", invoiceId + " — " + formatMoney(newSales.reduce((sum, x) => sum + x.total, 0)) + " — " + paymentMethod + (newSales[0].customerName ? " — " + newSales[0].customerName : ""));
+
     showMessage(
         "saleMessage",
         "تم تسجيل الفاتورة " + invoiceId +
@@ -3487,7 +3662,9 @@ const BACKUP_EXTRAS = [
     ["contacts", "gamy_inventory_contacts_v1", "العملاء والموردين"],
     ["discussNotes", "gamy_inventory_discuss_v1", "المناقشات"],
     ["employees", "gamy_inventory_employees_v1", "الموظفين"],
-    ["customerPayments", "gamy_inventory_customer_payments_v1", "دفعات العملاء"]
+    ["customerPayments", "gamy_inventory_customer_payments_v1", "دفعات العملاء"],
+    ["expenses", "gamy_inventory_expenses_v1", "المصاريف"],
+    ["shifts", "gamy_inventory_shifts_v1", "إقفالات الورديات"]
 ];
 const LAST_BACKUP_KEY = "gamy_inventory_last_backup_v1";
 
@@ -3546,6 +3723,7 @@ $("exportJsonBackupButton").addEventListener("click", () => {
  
         setTimeout(() => URL.revokeObjectURL(url), 1500);
         recordBackupDate();
+        logActivity("نسخة احتياطية", "تنزيل نسخة كاملة");
         renderBackupDetails();
         showMessage("exportMessage", "تم تنزيل نسخة احتياطية كاملة.", "success");
     } catch (error) {
@@ -3637,6 +3815,7 @@ function validateImportedSales(list) {
             paymentMethod: String(s.paymentMethod || ""),
             customerName: String(s.customerName || ""),
             cashierName: String(s.cashierName || ""),
+            discount: Number(s.discount) || 0,
             productId: String(s.productId || ""),
             productName: String(s.productName || ""),
             productCode: String(s.productCode || ""),
@@ -3729,6 +3908,7 @@ $("backupFileInput").addEventListener("change", async event => {
             "تمت الاستعادة بنجاح (" + lines.join("، ") + "). جاري إعادة تحميل الصفحة...",
             "success"
         );
+        logActivity("استعادة نسخة احتياطية", lines.join("، "));
         setTimeout(() => location.reload(), 1200);
     } catch (error) {
         console.error("Import error:", error);
@@ -3983,6 +4163,7 @@ $("saveAuditButton").addEventListener("click", () => {
     }
  
     renderAuditHistory();
+    logActivity("جرد مخزن", "منتجات مجردة " + items.length + " — عجز " + audit.shortage + " — زيادة " + audit.surplus);
     showMessage("auditMessage",
         "تم حفظ نتيجة الجرد بنجاح. المنتجات المجردة: " + items.length +
         "، العجز: " + audit.shortage +
@@ -5289,6 +5470,8 @@ monthInput.value = month;
         receiptBody.replaceChildren();
         addReceiptRow();
  
+        logActivity("إذن استلام (مسودة)", receipt.id + " — " + entries.length + " صنف");
+
         showMessage(
             "receiptMessage",
             "تم حفظ المسودة برقم " + receipt.id + ". لم تتم إضافة أي كمية للمخزون.",
@@ -5563,6 +5746,7 @@ monthInput.value = month;
  
                     renderProducts();
                     renderReceiptHistory();
+                    logActivity("اعتماد استلام بضاعة", receipt.id + " — " + receiptItems.length + " صنف");
                     showMessage(
                         "receiptMessage",
                         "تم اعتماد الإذن وإضافة الكميات للمخزون بنجاح.",
@@ -5606,6 +5790,7 @@ monthInput.value = month;
                         currentReceipts.splice(index, 1);
                         localStorage.setItem(RECEIPTS_KEY, JSON.stringify(currentReceipts));
  
+                        logActivity("حذف إذن استلام", receipt.id);
                         showMessage("receiptMessage", "تم حذف الإذن من السجل.", "success");
                         renderReceiptHistory();
                     } catch (error) {
@@ -6394,6 +6579,7 @@ monthInput.value = month;
 
     renderProducts();
     renderAll();
+    logActivity("إعادة من المرتجعات", record.productName + " × " + record.quantity);
     showMessage("returnMessage", "تمت إعادة القطع إلى المخزن الرئيسي.", "success");
   }
 
@@ -6456,6 +6642,7 @@ monthInput.value = month;
     el("returnQuantity").removeAttribute("max");
     el("returnPayMethod").value = "";
     renderAll();
+    logActivity("مرتجع", orderNo + " — " + customer + " — " + (sale.productName || "") + " × " + quantity + " — مبلغ " + formatMoney(refund));
     showMessage(msg,
       "تم تسجيل المرتجع رقم " + orderNo + " للعميل " + customer + " في مخزن المرتجعات بتاريخ " + dateText(record.createdAt) + ".",
       "success");
@@ -6657,6 +6844,7 @@ monthInput.value = month;
     el("exchangeReturnQty").removeAttribute("max");
     renderProducts();
     renderAll();
+    logActivity("تبديل", orderNo + " — " + customer + " — " + (sale.productName || "") + " ⇄ " + np.name + " — فرق " + formatMoney(difference));
     showMessage(msg,
       "تم التبديل رقم " + orderNo + ". دخلت " + q + " قطعة مخزن المرتجعات وخرجت " + nq + " قطعة من المخزن الرئيسي.",
       "success");
@@ -6940,6 +7128,21 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
     renderCart();
   }
 
+  const round2 = v => Math.round(v * 100) / 100;
+
+  function discountFor(subtotal) {
+    const type = el("posDiscountType").value;
+    const text = el("posDiscountValue").value.trim();
+    const raw = Number(text);
+    if (!text || !Number.isFinite(raw) || raw <= 0 || subtotal <= 0) return { amount: 0, error: "" };
+    if (type === "percent") {
+      if (raw > 100) return { amount: 0, error: "نسبة الخصم لا تزيد عن 100%." };
+      return { amount: round2(subtotal * raw / 100), error: "" };
+    }
+    if (raw > subtotal) return { amount: 0, error: "الخصم أكبر من إجمالي الفاتورة." };
+    return { amount: round2(raw), error: "" };
+  }
+
   function renderCart() {
     cart = cart.filter(l => findProduct(l.productId));
     const box = el("posCartLines");
@@ -7044,9 +7247,15 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
     });
 
     const units = cart.reduce((sum, l) => sum + l.quantity, 0);
-    const total = cart.reduce((sum, l) => sum + l.quantity * l.unitPrice, 0);
+    const subtotal = cart.reduce((sum, l) => sum + l.quantity * l.unitPrice, 0);
+    const discount = discountFor(subtotal);
+    const total = round2(subtotal - discount.amount);
 
     el("posCartUnits").textContent = units.toLocaleString("ar-EG");
+    el("posCartSubtotal").textContent = formatMoney(subtotal);
+    el("posDiscountError").textContent = discount.error;
+    el("posDiscountRow").hidden = discount.amount <= 0;
+    el("posCartDiscount").textContent = "− " + formatMoney(discount.amount);
     el("posCartTotal").textContent = formatMoney(total);
     el("posPayButton").disabled = !cart.length;
     el("posPayLabel").textContent = "دفع " + Number(total).toFixed(2) + " ج.م";
@@ -7111,6 +7320,14 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
 
     const customerName = el("posCustomer").value.trim();
     if (method === "آجل" && !customerName) { say("اكتب اسم العميل للبيع الآجل.", "error"); return; }
+
+    const subtotal = cart.reduce((sum, l) => sum + l.quantity * l.unitPrice, 0);
+    const discountInfo = discountFor(subtotal);
+    if (discountInfo.error) { say(discountInfo.error, "error"); return; }
+    if (discountInfo.amount > 0 && document.body.classList.contains("no-discount")) {
+      say("ليس لديك صلاحية إعطاء خصم.", "error");
+      return;
+    }
     const cashierName = el("userNameLabel") ? el("userNameLabel").textContent : "";
     const oldProductsStorage = localStorage.getItem(PRODUCT_KEY);
     const oldSalesStorage = localStorage.getItem(SALES_KEY);
@@ -7119,22 +7336,32 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
     const now = new Date().toISOString();
     const invoiceId = "INV-" + Date.now() + "-" + Math.random().toString(16).slice(2, 8);
 
-    const newSales = checked.map(({ line, product }) => ({
-      id: Date.now().toString() + Math.random().toString(16).slice(2),
-      invoiceId,
-      paymentMethod: method,
-      customerName,
-      cashierName,
-      productId: product.id,
-      productName: product.name,
-      productCode: product.code,
-      quantity: line.quantity,
-      unitPrice: line.unitPrice,
-      unitCost: Number(product.purchasePrice),
-      total: line.quantity * line.unitPrice,
-      profit: line.quantity * (line.unitPrice - Number(product.purchasePrice)),
-      createdAt: now
-    }));
+    let remainingDiscount = discountInfo.amount;
+    const newSales = checked.map(({ line, product }, index) => {
+      const gross = line.quantity * line.unitPrice;
+      const isLast = index === checked.length - 1;
+      const share = isLast ? remainingDiscount : Math.min(round2(discountInfo.amount * gross / subtotal), remainingDiscount);
+      remainingDiscount = round2(remainingDiscount - share);
+      const total = round2(gross - share);
+
+      return {
+        id: Date.now().toString() + Math.random().toString(16).slice(2),
+        invoiceId,
+        paymentMethod: method,
+        customerName,
+        cashierName,
+        productId: product.id,
+        productName: product.name,
+        productCode: product.code,
+        quantity: line.quantity,
+        unitPrice: line.unitPrice,
+        unitCost: Number(product.purchasePrice),
+        discount: share,
+        total,
+        profit: round2(total - line.quantity * Number(product.purchasePrice)),
+        createdAt: now
+      };
+    });
 
     checked.forEach(({ line, product }) => { product.quantity -= line.quantity; });
     sales.push(...newSales);
@@ -7160,9 +7387,11 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
     const total = newSales.reduce((sum, s) => sum + s.total, 0);
     cart = [];
     el("posCustomer").value = "";
+    el("posDiscountValue").value = "";
     renderProducts();
     renderSales();
     renderPos();
+    logActivity("فاتورة بيع (POS)", invoiceId + " — " + formatMoney(total) + " — " + method + (customerName ? " — " + customerName : "") + (discountInfo.amount > 0 ? " — خصم " + formatMoney(discountInfo.amount) : ""));
     say("تم الدفع " + formatMoney(total) + " (" + method + ") — فاتورة " + invoiceId + ".", "success");
     showReceipt(invoiceId);
   }
@@ -7173,6 +7402,7 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
     if (askFirst && cart.length && !confirm("هل تريد تفريغ السلة؟")) return;
     cart = [];
     el("posCustomer").value = "";
+    el("posDiscountValue").value = "";
     clearMessage("posMessage");
     renderCart();
   }
@@ -7181,6 +7411,8 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
   el("posNewOrder").addEventListener("click", () => { resetOrder(true); el("posSearch").focus(); });
 
   el("posSearch").addEventListener("input", renderGrid);
+  el("posDiscountType").addEventListener("change", renderCart);
+  el("posDiscountValue").addEventListener("input", renderCart);
   el("posSearch").addEventListener("keydown", event => {
     if (event.key !== "Enter") return;
     event.preventDefault();
@@ -7251,7 +7483,7 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
         (sale.productName || "—") + (details ? " (" + details + ")" : ""),
         String(sale.quantity),
         Number(sale.unitPrice).toFixed(2),
-        Number(sale.total).toFixed(2)
+        (Number(sale.quantity) * Number(sale.unitPrice)).toFixed(2)
       ].forEach(value => {
         const cell = document.createElement("span");
         cell.textContent = value;
@@ -7261,6 +7493,12 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
     });
 
     add("rc-sep", "");
+    const discountTotal = lines.reduce((sum, s) => sum + Number(s.discount || 0), 0);
+    if (discountTotal > 0) {
+      const gross = lines.reduce((sum, s) => sum + Number(s.quantity || 0) * Number(s.unitPrice || 0), 0);
+      add("rc-line", "المجموع: " + formatMoney(gross));
+      add("rc-line", "الخصم: -" + formatMoney(discountTotal));
+    }
     const total = lines.reduce((sum, s) => sum + Number(s.total || 0), 0);
     const totalRow = add("rc-total", "");
     const label = document.createElement("span");
@@ -7434,6 +7672,7 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
     }
 
     group.customer = name;
+    logActivity("تعديل اسم العميل", (group.invoiceId || "بيع سابق") + " ← " + (name || "(مسح)"));
     showMessage("invoiceMessage", name ? "تم حفظ اسم العميل للفاتورة." : "تم مسح اسم العميل من الفاتورة.", "success");
   }
 
@@ -7646,12 +7885,7 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
         date: r.createdAt, type: "مرتجع", ref: r.orderNo || r.id, debit: 0, credit: num(r.refund)
       });
     });
-/* إضافة العملاء المسجلين حتى لو بدون مديونية */
-readList(CONTACTS_KEY_A).forEach(c => {
-    if (!c || c.type !== "customer" || !c.name) return;
-    account(c.name);
-});
-    
+
     /* الدفعات */
     payments.forEach(p => {
       if (!p) return;
@@ -7727,11 +7961,11 @@ readList(CONTACTS_KEY_A).forEach(c => {
       pay.textContent = "تسجيل دفعة";
       pay.disabled = a.balance <= 0.009;
       pay.addEventListener("click", () => {
-        el("accountCustomerName").value = labelOf(a);
-el("accountCustomerPhone").value = phoneOf(a);
+        el("accountCustomer").value = a.key;
         el("accountAmount").value = a.balance.toFixed(2);
         el("accountAmount").focus();
       });
+
       const statement = document.createElement("button");
       statement.type = "button";
       statement.className = "secondary-btn";
@@ -7749,25 +7983,14 @@ el("accountCustomerPhone").value = phoneOf(a);
     }
 
     /* قائمة العملاء في نموذج الدفعة */
-const select = el("accountCustomer");
-const old = select.value;
-select.replaceChildren();
-
-const first = document.createElement("option");
-first.value = "";
-first.textContent = accounts.length ? "اختر العميل" : "لا يوجد عملاء";
-select.appendChild(first);
-
-accounts.forEach(a => {
-    const option = document.createElement("option");
-    option.value = a.key;
-    option.textContent = labelOf(a) + " — المستحق: " + formatMoney(a.balance);
-    select.appendChild(option);
-});
-
-if ([...select.options].some(o => o.value === old)) {
-    select.value = old;
-}   
+    const select = el("accountCustomer");
+    const old = select.value;
+    select.replaceChildren();
+    const first = document.createElement("option");
+    first.value = "";
+    first.textContent = debtors.length ? "اختر العميل" : "لا توجد مديونيات";
+    select.appendChild(first);
+    debtors.forEach(a => {
       const option = document.createElement("option");
       option.value = a.key;
       option.textContent = labelOf(a) + " — المستحق: " + formatMoney(a.balance);
@@ -7821,22 +8044,11 @@ if ([...select.options].some(o => o.value === old)) {
   el("accountForm").addEventListener("submit", event => {
     event.preventDefault();
     const msg = "accountMessage";
-    const customerName = el("accountCustomerName").value.trim();
-const customerPhone = el("accountCustomerPhone").value.trim();
 
-if (!customerName) {
-  return showMessage(msg, "اكتب اسم العميل أولًا.", "error");
-}
+    const key = el("accountCustomer").value;
+    const account = buildAccounts().find(a => a.key === key);
+    if (!account) return showMessage(msg, "اختر العميل أولًا.", "error");
 
-if (!customerPhone) {
-  return showMessage(msg, "اكتب رقم تليفون العميل.", "error");
-}
-
-const account = buildAccounts().find(a => a.key === keyOf(customerName));
-
-if (!account) {
-  return showMessage(msg, "العميل غير موجود في الحسابات. تأكد من تسجيل فاتورة آجلة له أولًا.", "error");
-}
     const amount = round2(Number(el("accountAmount").value));
     if (!Number.isFinite(amount) || amount <= 0) return showMessage(msg, "اكتب مبلغ دفعة صحيحًا أكبر من صفر.", "error");
     if (amount > account.balance + 0.009) {
@@ -7849,9 +8061,9 @@ if (!account) {
     const record = {
       id: "PAYREC-" + Date.now() + "-" + Math.random().toString(16).slice(2, 8),
       receiptNo: nextReceiptNo(),
-      customerName: customerName,
-customerPhone: customerPhone,
-amount, method,   
+      customerName: account.name,
+      amount, method,
+      cashierName: el("userNameLabel") ? el("userNameLabel").textContent : "",
       notes: el("accountNotes").value.trim(),
       createdAt: new Date().toISOString()
     };
@@ -7866,6 +8078,7 @@ amount, method,
 
     el("accountForm").reset();
     render();
+    logActivity("دفعة عميل", record.receiptNo + " — " + labelOf(account) + " — " + formatMoney(amount) + " (" + method + ")");
     showMessage(msg, "تم تسجيل دفعة " + formatMoney(amount) + " (" + method + ") برقم " + record.receiptNo + " من " + labelOf(account) + ".", "success");
   });
 
@@ -7913,6 +8126,793 @@ amount, method,
 })();
 </script>
 <script>
+/* تشغيل أزرار الحفظ حتى لو المتصفح يمنع إرسال النماذج (مثل المعاينة داخل صفحة) */
+(function () {
+  function submitForm(form) {
+    if (!form.noValidate && typeof form.reportValidity === "function" && !form.reportValidity()) return;
+    form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+  }
+
+  document.addEventListener("click", event => {
+    if (event.defaultPrevented) return;
+    const button = event.target.closest && event.target.closest('button[type="submit"],input[type="submit"]');
+    if (!button || !button.form) return;
+    event.preventDefault();
+    submitForm(button.form);
+  });
+
+  document.addEventListener("keydown", event => {
+    if (event.defaultPrevented || event.key !== "Enter") return;
+    const target = event.target;
+    if (!target || target.tagName !== "INPUT" || !target.form) return;
+    if (["button", "submit", "checkbox", "radio", "file"].includes(target.type)) return;
+    event.preventDefault();
+    submitForm(target.form);
+  });
+})();
+</script>
+<script>
+/* المصاريف وصافي الربح */
+(function () {
+  const EXPENSES_KEY = "gamy_inventory_expenses_v1";
+  const el = id => document.getElementById(id);
+  if (!el("expensesBody")) return;
+
+  const num = v => Number(v) || 0;
+  const round2 = v => Math.round(v * 100) / 100;
+  const readList = key => {
+    try {
+      const value = JSON.parse(localStorage.getItem(key) || "[]");
+      return Array.isArray(value) ? value : [];
+    } catch (e) { return []; }
+  };
+  const monthNow = () => getMonthKey(new Date());
+  const todayInput = () => {
+    const d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  };
+
+  let expenses = readList(EXPENSES_KEY).filter(e => e && e.id);
+
+  function profitSummary(monthKey) {
+    const monthSales = getMonthSales(monthKey);
+    const inMonth = d => getMonthKey(d) === monthKey;
+    const revenue = monthSales.reduce((sum, s) => sum + num(s.total), 0) + adjustmentsTotal("revenue", inMonth);
+    const profit = monthSales.reduce((sum, s) => sum + num(s.profit), 0) + adjustmentsTotal("profit", inMonth);
+    const spent = readList(EXPENSES_KEY)
+      .filter(e => e && String(e.date || "").slice(0, 7) === monthKey)
+      .reduce((sum, e) => sum + num(e.amount), 0);
+    return { revenue: round2(revenue), profit: round2(profit), expenses: round2(spent), net: round2(profit - spent) };
+  }
+  window.getProfitSummary = profitSummary;
+
+  function monthValue() { return el("expenseMonth").value || monthNow(); }
+
+  function render() {
+    const month = monthValue();
+    const summary = profitSummary(month);
+
+    el("expenseRevenue").textContent = formatMoney(summary.revenue);
+    el("expenseGrossProfit").textContent = formatMoney(summary.profit);
+    el("expenseTotal").textContent = formatMoney(summary.expenses);
+    el("expenseNetProfit").textContent = formatMoney(summary.net);
+    el("expenseNetProfit").style.color = summary.net < 0 ? "#dc2626" : "";
+
+    const list = expenses
+      .filter(e => String(e.date || "").slice(0, 7) === month)
+      .sort((a, b) => String(b.date).localeCompare(String(a.date)) || new Date(b.createdAt) - new Date(a.createdAt));
+
+    /* تفصيل حسب النوع */
+    const byCategory = new Map();
+    list.forEach(e => byCategory.set(e.category, (byCategory.get(e.category) || 0) + num(e.amount)));
+    const catBody = el("expenseCategoriesBody");
+    catBody.replaceChildren();
+    [...byCategory.entries()].sort((a, b) => b[1] - a[1]).forEach(([name, total]) => {
+      const tr = document.createElement("tr");
+      tr.append(createCell(name, "product-name"), createCell(formatMoney(total)));
+      catBody.appendChild(tr);
+    });
+    if (!byCategory.size) emptyRow(catBody, 2, "لا توجد مصاريف في هذا الشهر.");
+
+    /* جدول المصاريف */
+    const body = el("expensesBody");
+    body.replaceChildren();
+    list.forEach(e => {
+      const tr = document.createElement("tr");
+      tr.append(
+        createCell(e.date),
+        createCell(e.category, "product-name"),
+        createCell(formatMoney(e.amount)),
+        createCell(e.method || "—"),
+        createCell(e.notes || "—"),
+        createCell(e.createdBy || "—")
+      );
+
+      const actions = document.createElement("td");
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.className = "danger-btn";
+      remove.textContent = "حذف";
+      remove.addEventListener("click", () => {
+        if (!confirm("هل تريد حذف هذا المصروف؟")) return;
+        const old = expenses;
+        expenses = expenses.filter(x => x.id !== e.id);
+        if (!save()) { expenses = old; showMessage("expenseMessage", "تعذر الحذف.", "error"); return; }
+        logActivity("حذف مصروف", e.category + " — " + formatMoney(e.amount) + " — " + e.date);
+        render();
+        showMessage("expenseMessage", "تم حذف المصروف.", "success");
+      });
+      actions.appendChild(remove);
+      tr.appendChild(actions);
+      body.appendChild(tr);
+    });
+    if (!list.length) emptyRow(body, 7, "لا توجد مصاريف مسجلة في هذا الشهر.");
+
+    el("expensesCount").textContent = "عدد المصاريف: " + list.length.toLocaleString("ar-EG");
+  }
+
+  function save() {
+    try { localStorage.setItem(EXPENSES_KEY, JSON.stringify(expenses)); return true; }
+    catch (e) { return false; }
+  }
+
+  el("expenseForm").addEventListener("submit", event => {
+    event.preventDefault();
+    const msg = "expenseMessage";
+
+    const date = el("expenseDate").value;
+    const category = el("expenseCategory").value;
+    const amount = round2(Number(el("expenseAmount").value));
+    const method = el("expenseMethod").value;
+
+    if (!date) return showMessage(msg, "اختر تاريخ المصروف.", "error");
+    if (!category) return showMessage(msg, "اختر نوع المصروف.", "error");
+    if (!Number.isFinite(amount) || amount <= 0) return showMessage(msg, "اكتب مبلغًا صحيحًا أكبر من صفر.", "error");
+    if (!method) return showMessage(msg, "اختر طريقة الدفع.", "error");
+
+    const record = {
+      id: "EXP-" + Date.now() + "-" + Math.random().toString(16).slice(2, 8),
+      date, category, amount, method,
+      notes: el("expenseNotes").value.trim(),
+      createdBy: el("userNameLabel") ? el("userNameLabel").textContent : "",
+      createdAt: new Date().toISOString()
+    };
+
+    expenses.push(record);
+    if (!save()) {
+      expenses.pop();
+      return showMessage(msg, "تعذر حفظ المصروف. تحقق من مساحة التخزين.", "error");
+    }
+
+    logActivity("مصروف جديد", category + " — " + formatMoney(amount) + " (" + method + ") — " + date);
+    el("expenseForm").reset();
+    el("expenseDate").value = todayInput();
+    el("expenseMonth").value = date.slice(0, 7);
+    render();
+    showMessage(msg, "تم تسجيل المصروف " + formatMoney(amount) + ".", "success");
+  });
+
+  el("expenseMonth").addEventListener("change", render);
+
+  /* ملخص الربح الصافي في صفحة التقارير */
+  function updateReportsExtras() {
+    const summary = profitSummary(monthNow());
+    el("reportsExpenses").textContent = formatMoney(summary.expenses);
+    el("reportsNetProfit").textContent = formatMoney(summary.net);
+    el("reportsNetProfit").style.color = summary.net < 0 ? "#dc2626" : "";
+  }
+
+  const refreshReports = el("refreshReportsButton");
+  if (refreshReports) refreshReports.addEventListener("click", updateReportsExtras);
+
+  const previousShowPage = showPage;
+  showPage = function (name, updateHash = true) {
+    previousShowPage(name, updateHash);
+    if (name === "expenses") {
+      expenses = readList(EXPENSES_KEY).filter(e => e && e.id);
+      render();
+    }
+    if (name === "reports") updateReportsExtras();
+  };
+
+  el("expenseDate").value = todayInput();
+  el("expenseMonth").value = monthNow();
+  render();
+  updateReportsExtras();
+})();
+</script>
+<script>
+/* سجل النشاط */
+(function () {
+  const el = id => document.getElementById(id);
+  if (!el("activityBody")) return;
+
+  const MAX_ROWS = 500;
+  const readList = () => {
+    try {
+      const value = JSON.parse(localStorage.getItem(ACTIVITY_KEY) || "[]");
+      return Array.isArray(value) ? value.filter(a => a && a.id) : [];
+    } catch (e) { return []; }
+  };
+  const dayKey = value => {
+    const d = new Date(value);
+    if (Number.isNaN(d.getTime())) return "";
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  };
+
+  function filtered() {
+    const term = normalize(el("activitySearch").value);
+    const action = el("activityAction").value;
+    const from = el("activityFrom").value;
+    const to = el("activityTo").value;
+
+    return readList()
+      .filter(a => {
+        if (action && a.action !== action) return false;
+        const day = dayKey(a.createdAt);
+        if (from && (!day || day < from)) return false;
+        if (to && (!day || day > to)) return false;
+        return !term || [a.user, a.action, a.details].some(v => normalize(v).includes(term));
+      })
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  function renderActions() {
+    const select = el("activityAction");
+    const old = select.value;
+    select.replaceChildren();
+    const first = document.createElement("option");
+    first.value = "";
+    first.textContent = "كل الأنواع";
+    select.appendChild(first);
+    [...new Set(readList().map(a => a.action))].sort((a, b) => String(a).localeCompare(String(b), "ar")).forEach(name => {
+      const option = document.createElement("option");
+      option.value = name;
+      option.textContent = name;
+      select.appendChild(option);
+    });
+    if ([...select.options].some(o => o.value === old)) select.value = old;
+  }
+
+  function render() {
+    const rows = filtered();
+    const body = el("activityBody");
+    body.replaceChildren();
+
+    rows.slice(0, MAX_ROWS).forEach(a => {
+      const tr = document.createElement("tr");
+      const d = new Date(a.createdAt);
+      const details = createCell(a.details || "—");
+      details.style.whiteSpace = "normal";
+      details.style.minWidth = "260px";
+      tr.append(
+        createCell(Number.isNaN(d.getTime()) ? "—" : d.toLocaleString("ar-EG")),
+        createCell((a.user || "—") + (a.role ? " (" + a.role + ")" : "")),
+        badgeCell(a.action, /حذف|فاشلة/.test(a.action) ? "danger" : /دخول|خروج/.test(a.action) ? "info" : "ok"),
+        details
+      );
+      body.appendChild(tr);
+    });
+
+    if (!rows.length) emptyRow(body, 4, "لا توجد أنشطة مطابقة.");
+
+    el("activityCount").textContent = "عدد السجلات: " + rows.length.toLocaleString("ar-EG") +
+      (rows.length > MAX_ROWS ? " (يُعرض أحدث " + MAX_ROWS + " فقط — استخدم الفلاتر أو Excel)" : "");
+  }
+
+  ["activitySearch"].forEach(id => el(id).addEventListener("input", render));
+  ["activityAction", "activityFrom", "activityTo"].forEach(id => el(id).addEventListener("change", render));
+
+  el("activityClear").addEventListener("click", () => {
+    el("activitySearch").value = "";
+    el("activityAction").value = "";
+    el("activityFrom").value = "";
+    el("activityTo").value = "";
+    render();
+  });
+
+  el("activityExport").addEventListener("click", async () => {
+    const rows = filtered();
+    if (!rows.length) { showMessage("activityMessage", "لا توجد سجلات لتنزيلها.", "error"); return; }
+
+    try {
+      const XLSX = await loadXlsxLibrary();
+      const data = [
+        ["التاريخ", "المستخدم", "الصلاحية", "العملية", "التفاصيل"],
+        ...rows.map(a => {
+          const d = new Date(a.createdAt);
+          return [Number.isNaN(d.getTime()) ? "" : d.toLocaleString("ar-EG"), a.user || "", a.role || "", a.action, a.details || ""];
+        })
+      ];
+      const sheet = XLSX.utils.aoa_to_sheet(data);
+      sheet["!cols"] = [24, 22, 12, 26, 70].map(w => ({ wch: w }));
+      const workbook = XLSX.utils.book_new();
+      workbook.Workbook = { Views: [{ RTL: true }] };
+      XLSX.utils.book_append_sheet(workbook, sheet, "سجل النشاط");
+      XLSX.writeFile(workbook, "GAMY-Activity-" + getLocalDateForFilename() + ".xlsx", { bookType: "xlsx" });
+      showMessage("activityMessage", "تم تنزيل سجل النشاط.", "success");
+    } catch (error) {
+      showMessage("activityMessage", error.message || "تعذر التنزيل.", "error");
+    }
+  });
+
+  const previousShowPage = showPage;
+  showPage = function (name, updateHash = true) {
+    previousShowPage(name, updateHash);
+    if (name === "activity") { renderActions(); render(); }
+  };
+
+  renderActions();
+  render();
+})();
+</script>
+<script>
+/* إقفال الوردية */
+(function () {
+  const SHIFTS_KEY = "gamy_inventory_shifts_v1";
+  const PAYMENTS_KEY_C = "gamy_inventory_customer_payments_v1";
+  const EXPENSES_KEY_C = "gamy_inventory_expenses_v1";
+  const METHODS = ["كاش", "فيزا", "محفظة إلكترونية", "تحويل بنكي", "آجل"];
+  const el = id => document.getElementById(id);
+  if (!el("shiftReport")) return;
+
+  const num = v => Number(v) || 0;
+  const round2 = v => Math.round(v * 100) / 100;
+  const readList = key => {
+    try {
+      const value = JSON.parse(localStorage.getItem(key) || "[]");
+      return Array.isArray(value) ? value : [];
+    } catch (e) { return []; }
+  };
+  const dayKey = value => {
+    const d = new Date(value);
+    if (Number.isNaN(d.getTime())) return "";
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  };
+  const isEmployee = () => document.body.classList.contains("is-employee");
+  const userName = () => (el("userNameLabel") ? el("userNameLabel").textContent : "");
+
+  let shifts = readList(SHIFTS_KEY).filter(x => x && x.id);
+
+  /* ---------- الحسابات ---------- */
+  function compute(day, cashier) {
+    const all = cashier === "";
+    const lines = sales.filter(s => s && dayKey(s.createdAt) === day && (all || s.cashierName === cashier));
+
+    const invoices = new Map();
+    lines.forEach(s => {
+      const key = s.invoiceId || ("SALE-" + s.id);
+      let g = invoices.get(key);
+      if (!g) { g = { payment: s.paymentMethod || "", total: 0, discount: 0 }; invoices.set(key, g); }
+      g.total += num(s.total);
+      g.discount += num(s.discount);
+    });
+
+    const adjustments = getSalesAdjustments().filter(a => dayKey(a.date) === day && (all || a.cashier === cashier));
+    const salesTotal = [...invoices.values()].reduce((sum, g) => sum + g.total, 0);
+    const discounts = [...invoices.values()].reduce((sum, g) => sum + g.discount, 0);
+    const adjustmentsTotalValue = adjustments.reduce((sum, a) => sum + a.revenue, 0);
+    const returnsValue = adjustments.filter(a => a.kind === "return").reduce((sum, a) => sum + a.revenue, 0);
+    const exchangeValue = adjustments.filter(a => a.kind === "exchange").reduce((sum, a) => sum + a.revenue, 0);
+
+    const methods = {};
+    METHODS.forEach(m => {
+      methods[m] =
+        [...invoices.values()].filter(g => g.payment === m).reduce((sum, g) => sum + g.total, 0) +
+        adjustments.filter(a => a.payment === m).reduce((sum, a) => sum + a.revenue, 0);
+    });
+
+    const payments = readList(PAYMENTS_KEY_C).filter(p => p && dayKey(p.createdAt) === day && (all || p.cashierName === cashier));
+    const paymentsTotal = payments.reduce((sum, p) => sum + num(p.amount), 0);
+    const cashPayments = payments.filter(p => p.method === "كاش").reduce((sum, p) => sum + num(p.amount), 0);
+
+    const cashExpenses = readList(EXPENSES_KEY_C)
+      .filter(e => e && e.date === day && e.method === "كاش" && (all || e.createdBy === cashier))
+      .reduce((sum, e) => sum + num(e.amount), 0);
+
+    return {
+      invoiceCount: invoices.size,
+      gross: round2(salesTotal + discounts),
+      discounts: round2(discounts),
+      returnsValue: round2(returnsValue),
+      exchangeValue: round2(exchangeValue),
+      net: round2(salesTotal + adjustmentsTotalValue),
+      methods,
+      paymentsTotal: round2(paymentsTotal),
+      cashPayments: round2(cashPayments),
+      cashExpenses: round2(cashExpenses)
+    };
+  }
+
+  function currentValues() {
+    const day = el("closingDate").value;
+    const cashier = el("closingCashier").value;
+    const opening = Number(el("closingOpening").value) || 0;
+    const data = compute(day, cashier);
+    const expected = round2(opening + data.methods["كاش"] + data.cashPayments - data.cashExpenses);
+    const actualText = el("closingActual").value.trim();
+    const actual = actualText === "" ? null : Number(actualText);
+    return { day, cashier, opening, data, expected, actual, difference: actual === null ? null : round2(actual - expected) };
+  }
+
+  /* ---------- العرض ---------- */
+  function renderCashiers() {
+    const select = el("closingCashier");
+    const day = el("closingDate").value;
+    const old = select.value;
+    select.replaceChildren();
+
+    if (isEmployee()) {
+      const option = document.createElement("option");
+      option.value = userName();
+      option.textContent = userName();
+      select.appendChild(option);
+      select.value = userName();
+      select.disabled = true;
+      return;
+    }
+
+    select.disabled = false;
+    const all = document.createElement("option");
+    all.value = "";
+    all.textContent = "كل الكاشير";
+    select.appendChild(all);
+
+    const names = new Set(sales.filter(s => s && dayKey(s.createdAt) === day && s.cashierName).map(s => s.cashierName));
+    names.add(userName());
+    [...names].filter(Boolean).forEach(name => {
+      const option = document.createElement("option");
+      option.value = name;
+      option.textContent = name;
+      select.appendChild(option);
+    });
+    if ([...select.options].some(o => o.value === old)) select.value = old;
+  }
+
+  function addRow(body, label, value, className) {
+    const tr = document.createElement("tr");
+    if (className) tr.className = className;
+    tr.append(createCell(label), createCell(value));
+    body.appendChild(tr);
+  }
+
+  function renderReport() {
+    const v = currentValues();
+    const body = el("shiftReportBody");
+    body.replaceChildren();
+
+    el("shiftReportTitle").textContent = "تقرير وردية " + v.day + " — " + (v.cashier || "كل الكاشير");
+
+    addRow(body, "عدد الفواتير", v.data.invoiceCount.toLocaleString("ar-EG"));
+    addRow(body, "إجمالي المبيعات قبل الخصم", formatMoney(v.data.gross));
+    addRow(body, "الخصومات", formatMoney(-v.data.discounts));
+    addRow(body, "المرتجعات", formatMoney(v.data.returnsValue));
+    addRow(body, "فروق التبديل", formatMoney(v.data.exchangeValue));
+    addRow(body, "صافي المبيعات", formatMoney(v.data.net), "shift-total");
+    METHODS.forEach(m => addRow(body, "— " + m + " (صافي)", formatMoney(v.data.methods[m])));
+    addRow(body, "دفعات عملاء محصّلة (كل الطرق)", formatMoney(v.data.paymentsTotal));
+    addRow(body, "الكاش الافتتاحي", formatMoney(v.opening));
+    addRow(body, "+ كاش المبيعات (صافي)", formatMoney(v.data.methods["كاش"]));
+    addRow(body, "+ دفعات عملاء كاش", formatMoney(v.data.cashPayments));
+    addRow(body, "− مصاريف نقدية", formatMoney(v.data.cashExpenses));
+    addRow(body, "الكاش المتوقع في الدرج", formatMoney(v.expected), "shift-total");
+
+    if (v.actual !== null && Number.isFinite(v.actual)) {
+      addRow(body, "الكاش الفعلي", formatMoney(v.actual));
+      const d = v.difference;
+      addRow(body, "الفرق", d === 0 ? "مطابق" : (d < 0 ? "عجز " : "زيادة ") + formatMoney(Math.abs(d)), "shift-total");
+    }
+  }
+
+  function renderHistory() {
+    const body = el("closingHistoryBody");
+    body.replaceChildren();
+
+    const list = [...shifts]
+      .filter(x => !isEmployee() || x.createdBy === userName())
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    list.forEach(x => {
+      const d = new Date(x.createdAt);
+      const tr = document.createElement("tr");
+      tr.append(
+        createCell(x.date),
+        createCell(x.cashier || "كل الكاشير"),
+        createCell(formatMoney(x.net)),
+        createCell(formatMoney(x.expected)),
+        createCell(formatMoney(x.actual)),
+        badgeCell(x.difference === 0 ? "مطابق" : (x.difference < 0 ? "عجز " : "زيادة ") + formatMoney(Math.abs(x.difference)),
+          x.difference === 0 ? "ok" : "danger"),
+        createCell(x.createdBy || "—"),
+        createCell(Number.isNaN(d.getTime()) ? "—" : d.toLocaleString("ar-EG"))
+      );
+      body.appendChild(tr);
+    });
+    if (!list.length) emptyRow(body, 8, "لا توجد ورديات مقفلة بعد.");
+  }
+
+  function renderAll() {
+    renderCashiers();
+    renderReport();
+    renderHistory();
+  }
+
+  /* ---------- الحفظ والطباعة ---------- */
+  el("closingSave").addEventListener("click", () => {
+    const msg = "closingMessage";
+    const v = currentValues();
+
+    if (v.actual === null || !Number.isFinite(v.actual) || v.actual < 0) {
+      return showMessage(msg, "اكتب الكاش الفعلي الموجود في الدرج لإقفال الوردية.", "error");
+    }
+
+    const record = {
+      id: "SHIFT-" + Date.now() + "-" + Math.random().toString(16).slice(2, 8),
+      date: v.day, cashier: v.cashier, opening: v.opening,
+      expected: v.expected, actual: round2(v.actual), difference: v.difference,
+      net: v.data.net, invoices: v.data.invoiceCount,
+      notes: el("closingNotes").value.trim(),
+      createdBy: userName(),
+      createdAt: new Date().toISOString()
+    };
+
+    shifts.push(record);
+    try {
+      localStorage.setItem(SHIFTS_KEY, JSON.stringify(shifts));
+    } catch (error) {
+      shifts.pop();
+      return showMessage(msg, "تعذر حفظ الإقفال. تحقق من مساحة التخزين.", "error");
+    }
+
+    logActivity("إقفال وردية", v.day + " — " + (v.cashier || "كل الكاشير") + " — متوقع " + formatMoney(v.expected) +
+      " فعلي " + formatMoney(record.actual) + " — الفرق " + formatMoney(v.difference));
+
+    el("closingActual").value = "";
+    el("closingNotes").value = "";
+    renderHistory();
+    renderReport();
+    showMessage(msg, "تم حفظ إقفال الوردية. الفرق: " + (v.difference === 0 ? "مطابق" : formatMoney(v.difference)) + ".", "success");
+  });
+
+  el("closingPrint").addEventListener("click", () => {
+    document.body.classList.add("printing-shift");
+    const done = () => {
+      document.body.classList.remove("printing-shift");
+      window.removeEventListener("afterprint", done);
+    };
+    window.addEventListener("afterprint", done);
+    setTimeout(done, 120000);
+    try { window.print(); } catch (error) { done(); }
+  });
+
+  el("closingDate").addEventListener("change", renderAll);
+  el("closingCashier").addEventListener("change", renderReport);
+  ["closingOpening", "closingActual"].forEach(id => el(id).addEventListener("input", renderReport));
+
+  const previousShowPage = showPage;
+  showPage = function (name, updateHash = true) {
+    previousShowPage(name, updateHash);
+    if (name === "closing") {
+      shifts = readList(SHIFTS_KEY).filter(x => x && x.id);
+      renderAll();
+    }
+  };
+
+  const today = new Date();
+  el("closingDate").value = today.getFullYear() + "-" + String(today.getMonth() + 1).padStart(2, "0") + "-" + String(today.getDate()).padStart(2, "0");
+  renderAll();
+})();
+</script>
+<script>
+/* استيراد المنتجات من Excel */
+(function () {
+  const el = id => document.getElementById(id);
+  if (!el("importFile")) return;
+
+  const FIELDS = {
+    name: ["اسم المنتج", "الاسم", "name", "product", "product name"],
+    code: ["كود المنتج", "الكود", "كود", "code", "sku", "barcode", "الباركود"],
+    color: ["اللون", "color"],
+    size: ["المقاس", "size"],
+    model: ["الموديل", "model", "التصنيف", "category"],
+    gender: ["النوع", "gender"],
+    purchasePrice: ["سعر الشراء", "purchase price", "purchaseprice", "cost", "التكلفة"],
+    salePrice: ["سعر البيع", "sale price", "saleprice", "price", "السعر"],
+    quantity: ["الكمية", "quantity", "qty", "stock", "الرصيد"]
+  };
+
+  const FIELD_OF = {};
+  Object.entries(FIELDS).forEach(([field, names]) => names.forEach(n => { FIELD_OF[n.toLowerCase()] = field; }));
+
+  const ARABIC_DIGITS = "٠١٢٣٤٥٦٧٨٩";
+  const toNumber = value => {
+    if (typeof value === "number") return value;
+    const text = String(value === undefined || value === null ? "" : value)
+      .replace(/[٠-٩]/g, d => String(ARABIC_DIGITS.indexOf(d)))
+      .replace(/[,٬\s]/g, "").replace("٫", ".");
+    return text === "" ? NaN : Number(text);
+  };
+
+  const normalizeGender = value => {
+    const t = String(value || "").trim().toLowerCase();
+    if (/رجال|men|male/.test(t) && !/women|female/.test(t)) return "رجالي";
+    if (/حريم|نساء|women|female/.test(t)) return "حريمي";
+    return "";
+  };
+
+  let pending = null;
+
+  function parseRows(rows) {
+    const valid = [];
+    const errors = [];
+    const seen = new Set();
+
+    rows.forEach((row, index) => {
+      const line = index + 2;
+      const rec = {};
+      Object.keys(row).forEach(key => {
+        const field = FIELD_OF[String(key).trim().replace(/\s+/g, " ").toLowerCase()];
+        if (field && rec[field] === undefined) rec[field] = row[key];
+      });
+
+      if (Object.values(rec).every(v => String(v === undefined || v === null ? "" : v).trim() === "")) return;
+
+      const name = String(rec.name || "").trim();
+      const code = String(rec.code || "").trim();
+      const purchasePrice = rec.purchasePrice === undefined || String(rec.purchasePrice).trim() === "" ? 0 : toNumber(rec.purchasePrice);
+      const salePrice = toNumber(rec.salePrice);
+      const quantity = rec.quantity === undefined || String(rec.quantity).trim() === "" ? 0 : toNumber(rec.quantity);
+
+      const problems = [];
+      if (!name) problems.push("اسم المنتج ناقص");
+      if (!code) problems.push("الكود ناقص");
+      if (!Number.isFinite(salePrice) || salePrice <= 0) problems.push("سعر البيع غير صحيح");
+      if (!Number.isFinite(purchasePrice) || purchasePrice < 0) problems.push("سعر الشراء غير صحيح");
+      if (!Number.isInteger(quantity) || quantity < 0) problems.push("الكمية لازم تكون عددًا صحيحًا");
+      if (code && seen.has(normalize(code))) problems.push("الكود مكرر داخل الملف");
+
+      if (problems.length) { errors.push("سطر " + line + ": " + problems.join("، ")); return; }
+
+      seen.add(normalize(code));
+      valid.push({
+        name, code,
+        color: String(rec.color || "").trim(),
+        size: String(rec.size || "").trim(),
+        model: String(rec.model || "").trim(),
+        gender: normalizeGender(rec.gender),
+        purchasePrice, salePrice, quantity
+      });
+    });
+
+    return { valid, errors };
+  }
+
+  function describe(result) {
+    const mode = el("importMode").value;
+    const existing = result.valid.filter(r => products.some(p => normalize(p.code) === normalize(r.code))).length;
+    const fresh = result.valid.length - existing;
+    const lines = [
+      "منتجات جديدة: " + fresh,
+      "أكواد موجودة بالفعل: " + existing + (mode === "skip" ? " (سيتم تخطيها)" : " (سيتم تحديث بياناتها وإضافة كميتها)"),
+      "سطور بها أخطاء: " + result.errors.length
+    ];
+    return lines.concat(result.errors.slice(0, 10)).join("\n");
+  }
+
+  function showPreview() {
+    const box = el("importPreview");
+    if (!pending) { box.hidden = true; el("importConfirm").disabled = true; return; }
+    box.hidden = false;
+    box.style.whiteSpace = "pre-line";
+    box.textContent = describe(pending);
+    el("importConfirm").disabled = pending.valid.length === 0;
+  }
+
+  el("importFile").addEventListener("change", async () => {
+    const file = el("importFile").files && el("importFile").files[0];
+    pending = null;
+    clearMessage("productImportMessage");
+    if (!file) { showPreview(); return; }
+
+    showMessage("productImportMessage", "جاري قراءة الملف...", "info");
+    try {
+      const XLSX = await loadXlsxLibrary();
+      const workbook = XLSX.read(await file.arrayBuffer(), { type: "array" });
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+
+      if (!rows.length) throw new Error("الملف فارغ أو لا يحتوي على بيانات.");
+
+      pending = parseRows(rows);
+      if (!pending.valid.length && !pending.errors.length) throw new Error("لم أجد أعمدة مطابقة. حمّل النموذج واستخدم نفس العناوين.");
+
+      showMessage("productImportMessage",
+        pending.valid.length ? "راجع الملخص ثم اضغط تأكيد الاستيراد." : "لا توجد سطور صالحة للاستيراد. راجع الأخطاء.",
+        pending.valid.length ? "info" : "error");
+    } catch (error) {
+      console.error("Import read error:", error);
+      showMessage("productImportMessage", error.message || "تعذرت قراءة الملف.", "error");
+    }
+    showPreview();
+  });
+
+  el("importMode").addEventListener("change", showPreview);
+
+  el("importConfirm").addEventListener("click", () => {
+    if (!pending || !pending.valid.length) return;
+    const msg = "productImportMessage";
+    const mode = el("importMode").value;
+
+    const backup = products.map(p => ({ ...p }));
+    const oldStorage = localStorage.getItem(PRODUCT_KEY);
+    const movements = [];
+    let added = 0, updated = 0, skipped = 0;
+
+    pending.valid.forEach(row => {
+      const existing = products.find(p => normalize(p.code) === normalize(row.code));
+
+      if (existing) {
+        if (mode === "skip") { skipped++; return; }
+        Object.assign(existing, {
+          name: row.name, color: row.color, size: row.size, model: row.model || existing.model,
+          gender: row.gender || existing.gender, purchasePrice: row.purchasePrice, salePrice: row.salePrice
+        });
+        existing.quantity = Number(existing.quantity || 0) + row.quantity;
+        if (row.quantity > 0) movements.push(["إضافة يدوية", existing, row.quantity]);
+        updated++;
+        return;
+      }
+
+      const product = {
+        id: Date.now().toString() + Math.random().toString(16).slice(2),
+        name: row.name, code: row.code, color: row.color, size: row.size,
+        model: row.model, gender: row.gender, image: "",
+        purchasePrice: row.purchasePrice, salePrice: row.salePrice, quantity: row.quantity
+      };
+      products.push(product);
+      if (row.quantity > 0) movements.push(["رصيد افتتاحي", product, row.quantity]);
+      added++;
+    });
+
+    if (!saveProducts()) {
+      products = backup;
+      try {
+        if (oldStorage === null) localStorage.removeItem(PRODUCT_KEY); else localStorage.setItem(PRODUCT_KEY, oldStorage);
+      } catch (e) {}
+      showMessage(msg, "تعذر حفظ المنتجات. لم يتم تغيير شيء.", "error");
+      return;
+    }
+
+    movements.forEach(([type, product, quantity]) => logManualMovement(type, product, quantity));
+    logActivity("استيراد منتجات Excel", "جديد " + added + " — محدّث " + updated + " — متخطى " + skipped + " — أخطاء " + pending.errors.length);
+
+    pending = null;
+    el("importFile").value = "";
+    showPreview();
+    renderProducts();
+    showMessage(msg, "تم الاستيراد: " + added + " منتج جديد، " + updated + " محدّث، " + skipped + " متخطى.", "success");
+  });
+
+  el("importTemplate").addEventListener("click", async () => {
+    try {
+      const XLSX = await loadXlsxLibrary();
+      const data = [
+        ["اسم المنتج", "كود المنتج", "اللون", "المقاس", "الموديل", "النوع", "سعر الشراء", "سعر البيع", "الكمية"],
+        ["تيشيرت بولو", "POLO-001", "أسود", "L", "تيشيرت", "رجالي", 300, 550, 10],
+        ["قميص كتان", "SHIRT-002", "أبيض", "M", "قميص", "رجالي", 450, 900, 5]
+      ];
+      const sheet = XLSX.utils.aoa_to_sheet(data);
+      sheet["!cols"] = [24, 16, 12, 10, 14, 12, 14, 14, 10].map(w => ({ wch: w }));
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, sheet, "المنتجات");
+      XLSX.writeFile(workbook, "GAMY-Products-Template.xlsx", { bookType: "xlsx" });
+    } catch (error) {
+      showMessage("productImportMessage", error.message || "تعذر تنزيل النموذج.", "error");
+    }
+  });
+})();
+</script>
+<script>
 /* الدخول والموظفون والصلاحيات */
 (function () {
   "use strict";
@@ -7932,6 +8932,8 @@ amount, method,
     ["storage", "التخزين والجرد"],
     ["receiving", "استلام البضاعة"],
     ["accounts", "حسابات العملاء (الآجل)"],
+    ["closing", "إقفال الوردية"],
+    ["discount", "إعطاء خصم في شاشة البيع"],
     ["viewCosts", "أسعار الشراء والأرباح"]
   ];
 
@@ -7942,7 +8944,7 @@ amount, method,
     salesReturns: "returns", exchanges: "returns",
     history: "invoices",
     products: "storage", inventoryAudit: "storage", stockMovements: "storage", stockAlerts: "storage",
-    receipts: "receiving", accounts: "accounts",
+    receipts: "receiving", accounts: "accounts", closing: "closing", expenses: "admin", activity: "admin",
     dashboard: "admin", reports: "admin", backup: "admin", customersSuppliers: "admin", employees: "admin"
   };
 
@@ -8024,6 +9026,7 @@ amount, method,
   }
 
   function endSession() {
+    if (currentUser) logActivity("تسجيل خروج", "");
     try { sessionStorage.removeItem(SESSION_KEY); } catch (e) {}
     try { location.hash = ""; } catch (e) {}
     location.reload();
@@ -8034,6 +9037,7 @@ amount, method,
     const employee = !!currentUser && !admin;
 
     document.body.classList.toggle("is-employee", employee);
+    document.body.classList.toggle("no-discount", employee && !(currentUser.permissions && currentUser.permissions.discount));
     document.body.classList.toggle("no-costs", employee && !(currentUser.permissions && currentUser.permissions.viewCosts));
 
     document.querySelectorAll(".nav-item[data-page]").forEach(button => {
@@ -8133,6 +9137,7 @@ amount, method,
         }
         clearFailures();
         loginAs(buildUser(ADMIN_CODE));
+        logActivity("إنشاء كلمة مرور المدير", "تشغيل أول مرة", { user: ADMIN_NAME, role: "مدير" });
         return;
       }
 
@@ -8159,11 +9164,13 @@ amount, method,
 
       if (!ok || !user) {
         registerFailure();
+        logActivity("محاولة دخول فاشلة", "الكود: " + code, { user: code, role: "—" });
         return showMessage(msg, "الكود أو الرمز السري غير صحيح.", "error");
       }
 
       clearFailures();
       loginAs(user);
+      logActivity("تسجيل دخول", "", { user: user.role === "admin" ? ADMIN_NAME : user.name, role: user.role === "admin" ? "مدير" : "موظف" });
     } catch (error) {
       console.error("Login error:", error);
       showMessage(msg, error.message || "تعذر تسجيل الدخول.", "error");
@@ -8281,6 +9288,7 @@ amount, method,
         target.active = target.active === false;
         if (!saveEmployees()) { target.active = !target.active; showMessage("employeeMessage", "تعذر الحفظ.", "error"); return; }
         renderEmployees();
+        logActivity(target.active ? "تفعيل حساب موظف" : "إيقاف حساب موظف", target.name + " (" + target.code + ")");
         showMessage("employeeMessage", target.active ? "تم تفعيل الحساب." : "تم إيقاف الحساب. لن يستطيع الدخول.", "success");
       });
 
@@ -8296,6 +9304,7 @@ amount, method,
         if (!saveEmployees()) { employees = old; showMessage("employeeMessage", "تعذر الحذف.", "error"); return; }
         if (editingId === e.id) resetEmployeeForm();
         renderEmployees();
+        logActivity("حذف موظف", e.name + " (" + e.code + ")");
         showMessage("employeeMessage", "تم حذف الموظف.", "success");
       });
 
@@ -8380,6 +9389,7 @@ amount, method,
 
       resetEmployeeForm();
       renderEmployees();
+      logActivity(editing ? "تعديل موظف" : "إضافة موظف", name + " (" + code + ") — " + position);
       showMessage(msg, editing ? "تم حفظ تعديلات الموظف." : "تمت إضافة الموظف. يدخل بالكود " + code + ".", "success");
     } catch (error) {
       console.error(error);
@@ -8405,6 +9415,7 @@ amount, method,
       if (!writeJSON(AUTH_KEY, auth)) return showMessage(msg, "تعذر حفظ كلمة المرور.", "error");
 
       el("adminPasswordForm").reset();
+      logActivity("تغيير كلمة مرور المدير", "");
       showMessage(msg, "تم تغيير كلمة مرور المدير.", "success");
     } catch (error) {
       showMessage(msg, error.message || "تعذر تغيير كلمة المرور.", "error");
