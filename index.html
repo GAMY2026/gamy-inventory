@@ -627,6 +627,15 @@ body.no-discount .pos-discount{display:none}
   body.printing-shift,body.printing-shift .panel,body.printing-shift table,body.printing-shift tr,body.printing-shift td,body.printing-shift th{background:#fff!important;color:#000!important;box-shadow:none!important;border-color:#999!important}
   body.printing-shift .app-layout{display:block!important;width:100%!important;margin:0!important}
 }
+.pos-shift{font-size:12px;font-weight:700;background:rgba(255,255,255,.16);border-radius:6px;padding:4px 10px;white-space:nowrap}
+.pos-shift-modal{position:absolute;inset:0;z-index:20;background:rgba(17,24,39,.6);display:grid;place-items:center;padding:16px}
+.pos-shift-card{width:min(380px,100%);background:#fff;border-radius:12px;padding:22px;display:flex;flex-direction:column;gap:10px;color:#2b2f36;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.pos-shift-card h2{font-size:18px;color:var(--pos-purple)}
+.pos-shift-card p{font-size:12px;color:#6b7280;line-height:1.8}
+.pos-shift-card label{font-size:12px;font-weight:700}
+.pos-shift-card input{height:42px;border:1px solid #cfd3da;border-radius:6px;padding:0 10px;font-size:15px;background:#fff;color:#2b2f36}
+.pos-top-btn.dark{background:#eceff3;color:#374151;border-color:#d5d8de}
+@media(max-width:800px){.pos-shift{display:none}}
 </style>
  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 </head>
@@ -1223,10 +1232,24 @@ body.no-discount .pos-discount{display:none}
     <button type="button" class="pos-top-btn" id="posBack">⟵ النظام</button>
     <span class="pos-session">GAMY POS</span>
     <div class="pos-top-spacer"></div>
+    <span class="pos-shift" id="posShiftInfo"></span>
+    <button type="button" class="pos-top-btn" id="posShiftButton">فتح الوردية</button>
     <div class="pos-search"><span aria-hidden="true">🔍</span><input id="posSearch" type="search" placeholder="ابحث عن منتج أو امسح الباركود" autocomplete="off"></div>
     <span class="pos-user" id="posUserLabel"></span>
     <button type="button" class="pos-top-btn" id="posFullscreen" title="ملء الشاشة" aria-label="ملء الشاشة">⛶</button>
    </header>
+
+   <div class="pos-shift-modal" id="posShiftModal" hidden>
+    <div class="pos-shift-card">
+     <h2>فتح وردية جديدة</h2>
+     <p>اكتب الكاش الموجود في الدرج الآن. كل الأوردرات من لحظة الفتح تتحسب في تقرير الإقفال.</p>
+     <label for="posOpeningCash">الكاش الافتتاحي</label>
+     <input id="posOpeningCash" type="number" min="0" step="0.01" placeholder="0">
+     <div class="pos-discount-error" id="posShiftError"></div>
+     <button type="button" class="pos-pay" id="posOpenShift">فتح الوردية</button>
+     <button type="button" class="pos-top-btn dark" id="posShiftBack">رجوع للنظام</button>
+    </div>
+   </div>
 
    <div class="pos-body">
     <aside class="pos-cart">
@@ -1395,7 +1418,9 @@ body.no-discount .pos-discount{display:none}
   <section class="page" data-page-section="closing">
    <div class="page-topline no-print"><h1>إقفال الوردية</h1><p>تقرير آخر اليوم بالمبيعات وطرق الدفع، ومقارنة الكاش المتوقع بالكاش الفعلي في الدرج.</p></div>
    <section class="panel no-print">
+    <div id="closingShiftInfo" class="message info" role="status" style="margin:0 0 16px;"></div>
     <div class="form-grid">
+     <div class="field"><label for="closingMode">نوع التقرير</label><select id="closingMode"></select></div>
      <div class="field"><label for="closingDate">التاريخ</label><input id="closingDate" type="date"></div>
      <div class="field"><label for="closingCashier">الكاشير</label><select id="closingCashier"><option value="">كل الكاشير</option></select></div>
      <div class="field"><label for="closingOpening">الكاش الافتتاحي في الدرج</label><input id="closingOpening" type="number" min="0" step="0.01" placeholder="0"></div>
@@ -1405,6 +1430,7 @@ body.no-discount .pos-discount{display:none}
     <div class="actions">
      <button type="button" class="primary-btn" id="closingSave">حفظ إقفال الوردية</button>
      <button type="button" class="secondary-btn" id="closingPrint">طباعة التقرير</button>
+     <button type="button" class="primary-btn" id="closingExport">تنزيل تقرير Excel</button>
     </div>
     <div id="closingMessage" class="message" role="status"></div>
    </section>
@@ -1414,7 +1440,7 @@ body.no-discount .pos-discount{display:none}
    </section>
    <section class="panel no-print">
     <div class="panel-heading"><h2 class="section-title">سجل الإقفالات</h2></div>
-    <div class="table-wrapper"><table><thead><tr><th>التاريخ</th><th>الكاشير</th><th>صافي المبيعات</th><th>الكاش المتوقع</th><th>الكاش الفعلي</th><th>الفرق</th><th>أقفلها</th><th>وقت الحفظ</th></tr></thead><tbody id="closingHistoryBody"></tbody></table></div>
+    <div class="table-wrapper"><table><thead><tr><th>التاريخ</th><th>الكاشير</th><th>الأوردرات</th><th>صافي المبيعات</th><th>الكاش المتوقع</th><th>الكاش الفعلي</th><th>الفرق</th><th>أقفلها</th><th>وقت الحفظ</th></tr></thead><tbody id="closingHistoryBody"></tbody></table></div>
    </section>
   </section>
 
@@ -3112,6 +3138,35 @@ function adjustmentsTotal(field, predicate) {
     return getSalesAdjustments()
         .filter(a => predicate(a.date))
         .reduce((sum, a) => sum + Number(a[field] || 0), 0);
+}
+
+const OPEN_SHIFT_KEY = "gamy_inventory_open_shift_v1";
+
+function getOpenShift() {
+    try {
+        const value = JSON.parse(localStorage.getItem(OPEN_SHIFT_KEY) || "null");
+        return value && value.id && value.openedAt ? value : null;
+    } catch (error) {
+        return null;
+    }
+}
+
+function shiftSummary(shift) {
+    const from = new Date(shift.openedAt).getTime();
+    const orders = new Set();
+    let total = 0;
+
+    sales.forEach(s => {
+        if (!s || !(new Date(s.createdAt).getTime() >= from)) return;
+        orders.add(s.invoiceId || ("SALE-" + s.id));
+        total += Number(s.total) || 0;
+    });
+
+    const adjusted = getSalesAdjustments()
+        .filter(a => new Date(a.date).getTime() >= from)
+        .reduce((sum, a) => sum + a.revenue, 0);
+
+    return { orders: orders.size, net: Math.round((total + adjusted) * 100) / 100 };
 }
 
 const ACTIVITY_KEY = "gamy_inventory_activity_v1";
@@ -7257,7 +7312,7 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
     el("posDiscountRow").hidden = discount.amount <= 0;
     el("posCartDiscount").textContent = "− " + formatMoney(discount.amount);
     el("posCartTotal").textContent = formatMoney(total);
-    el("posPayButton").disabled = !cart.length;
+    el("posPayButton").disabled = !cart.length || !getOpenShift();
     el("posPayLabel").textContent = "دفع " + Number(total).toFixed(2) + " ج.م";
   }
 
@@ -7296,12 +7351,16 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
     renderCart();
     renderMethods();
     renderCustomers();
+    refreshShift();
   }
   window.renderPos = renderPos;
 
   /* ---------- الدفع ---------- */
   function pay() {
     if (!cart.length) { say("السلة فارغة.", "error"); return; }
+
+    const openShift = getOpenShift();
+    if (!openShift) { say("افتح الوردية أولًا.", "error"); refreshShift(); return; }
 
     const checked = [];
     for (const line of cart) {
@@ -7350,6 +7409,7 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
         paymentMethod: method,
         customerName,
         cashierName,
+        shiftId: openShift.id,
         productId: product.id,
         productName: product.name,
         productCode: product.code,
@@ -7550,6 +7610,67 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
   });
 
   window.showReceipt = showReceipt;
+
+  /* ---------- الوردية ---------- */
+  function refreshShift() {
+    const shift = getOpenShift();
+    const info = el("posShiftInfo");
+
+    if (shift) {
+      const summary = shiftSummary(shift);
+      const opened = new Date(shift.openedAt);
+      info.textContent = "وردية " + (shift.openedBy || "") + " من " +
+        (Number.isNaN(opened.getTime()) ? "—" : opened.toLocaleTimeString("ar-EG", { hour: "2-digit", minute: "2-digit" })) +
+        " — أوردرات: " + summary.orders.toLocaleString("ar-EG") +
+        " — صافي: " + formatMoney(summary.net);
+      el("posShiftButton").textContent = "إقفال الوردية";
+      el("posShiftModal").hidden = true;
+    } else {
+      info.textContent = "لا توجد وردية مفتوحة";
+      el("posShiftButton").textContent = "فتح الوردية";
+      el("posShiftModal").hidden = false;
+    }
+
+    el("posPayButton").disabled = !cart.length || !shift;
+  }
+
+  el("posOpenShift").addEventListener("click", () => {
+    const text = el("posOpeningCash").value.trim();
+    const cash = text === "" ? 0 : Number(text);
+
+    if (!Number.isFinite(cash) || cash < 0) {
+      el("posShiftError").textContent = "اكتب كاش افتتاحي صحيحًا.";
+      return;
+    }
+    if (getOpenShift()) { refreshShift(); return; }
+
+    const shift = {
+      id: "SHIFT-" + Date.now() + "-" + Math.random().toString(16).slice(2, 8),
+      openedBy: el("userNameLabel") ? el("userNameLabel").textContent : "",
+      openedAt: new Date().toISOString(),
+      openingCash: Math.round(cash * 100) / 100
+    };
+
+    try {
+      localStorage.setItem(OPEN_SHIFT_KEY, JSON.stringify(shift));
+    } catch (error) {
+      el("posShiftError").textContent = "تعذر حفظ الوردية. تحقق من مساحة التخزين.";
+      return;
+    }
+
+    logActivity("فتح وردية", "كاش افتتاحي " + formatMoney(shift.openingCash));
+    el("posOpeningCash").value = "";
+    el("posShiftError").textContent = "";
+    refreshShift();
+    say("تم فتح الوردية. ابدأ البيع.", "success");
+  });
+
+  el("posShiftButton").addEventListener("click", () => {
+    if (getOpenShift()) showPage("closing");
+    else el("posShiftModal").hidden = false;
+  });
+
+  el("posShiftBack").addEventListener("click", () => showPage("home"));
 
   const previousShowPage = showPage;
   showPage = function (name, updateHash = true) {
@@ -8447,7 +8568,7 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
 })();
 </script>
 <script>
-/* إقفال الوردية */
+/* إقفال الوردية: وردية مفتوحة من شاشة البيع، أو مراجعة يوم */
 (function () {
   const SHIFTS_KEY = "gamy_inventory_shifts_v1";
   const PAYMENTS_KEY_C = "gamy_inventory_customer_payments_v1";
@@ -8469,70 +8590,106 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
     if (Number.isNaN(d.getTime())) return "";
     return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
   };
+  const timeText = value => {
+    const d = new Date(value);
+    return Number.isNaN(d.getTime()) ? "—" : d.toLocaleString("ar-EG");
+  };
   const isEmployee = () => document.body.classList.contains("is-employee");
   const userName = () => (el("userNameLabel") ? el("userNameLabel").textContent : "");
+  const isGift = line => {
+    const product = findProduct(line.productId) || {};
+    return /هد[يا]|gift/i.test([line.productName, product.model, product.name].join(" "));
+  };
 
   let shifts = readList(SHIFTS_KEY).filter(x => x && x.id);
 
+  /* ---------- نطاق التقرير ---------- */
+  function currentWindow() {
+    const shift = getOpenShift();
+    if (el("closingMode").value === "shift" && shift) {
+      return { kind: "shift", shift, from: new Date(shift.openedAt).getTime(), to: Date.now(), cashier: "" };
+    }
+    return { kind: "day", day: el("closingDate").value, cashier: el("closingCashier").value };
+  }
+
+  const inWindow = (value, w) => {
+    if (w.kind === "day") return dayKey(value) === w.day;
+    const t = new Date(value).getTime();
+    return t >= w.from && t <= w.to;
+  };
+  const matchCashier = (name, w) => w.kind === "shift" || w.cashier === "" || name === w.cashier;
+
   /* ---------- الحسابات ---------- */
-  function compute(day, cashier) {
-    const all = cashier === "";
-    const lines = sales.filter(s => s && dayKey(s.createdAt) === day && (all || s.cashierName === cashier));
+  function compute(w) {
+    const lines = sales.filter(s => s && inWindow(s.createdAt, w) && matchCashier(s.cashierName, w));
 
     const invoices = new Map();
     lines.forEach(s => {
       const key = s.invoiceId || ("SALE-" + s.id);
       let g = invoices.get(key);
-      if (!g) { g = { payment: s.paymentMethod || "", total: 0, discount: 0 }; invoices.set(key, g); }
+      if (!g) {
+        g = { id: s.invoiceId || "بيع سابق", time: s.createdAt, customer: s.customerName || "", cashier: s.cashierName || "",
+          payment: s.paymentMethod || "", units: 0, total: 0, discount: 0 };
+        invoices.set(key, g);
+      }
+      g.units += num(s.quantity);
       g.total += num(s.total);
       g.discount += num(s.discount);
     });
+    const invoiceList = [...invoices.values()];
 
-    const adjustments = getSalesAdjustments().filter(a => dayKey(a.date) === day && (all || a.cashier === cashier));
-    const salesTotal = [...invoices.values()].reduce((sum, g) => sum + g.total, 0);
-    const discounts = [...invoices.values()].reduce((sum, g) => sum + g.discount, 0);
-    const adjustmentsTotalValue = adjustments.reduce((sum, a) => sum + a.revenue, 0);
-    const returnsValue = adjustments.filter(a => a.kind === "return").reduce((sum, a) => sum + a.revenue, 0);
-    const exchangeValue = adjustments.filter(a => a.kind === "exchange").reduce((sum, a) => sum + a.revenue, 0);
+    const adjustments = getSalesAdjustments().filter(a => inWindow(a.date, w) && matchCashier(a.cashier, w));
+    const salesTotal = invoiceList.reduce((sum, g) => sum + g.total, 0);
+    const discounts = invoiceList.reduce((sum, g) => sum + g.discount, 0);
+    const adjustmentsSum = adjustments.reduce((sum, a) => sum + a.revenue, 0);
 
     const methods = {};
+    const orders = {};
     METHODS.forEach(m => {
-      methods[m] =
-        [...invoices.values()].filter(g => g.payment === m).reduce((sum, g) => sum + g.total, 0) +
+      methods[m] = invoiceList.filter(g => g.payment === m).reduce((sum, g) => sum + g.total, 0) +
         adjustments.filter(a => a.payment === m).reduce((sum, a) => sum + a.revenue, 0);
+      orders[m] = invoiceList.filter(g => g.payment === m).length;
     });
 
-    const payments = readList(PAYMENTS_KEY_C).filter(p => p && dayKey(p.createdAt) === day && (all || p.cashierName === cashier));
-    const paymentsTotal = payments.reduce((sum, p) => sum + num(p.amount), 0);
+    const payments = readList(PAYMENTS_KEY_C).filter(p => p && inWindow(p.createdAt, w) && matchCashier(p.cashierName, w));
     const cashPayments = payments.filter(p => p.method === "كاش").reduce((sum, p) => sum + num(p.amount), 0);
 
     const cashExpenses = readList(EXPENSES_KEY_C)
-      .filter(e => e && e.date === day && e.method === "كاش" && (all || e.createdBy === cashier))
+      .filter(e => e && e.method === "كاش" &&
+        (w.kind === "day" ? e.date === w.day && matchCashier(e.createdBy, w) : inWindow(e.createdAt, w)))
       .reduce((sum, e) => sum + num(e.amount), 0);
 
+    const giftLines = lines.filter(isGift);
+    const gifts = { total: 0 };
+    METHODS.forEach(m => { gifts[m] = 0; });
+    giftLines.forEach(s => {
+      gifts.total += num(s.total);
+      if (gifts[s.paymentMethod] !== undefined) gifts[s.paymentMethod] += num(s.total);
+    });
+
     return {
-      invoiceCount: invoices.size,
+      lines, invoiceList, giftLines, gifts,
+      invoiceCount: invoiceList.length,
       gross: round2(salesTotal + discounts),
       discounts: round2(discounts),
-      returnsValue: round2(returnsValue),
-      exchangeValue: round2(exchangeValue),
-      net: round2(salesTotal + adjustmentsTotalValue),
-      methods,
-      paymentsTotal: round2(paymentsTotal),
+      returnsValue: round2(adjustments.filter(a => a.kind === "return").reduce((sum, a) => sum + a.revenue, 0)),
+      exchangeValue: round2(adjustments.filter(a => a.kind === "exchange").reduce((sum, a) => sum + a.revenue, 0)),
+      net: round2(salesTotal + adjustmentsSum),
+      methods, orders,
+      paymentsTotal: round2(payments.reduce((sum, p) => sum + num(p.amount), 0)),
       cashPayments: round2(cashPayments),
       cashExpenses: round2(cashExpenses)
     };
   }
 
   function currentValues() {
-    const day = el("closingDate").value;
-    const cashier = el("closingCashier").value;
-    const opening = Number(el("closingOpening").value) || 0;
-    const data = compute(day, cashier);
+    const w = currentWindow();
+    const opening = w.kind === "shift" ? num(w.shift.openingCash) : (Number(el("closingOpening").value) || 0);
+    const data = compute(w);
     const expected = round2(opening + data.methods["كاش"] + data.cashPayments - data.cashExpenses);
     const actualText = el("closingActual").value.trim();
     const actual = actualText === "" ? null : Number(actualText);
-    return { day, cashier, opening, data, expected, actual, difference: actual === null ? null : round2(actual - expected) };
+    return { w, opening, data, expected, actual, difference: actual === null ? null : round2(actual - expected) };
   }
 
   /* ---------- العرض ---------- */
@@ -8548,11 +8705,9 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
       option.textContent = userName();
       select.appendChild(option);
       select.value = userName();
-      select.disabled = true;
       return;
     }
 
-    select.disabled = false;
     const all = document.createElement("option");
     all.value = "";
     all.textContent = "كل الكاشير";
@@ -8569,6 +8724,48 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
     if ([...select.options].some(o => o.value === old)) select.value = old;
   }
 
+  function renderMode() {
+    const shift = getOpenShift();
+    const select = el("closingMode");
+    const old = select.value;
+
+    select.replaceChildren();
+    if (shift) {
+      const option = document.createElement("option");
+      option.value = "shift";
+      option.textContent = "الوردية المفتوحة حاليًا";
+      select.appendChild(option);
+    }
+    const day = document.createElement("option");
+    day.value = "day";
+    day.textContent = "مراجعة يوم محدد";
+    select.appendChild(day);
+
+    select.value = shift && (old === "shift" || old === "") ? "shift" : (old === "day" ? "day" : (shift ? "shift" : "day"));
+    const shiftMode = select.value === "shift" && !!shift;
+
+    el("closingDate").disabled = shiftMode;
+    el("closingCashier").disabled = shiftMode || isEmployee();
+    el("closingOpening").readOnly = shiftMode;
+    if (shiftMode) el("closingOpening").value = String(num(shift.openingCash));
+
+    const info = el("closingShiftInfo");
+    if (shiftMode) {
+      const minutes = Math.max(0, Math.floor((Date.now() - new Date(shift.openedAt).getTime()) / 60000));
+      const summary = shiftSummary(shift);
+      info.textContent = "وردية مفتوحة بواسطة " + (shift.openedBy || "—") + " منذ " + timeText(shift.openedAt) +
+        " (" + Math.floor(minutes / 60).toLocaleString("ar-EG") + " ساعة و" + (minutes % 60).toLocaleString("ar-EG") + " دقيقة)" +
+        " — عدد الأوردرات: " + summary.orders.toLocaleString("ar-EG");
+      info.className = "message info";
+      el("closingSave").textContent = "إقفال الوردية وحفظ التقرير";
+    } else {
+      info.textContent = "لا توجد وردية مفتوحة. افتحها من شاشة بيع المنتجات، أو راجع يومًا محددًا من هنا.";
+      info.className = "message info";
+      el("closingSave").textContent = "حفظ إقفال اليوم";
+    }
+    return shiftMode;
+  }
+
   function addRow(body, label, value, className) {
     const tr = document.createElement("tr");
     if (className) tr.className = className;
@@ -8581,16 +8778,25 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
     const body = el("shiftReportBody");
     body.replaceChildren();
 
-    el("shiftReportTitle").textContent = "تقرير وردية " + v.day + " — " + (v.cashier || "كل الكاشير");
+    el("shiftReportTitle").textContent = v.w.kind === "shift"
+      ? "تقرير الوردية — منذ " + timeText(v.w.shift.openedAt)
+      : "تقرير يوم " + v.w.day + " — " + (v.w.cashier || "كل الكاشير");
 
-    addRow(body, "عدد الفواتير", v.data.invoiceCount.toLocaleString("ar-EG"));
+    addRow(body, "عدد الأوردرات (الفواتير)", v.data.invoiceCount.toLocaleString("ar-EG"), "shift-total");
+    if (v.w.kind === "shift") {
+      const minutes = Math.max(0, Math.floor((v.w.to - v.w.from) / 60000));
+      addRow(body, "مدة الوردية", Math.floor(minutes / 60).toLocaleString("ar-EG") + " ساعة و" + (minutes % 60).toLocaleString("ar-EG") + " دقيقة");
+    }
     addRow(body, "إجمالي المبيعات قبل الخصم", formatMoney(v.data.gross));
     addRow(body, "الخصومات", formatMoney(-v.data.discounts));
     addRow(body, "المرتجعات", formatMoney(v.data.returnsValue));
     addRow(body, "فروق التبديل", formatMoney(v.data.exchangeValue));
     addRow(body, "صافي المبيعات", formatMoney(v.data.net), "shift-total");
-    METHODS.forEach(m => addRow(body, "— " + m + " (صافي)", formatMoney(v.data.methods[m])));
-    addRow(body, "دفعات عملاء محصّلة (كل الطرق)", formatMoney(v.data.paymentsTotal));
+    METHODS.forEach(m => addRow(body, "— " + m + " (صافي، " + v.data.orders[m].toLocaleString("ar-EG") + " أوردر)", formatMoney(v.data.methods[m])));
+    addRow(body, "مبيعات الهدايا (إجمالي)", formatMoney(v.data.gifts.total));
+    addRow(body, "— الهدايا كاش", formatMoney(v.data.gifts["كاش"]));
+    addRow(body, "— الهدايا فيزا", formatMoney(v.data.gifts["فيزا"]));
+    addRow(body, "دفعات عملاء محصّلة", formatMoney(v.data.paymentsTotal));
     addRow(body, "الكاش الافتتاحي", formatMoney(v.opening));
     addRow(body, "+ كاش المبيعات (صافي)", formatMoney(v.data.methods["كاش"]));
     addRow(body, "+ دفعات عملاء كاش", formatMoney(v.data.cashPayments));
@@ -8613,31 +8819,32 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     list.forEach(x => {
-      const d = new Date(x.createdAt);
       const tr = document.createElement("tr");
+      const diff = num(x.difference);
       tr.append(
         createCell(x.date),
         createCell(x.cashier || "كل الكاشير"),
+        createCell(x.orders === undefined ? "—" : num(x.orders).toLocaleString("ar-EG")),
         createCell(formatMoney(x.net)),
         createCell(formatMoney(x.expected)),
         createCell(formatMoney(x.actual)),
-        badgeCell(x.difference === 0 ? "مطابق" : (x.difference < 0 ? "عجز " : "زيادة ") + formatMoney(Math.abs(x.difference)),
-          x.difference === 0 ? "ok" : "danger"),
+        badgeCell(diff === 0 ? "مطابق" : (diff < 0 ? "عجز " : "زيادة ") + formatMoney(Math.abs(diff)), diff === 0 ? "ok" : (diff < 0 ? "danger" : "warn")),
         createCell(x.createdBy || "—"),
-        createCell(Number.isNaN(d.getTime()) ? "—" : d.toLocaleString("ar-EG"))
+        createCell(timeText(x.createdAt))
       );
       body.appendChild(tr);
     });
-    if (!list.length) emptyRow(body, 8, "لا توجد ورديات مقفلة بعد.");
+    if (!list.length) emptyRow(body, 9, "لا توجد ورديات مقفلة بعد.");
   }
 
   function renderAll() {
     renderCashiers();
+    renderMode();
     renderReport();
     renderHistory();
   }
 
-  /* ---------- الحفظ والطباعة ---------- */
+  /* ---------- الحفظ والإقفال ---------- */
   el("closingSave").addEventListener("click", () => {
     const msg = "closingMessage";
     const v = currentValues();
@@ -8646,32 +8853,42 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
       return showMessage(msg, "اكتب الكاش الفعلي الموجود في الدرج لإقفال الوردية.", "error");
     }
 
+    const shiftMode = v.w.kind === "shift";
+    const now = new Date();
     const record = {
       id: "SHIFT-" + Date.now() + "-" + Math.random().toString(16).slice(2, 8),
-      date: v.day, cashier: v.cashier, opening: v.opening,
+      mode: v.w.kind,
+      shiftId: shiftMode ? v.w.shift.id : "",
+      date: shiftMode ? dayKey(v.w.shift.openedAt) : v.w.day,
+      openedAt: shiftMode ? v.w.shift.openedAt : "",
+      closedAt: now.toISOString(),
+      cashier: shiftMode ? (v.w.shift.openedBy || "") : v.w.cashier,
+      opening: v.opening,
       expected: v.expected, actual: round2(v.actual), difference: v.difference,
-      net: v.data.net, invoices: v.data.invoiceCount,
+      net: v.data.net, orders: v.data.invoiceCount, invoices: v.data.invoiceCount,
       notes: el("closingNotes").value.trim(),
       createdBy: userName(),
-      createdAt: new Date().toISOString()
+      createdAt: now.toISOString()
     };
 
     shifts.push(record);
     try {
       localStorage.setItem(SHIFTS_KEY, JSON.stringify(shifts));
+      if (shiftMode) localStorage.removeItem(OPEN_SHIFT_KEY);
     } catch (error) {
       shifts.pop();
       return showMessage(msg, "تعذر حفظ الإقفال. تحقق من مساحة التخزين.", "error");
     }
 
-    logActivity("إقفال وردية", v.day + " — " + (v.cashier || "كل الكاشير") + " — متوقع " + formatMoney(v.expected) +
-      " فعلي " + formatMoney(record.actual) + " — الفرق " + formatMoney(v.difference));
+    logActivity(shiftMode ? "إقفال وردية" : "إقفال يوم",
+      (shiftMode ? "من " + timeText(v.w.shift.openedAt) : v.w.day) + " — أوردرات " + v.data.invoiceCount +
+      " — متوقع " + formatMoney(v.expected) + " فعلي " + formatMoney(record.actual) + " — الفرق " + formatMoney(v.difference));
 
     el("closingActual").value = "";
     el("closingNotes").value = "";
-    renderHistory();
-    renderReport();
-    showMessage(msg, "تم حفظ إقفال الوردية. الفرق: " + (v.difference === 0 ? "مطابق" : formatMoney(v.difference)) + ".", "success");
+    renderAll();
+    showMessage(msg, (shiftMode ? "تم إقفال الوردية. " : "تم حفظ إقفال اليوم. ") +
+      "الفرق: " + (v.difference === 0 ? "مطابق" : formatMoney(v.difference)) + ". يمكنك تنزيل التقرير من زر Excel قبل مغادرة الصفحة.", "success");
   });
 
   el("closingPrint").addEventListener("click", () => {
@@ -8685,6 +8902,87 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
     try { window.print(); } catch (error) { done(); }
   });
 
+  /* ---------- تقرير Excel ---------- */
+  el("closingExport").addEventListener("click", async () => {
+    const msg = "closingMessage";
+    const v = currentValues();
+    const shiftMode = v.w.kind === "shift";
+
+    try {
+      const XLSX = await loadXlsxLibrary();
+      const workbook = XLSX.utils.book_new();
+      workbook.Workbook = { Views: [{ RTL: true }] };
+
+      const add = (name, rows, widths) => {
+        const sheet = XLSX.utils.aoa_to_sheet(rows);
+        sheet["!cols"] = widths.map(w => ({ wch: w }));
+        XLSX.utils.book_append_sheet(workbook, sheet, name);
+      };
+
+      const minutes = shiftMode ? Math.max(0, Math.floor((v.w.to - v.w.from) / 60000)) : 0;
+      const summary = [
+        ["تقرير " + (shiftMode ? "الوردية" : "اليوم"), ""],
+        ["الكاشير", shiftMode ? (v.w.shift.openedBy || "") : (v.w.cashier || "كل الكاشير")],
+        [shiftMode ? "بداية الوردية" : "اليوم", shiftMode ? timeText(v.w.shift.openedAt) : v.w.day],
+        ["وقت استخراج التقرير", timeText(new Date())]
+      ];
+      if (shiftMode) summary.push(["مدة الوردية", Math.floor(minutes / 60) + " ساعة و" + (minutes % 60) + " دقيقة"]);
+      summary.push(
+        ["عدد الأوردرات (الفواتير)", v.data.invoiceCount],
+        ["إجمالي المبيعات قبل الخصم", v.data.gross],
+        ["الخصومات", -v.data.discounts],
+        ["المرتجعات", v.data.returnsValue],
+        ["فروق التبديل", v.data.exchangeValue],
+        ["صافي المبيعات", v.data.net],
+        ["مبيعات الهدايا (إجمالي)", v.data.gifts.total],
+        ["الهدايا — كاش", v.data.gifts["كاش"]],
+        ["الهدايا — فيزا", v.data.gifts["فيزا"]],
+        ["دفعات عملاء محصّلة", v.data.paymentsTotal],
+        ["الكاش الافتتاحي", v.opening],
+        ["كاش المبيعات (صافي)", v.data.methods["كاش"]],
+        ["دفعات عملاء كاش", v.data.cashPayments],
+        ["مصاريف نقدية", -v.data.cashExpenses],
+        ["الكاش المتوقع في الدرج", v.expected]
+      );
+      if (v.actual !== null && Number.isFinite(v.actual)) {
+        summary.push(["الكاش الفعلي", v.actual], ["الفرق (سالب = عجز)", v.difference]);
+      }
+      add("ملخص", summary, [34, 30]);
+
+      add("كاش وفيزا", [
+        ["طريقة الدفع", "عدد الأوردرات", "صافي المبيعات", "مبيعات الهدايا"],
+        ...METHODS.map(m => [m, v.data.orders[m], v.data.methods[m], v.data.gifts[m]]),
+        ["الإجمالي", v.data.invoiceCount, v.data.net, v.data.gifts.total]
+      ], [20, 16, 18, 18]);
+
+      add("الأوردرات", [
+        ["رقم الفاتورة", "الوقت", "العميل", "الكاشير", "طريقة الدفع", "عدد القطع", "الخصم", "الإجمالي"],
+        ...v.data.invoiceList.map(g => [g.id, timeText(g.time), g.customer, g.cashier, g.payment, g.units, g.discount, g.total])
+      ], [28, 24, 20, 18, 16, 12, 12, 14]);
+
+      add("مبيعات الهدايا", [
+        ["رقم الفاتورة", "الوقت", "الصنف", "الكود", "الكمية", "طريقة الدفع", "الإجمالي"],
+        ...v.data.giftLines.map(s => [s.invoiceId || "بيع سابق", timeText(s.createdAt), s.productName, s.productCode, s.quantity, s.paymentMethod || "", s.total]),
+        [],
+        ["إجمالي الهدايا", "", "", "", "", "", v.data.gifts.total],
+        ["كاش", "", "", "", "", "", v.data.gifts["كاش"]],
+        ["فيزا", "", "", "", "", "", v.data.gifts["فيزا"]]
+      ], [28, 24, 28, 16, 10, 16, 14]);
+
+      add("تفاصيل الأصناف", [
+        ["رقم الفاتورة", "الوقت", "الصنف", "الكود", "الكمية", "سعر القطعة", "الخصم", "الإجمالي", "طريقة الدفع"],
+        ...v.data.lines.map(s => [s.invoiceId || "بيع سابق", timeText(s.createdAt), s.productName, s.productCode, s.quantity, s.unitPrice, num(s.discount), s.total, s.paymentMethod || ""])
+      ], [28, 24, 28, 16, 10, 12, 10, 12, 16]);
+
+      XLSX.writeFile(workbook, "GAMY-Shift-Report-" + getLocalDateForFilename() + ".xlsx", { bookType: "xlsx" });
+      showMessage(msg, "تم تنزيل تقرير Excel: ملخص، كاش وفيزا، الأوردرات، مبيعات الهدايا، تفاصيل الأصناف.", "success");
+    } catch (error) {
+      console.error("Shift export error:", error);
+      showMessage(msg, error.message || "تعذر تنزيل التقرير.", "error");
+    }
+  });
+
+  el("closingMode").addEventListener("change", renderAll);
   el("closingDate").addEventListener("change", renderAll);
   el("closingCashier").addEventListener("change", renderReport);
   ["closingOpening", "closingActual"].forEach(id => el(id).addEventListener("input", renderReport));
@@ -9014,6 +9312,7 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
     if (currentUser.role === "admin") return true;
     if (rule === "all") return true;
     if (rule === "admin") return false;
+    if (rule === "closing") return !!(currentUser.permissions && (currentUser.permissions.closing || currentUser.permissions.sell));
     return !!(currentUser.permissions && currentUser.permissions[rule]);
   }
 
