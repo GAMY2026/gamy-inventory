@@ -636,6 +636,9 @@ body.no-discount .pos-discount{display:none}
 .pos-shift-card input{height:42px;border:1px solid #cfd3da;border-radius:6px;padding:0 10px;font-size:15px;background:#fff;color:#2b2f36}
 .pos-top-btn.dark{background:#eceff3;color:#374151;border-color:#d5d8de}
 @media(max-width:800px){.pos-shift{display:none}}
+.pos-customer-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;min-height:40px;margin-bottom:10px;border:1px dashed var(--pos-purple);border-radius:6px;background:#fff;color:var(--pos-purple);font-size:13px;font-weight:700}
+.pos-customer-btn:hover{background:#f5eefc}
+.pos-customer-btn.has-customer{border-style:solid;background:#f5eefc}
 </style>
  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 </head>
@@ -1265,6 +1268,7 @@ body.no-discount .pos-discount{display:none}
       <div class="pos-discount-error" id="posDiscountError"></div>
       <div class="pos-total-row" id="posDiscountRow"><span>قيمة الخصم</span><strong id="posCartDiscount">0 ج.م</strong></div>
       <div class="pos-total-row total"><span>الإجمالي</span><strong id="posCartTotal">0 ج.م</strong></div>
+      <button type="button" class="pos-customer-btn" id="posCustomerBtn"><span aria-hidden="true">👤</span><span id="posCustomerBtnLabel">Customer</span></button>
       <div class="pos-methods" id="posMethods"></div>
       <div id="posMessage" class="message" role="status"></div>
       <button type="button" class="pos-pay" id="posPayButton" disabled><span id="posPayLabel">دفع 0.00 ج.م</span><span aria-hidden="true">➜</span></button>
@@ -1893,6 +1897,23 @@ body.no-discount .pos-discount{display:none}
  </section>
 </div>
  
+<div id="posCustomerModal" class="modal-overlay receipt-overlay" hidden>
+ <section class="modal" role="dialog" aria-modal="true" aria-label="بيانات العميل" style="background:#fff;color:#2b2f36;color-scheme:light;">
+  <h2 style="color:#6c27c7;">بيانات العميل</h2>
+  <p style="color:#6b7280;">اكتب اسم العميل ورقم التليفون ثم احفظ، وارجع لإقفال الفاتورة.</p>
+  <div class="field"><label for="posCustName" style="color:#374151;">اسم العميل</label>
+   <input id="posCustName" type="text" list="posCustomerList" placeholder="اسم العميل" autocomplete="off" style="background:#fff;color:#111827;border-color:#cfd6e2;"></div>
+  <div class="field"><label for="posCustPhone" style="color:#374151;">رقم التليفون</label>
+   <input id="posCustPhone" type="tel" inputmode="tel" placeholder="01xxxxxxxxx" autocomplete="off" style="background:#fff;color:#111827;border-color:#cfd6e2;"></div>
+  <div class="pos-discount-error" id="posCustError"></div>
+  <div class="modal-actions">
+   <button class="primary-btn" type="button" id="posCustSave">حفظ</button>
+   <button class="secondary-btn" type="button" id="posCustClear" style="background:#fff;color:#1f2937;border-color:#cfd6e2;">مسح العميل</button>
+   <button class="secondary-btn" type="button" id="posCustCancel" style="background:#fff;color:#1f2937;border-color:#cfd6e2;">إلغاء</button>
+  </div>
+ </section>
+</div>
+
 <div id="receiptModal" class="modal-overlay receipt-overlay" hidden>
  <section class="modal receipt-modal" role="dialog" aria-modal="true" aria-label="الإيصال">
   <div id="receiptPrintArea" class="receipt-paper"></div>
@@ -3869,6 +3890,7 @@ function validateImportedSales(list) {
             invoiceId: String(s.invoiceId || ""),
             paymentMethod: String(s.paymentMethod || ""),
             customerName: String(s.customerName || ""),
+            customerPhone: String(s.customerPhone || ""),
             cashierName: String(s.cashierName || ""),
             discount: Number(s.discount) || 0,
             productId: String(s.productId || ""),
@@ -7408,6 +7430,7 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
         invoiceId,
         paymentMethod: method,
         customerName,
+        customerPhone,
         cashierName,
         shiftId: openShift.id,
         productId: product.id,
@@ -7447,6 +7470,8 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
     const total = newSales.reduce((sum, s) => sum + s.total, 0);
     cart = [];
     el("posCustomer").value = "";
+    customerPhone = "";
+    refreshCustomerButton();
     el("posDiscountValue").value = "";
     renderProducts();
     renderSales();
@@ -7456,12 +7481,90 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
     showReceipt(invoiceId);
   }
 
+  /* ---------- بيانات العميل (الاسم + التليفون) ---------- */
+  let customerPhone = "";
+
+  function refreshCustomerButton() {
+    const name = el("posCustomer").value.trim();
+    el("posCustomerBtnLabel").textContent = name ? name + (customerPhone ? " — " + customerPhone : "") : "Customer";
+    el("posCustomerBtn").classList.toggle("has-customer", !!name);
+  }
+
+  function findContact(name) {
+    try {
+      const list = JSON.parse(localStorage.getItem(CONTACTS_KEY_POS) || "[]");
+      return (Array.isArray(list) ? list : []).find(c => c && c.type === "customer" && normalize(c.name) === normalize(name));
+    } catch (e) { return null; }
+  }
+
+  function upsertContact(name, phone) {
+    try {
+      const raw = JSON.parse(localStorage.getItem(CONTACTS_KEY_POS) || "[]");
+      const list = Array.isArray(raw) ? raw : [];
+      const existing = list.find(c => c && c.type === "customer" && normalize(c.name) === normalize(name));
+      if (existing) {
+        if (phone && existing.phone !== phone) existing.phone = phone;
+      } else {
+        list.push({
+          id: Date.now().toString() + Math.random().toString(16).slice(2),
+          type: "customer", name, phone, address: "", goodsType: "",
+          createdAt: new Date().toISOString()
+        });
+      }
+      localStorage.setItem(CONTACTS_KEY_POS, JSON.stringify(list));
+    } catch (e) { console.error(e); }
+  }
+
+  const closeCustomerModal = () => { el("posCustomerModal").hidden = true; };
+
+  el("posCustomerBtn").addEventListener("click", () => {
+    el("posCustName").value = el("posCustomer").value.trim();
+    el("posCustPhone").value = customerPhone;
+    el("posCustError").textContent = "";
+    el("posCustomerModal").hidden = false;
+    el("posCustName").focus();
+  });
+
+  el("posCustName").addEventListener("change", () => {
+    const contact = findContact(el("posCustName").value);
+    if (contact && contact.phone && !el("posCustPhone").value.trim()) el("posCustPhone").value = contact.phone;
+  });
+
+  el("posCustSave").addEventListener("click", () => {
+    const name = el("posCustName").value.trim();
+    const phone = el("posCustPhone").value.trim();
+    if (!name) { el("posCustError").textContent = "اكتب اسم العميل."; return; }
+    if (phone && !/^[0-9٠-٩+\s-]{6,15}$/.test(phone)) {
+      el("posCustError").textContent = "رقم التليفون غير صحيح.";
+      return;
+    }
+    el("posCustomer").value = name;
+    customerPhone = phone;
+    upsertContact(name, phone);
+    closeCustomerModal();
+    refreshCustomerButton();
+    renderCustomers();
+  });
+
+  el("posCustClear").addEventListener("click", () => {
+    el("posCustomer").value = "";
+    customerPhone = "";
+    closeCustomerModal();
+    refreshCustomerButton();
+  });
+
+  el("posCustCancel").addEventListener("click", closeCustomerModal);
+  el("posCustomerModal").addEventListener("click", e => { if (e.target.id === "posCustomerModal") closeCustomerModal(); });
+  el("posCustomer").addEventListener("input", () => { customerPhone = ""; refreshCustomerButton(); });
+
   el("posPayButton").addEventListener("click", pay);
 
   function resetOrder(askFirst) {
     if (askFirst && cart.length && !confirm("هل تريد تفريغ السلة؟")) return;
     cart = [];
     el("posCustomer").value = "";
+    customerPhone = "";
+    refreshCustomerButton();
     el("posDiscountValue").value = "";
     clearMessage("posMessage");
     renderCart();
