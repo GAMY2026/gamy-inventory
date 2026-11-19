@@ -988,6 +988,61 @@ body.no-discount .pos-discount{display:none}
         </div>
     </section>
 
+    <section class="panel" id="invReturnPanel">
+        <div class="panel-heading">
+            <h2 class="section-title">مرتجع من فاتورة العميل</h2>
+            <p class="description">اكتب اسم العميل أو تليفونه أو رقم الفاتورة، افتح الفاتورة، واختر المنتجات اللي العميل عايز يرجعها.</p>
+        </div>
+
+        <div class="field">
+            <label for="invReturnSearch">🔍 بحث (اسم العميل / التليفون / رقم الفاتورة / اسم المنتج)</label>
+            <input id="invReturnSearch" type="search" list="customerLookupList" placeholder="اكتب هنا... ولو فيه فاتورة واحدة مطابقة هتفتح لوحدها" autocomplete="off">
+        </div>
+
+        <div class="table-wrapper" style="margin-top:14px;">
+            <table>
+                <thead><tr><th>التاريخ</th><th>رقم الفاتورة</th><th>العميل</th><th>التليفون</th><th>الدفع</th><th>عدد الأصناف</th><th>الإجمالي</th><th>المتاح للإرجاع</th><th>إجراء</th></tr></thead>
+                <tbody id="invReturnResults"></tbody>
+            </table>
+        </div>
+        <div class="table-footer"><span id="invReturnCount"></span></div>
+
+        <div id="invReturnDetail" hidden style="margin-top:22px;">
+            <div class="sale-preview" id="invReturnInfo" style="white-space:pre-line;"></div>
+            <div class="actions" style="margin-top:12px;">
+                <button type="button" class="secondary-btn" id="invReturnSelectAll">تحديد كل المنتجات</button>
+                <button type="button" class="secondary-btn" id="invReturnUnselect">إلغاء التحديد</button>
+                <button type="button" class="secondary-btn" id="invReturnClose">إغلاق الفاتورة</button>
+            </div>
+            <div class="table-wrapper" style="margin-top:12px;">
+                <table>
+                    <thead><tr><th>إرجاع</th><th>المنتج</th><th>الكود</th><th>المباع</th><th>اترجع قبل كده</th><th>المتاح للإرجاع</th><th>سعر القطعة المدفوع</th><th>الكمية المرتجعة</th><th>المبلغ المسترد</th></tr></thead>
+                    <tbody id="invReturnLinesBody"></tbody>
+                </table>
+            </div>
+
+            <div class="form-grid" style="margin-top:18px;">
+                <div class="field"><label for="invReturnOrderNo">رقم أوردر المرتجع</label><input id="invReturnOrderNo" type="text" placeholder="رقم الأوردر"></div>
+                <div class="field"><label for="invReturnCustomer">اسم العميل</label><input id="invReturnCustomer" type="text" list="customerNamesList" placeholder="اسم العميل" autocomplete="off"></div>
+                <div class="field">
+                    <label for="invReturnReason">سبب الإرجاع</label>
+                    <select id="invReturnReason">
+                        <option value="">اختر السبب</option>
+                        <option value="مقاس غير مناسب">مقاس غير مناسب</option>
+                        <option value="عيب في المنتج">عيب في المنتج</option>
+                        <option value="منتج غير مطابق">منتج غير مطابق</option>
+                        <option value="تغيير رأي العميل">تغيير رأي العميل</option>
+                        <option value="سبب آخر">سبب آخر</option>
+                    </select>
+                </div>
+            </div>
+            <div class="field" style="margin-top:16px;"><label for="invReturnNotes">ملاحظات إضافية</label><textarea id="invReturnNotes" placeholder="اكتب أي ملاحظات عن المرتجع"></textarea></div>
+            <div class="sale-preview" id="invReturnSummary" style="margin-top:16px;">لم تحدد أي منتج بعد.</div>
+            <div class="actions"><button type="button" class="primary-btn" id="invReturnConfirm">تأكيد مرتجع المنتجات المحددة</button></div>
+        </div>
+        <div id="invReturnMessage" class="message" role="status"></div>
+    </section>
+
     <section class="panel">
         <div class="panel-heading">
             <h2 class="section-title">تسجيل مرتجع جديد</h2>
@@ -997,6 +1052,13 @@ body.no-discount .pos-discount{display:none}
         </div>
 
         <form id="salesReturnForm">
+
+            <div class="field" style="margin-top:0;">
+                <label for="returnLookup">🔍 بحث عن العميل (الاسم أو التليفون أو رقم الفاتورة)</label>
+                <input id="returnLookup" type="search" list="customerLookupList" placeholder="اكتب اسم العميل أو رقم تليفونه لعرض أوردراته القديمة" autocomplete="off">
+                <datalist id="customerLookupList"></datalist>
+            </div>
+            <div class="sale-preview" id="returnLookupInfo" style="margin:12px 0 18px;" hidden></div>
 
             <div class="form-grid">
 
@@ -1100,9 +1162,66 @@ body.no-discount .pos-discount{display:none}
     <div class="stat-card"><div class="stat-label">فروق تم ردها للعملاء</div><div class="stat-value" id="exchangesRefunded">0 ج.م</div></div>
    </div>
 
+   <section class="panel" id="invExPanel">
+    <div class="panel-heading"><h2 class="section-title">تبديل من فاتورة العميل</h2><p class="description">ابحث عن العميل أو الفاتورة، افتحها، اختار القطع اللي هيرجعها، وبعدها أضف القطع البديلة. الفرق بيتحسب لوحده.</p></div>
+
+    <div class="field">
+     <label for="invExSearch">🔍 بحث (اسم العميل / التليفون / رقم الفاتورة / اسم المنتج)</label>
+     <input id="invExSearch" type="search" list="customerLookupList" placeholder="اكتب هنا... ولو فيه فاتورة واحدة مطابقة هتفتح لوحدها" autocomplete="off">
+    </div>
+    <div class="table-wrapper" style="margin-top:14px;">
+     <table><thead><tr><th>التاريخ</th><th>رقم الفاتورة</th><th>العميل</th><th>التليفون</th><th>الدفع</th><th>عدد الأصناف</th><th>الإجمالي</th><th>المتاح للتبديل</th><th>إجراء</th></tr></thead><tbody id="invExResults"></tbody></table>
+    </div>
+    <div class="table-footer"><span id="invExCount"></span></div>
+
+    <div id="invExDetail" hidden style="margin-top:22px;">
+     <div class="sale-preview" id="invExInfo" style="white-space:pre-line;"></div>
+
+     <h3 class="section-title" style="margin-top:20px;font-size:15px;">1) القطع اللي العميل هيرجعها</h3>
+     <div class="actions" style="margin-top:0;">
+      <button type="button" class="secondary-btn" id="invExSelectAll">تحديد كل المنتجات</button>
+      <button type="button" class="secondary-btn" id="invExUnselect">إلغاء التحديد</button>
+      <button type="button" class="secondary-btn" id="invExClose">إغلاق الفاتورة</button>
+     </div>
+     <div class="table-wrapper" style="margin-top:12px;">
+      <table><thead><tr><th>تبديل</th><th>المنتج</th><th>الكود</th><th>المباع</th><th>اترجع قبل كده</th><th>المتاح</th><th>سعر القطعة المدفوع</th><th>الكمية</th><th>القيمة</th></tr></thead><tbody id="invExLinesBody"></tbody></table>
+     </div>
+
+     <h3 class="section-title" style="margin-top:22px;font-size:15px;">2) القطع البديلة</h3>
+     <div class="form-grid">
+      <div class="field"><label for="invExProduct">القطعة البديلة</label><select id="invExProduct"><option value="">اختر القطعة البديلة</option></select></div>
+      <div class="field"><label for="invExQty">الكمية</label><input id="invExQty" type="number" min="1" step="1" value="1"></div>
+      <div class="field"><label for="invExPrice">سعر القطعة</label><input id="invExPrice" type="number" min="0.01" step="0.01"></div>
+     </div>
+     <div class="actions"><button type="button" class="secondary-btn" id="invExAdd">إضافة القطعة البديلة</button></div>
+     <div class="table-wrapper" style="margin-top:12px;">
+      <table><thead><tr><th>القطعة البديلة</th><th>الكود</th><th>الكمية</th><th>سعر القطعة</th><th>الإجمالي</th><th>إجراء</th></tr></thead><tbody id="invExNewBody"></tbody></table>
+     </div>
+
+     <h3 class="section-title" style="margin-top:22px;font-size:15px;">3) بيانات التبديل</h3>
+     <div class="form-grid">
+      <div class="field"><label for="invExOrderNo">رقم أوردر التبديل</label><input id="invExOrderNo" type="text" placeholder="رقم الأوردر"></div>
+      <div class="field"><label for="invExCustomer">اسم العميل</label><input id="invExCustomer" type="text" list="customerNamesList" placeholder="اسم العميل" autocomplete="off"></div>
+      <div class="field"><label for="invExReason">سبب التبديل</label>
+       <select id="invExReason"><option value="">اختر السبب</option><option value="مقاس مختلف">مقاس مختلف</option><option value="تبديل بقطعة أخرى">تبديل بقطعة أخرى</option><option value="عيب في المنتج">عيب في المنتج</option><option value="سبب آخر">سبب آخر</option></select></div>
+      <div class="field"><label for="invExMethod">طريقة دفع / رد الفرق</label>
+       <select id="invExMethod"><option value="">لا يوجد فرق</option><option value="كاش">كاش</option><option value="فيزا">فيزا</option></select></div>
+     </div>
+     <div class="field" style="margin-top:16px;"><label for="invExNotes">ملاحظات إضافية</label><textarea id="invExNotes" placeholder="اكتب أي ملاحظات عن التبديل"></textarea></div>
+     <div class="sale-preview" id="invExSummary" style="margin-top:16px;">حدد القطع المرتجعة وأضف القطع البديلة لمعاينة الفرق.</div>
+     <div class="actions"><button type="button" class="primary-btn" id="invExConfirm">تأكيد التبديل</button></div>
+    </div>
+    <div id="invExMessage" class="message" role="status"></div>
+   </section>
+
    <section class="panel">
     <div class="panel-heading"><h2 class="section-title">تسجيل عملية تبديل</h2><p class="description">القطعة القديمة تدخل مخزن المرتجعات، والقطعة البديلة تُخصم من المخزن الرئيسي.</p></div>
     <form id="exchangeForm">
+     <div class="field" style="margin-top:0;">
+      <label for="exchangeLookup">🔍 بحث عن العميل (الاسم أو التليفون أو رقم الفاتورة)</label>
+      <input id="exchangeLookup" type="search" list="customerLookupList" placeholder="اكتب اسم العميل أو رقم تليفونه لعرض أوردراته القديمة" autocomplete="off">
+     </div>
+     <div class="sale-preview" id="exchangeLookupInfo" style="margin:12px 0 18px;" hidden></div>
      <div class="form-grid">
       <div class="field"><label for="exchangeOrderNo">رقم أوردر التبديل</label><input id="exchangeOrderNo" type="text" required placeholder="رقم الأوردر"></div>
       <div class="field"><label for="exchangeCustomer">اسم العميل</label><input id="exchangeCustomer" type="text" required list="customerNamesList" placeholder="اسم العميل" autocomplete="off"></div>
@@ -3134,7 +3253,9 @@ function getSalesAdjustments() {
         const sale = lineById.get(x.saleId) || {};
         const returnedQty = Number(x.returnedQty) || 0;
         const newQty = Number(x.newQty) || 0;
-        const returnedCost = (Number(sale.unitCost) || 0) * returnedQty;
+        const returnedCost = Array.isArray(x.returnedItems)
+            ? x.returnedItems.reduce((t, i) => t + (Number(i.unitCost) || 0) * (Number(i.quantity) || 0), 0)
+            : (Number(sale.unitCost) || 0) * returnedQty;
         const storedCost = Number(x.newUnitCost);
         const newProduct = findProduct(x.newProductId);
         const newUnitCost = (x.newUnitCost !== undefined && Number.isFinite(storedCost))
@@ -3147,7 +3268,9 @@ function getSalesAdjustments() {
             invoiceId: sale.invoiceId || "",
             payment: x.method || sale.paymentMethod || "",
             revenue: Number(x.difference) || 0,
-            profit: ((Number(x.newValue) || 0) - newUnitCost * newQty) - ((Number(x.returnedValue) || 0) - returnedCost),
+            profit: ((Number(x.newValue) || 0) - (Array.isArray(x.newItems)
+                ? x.newItems.reduce((t, i) => t + (Number(i.unitCost) || 0) * (Number(i.quantity) || 0), 0)
+                : newUnitCost * newQty)) - ((Number(x.returnedValue) || 0) - returnedCost),
             units: newQty - returnedQty
         });
     });
@@ -5982,11 +6105,16 @@ monthInput.value = month;
 
         readList(EXCHANGES_KEY).forEach(x => {
             if (!x) return;
-            const p = productFor(x.newProductId, x.newProductCode);
-            list.push({
-                date: x.createdAt, ref: x.orderNo || x.id, type: "تبديل (خروج بديل)", effect: "out",
-                name: x.newProductName || p.name, code: x.newProductCode || p.code,
-                size: p.size, color: p.color, quantity: -Math.abs(num(x.newQty))
+            const outs = Array.isArray(x.newItems) && x.newItems.length
+                ? x.newItems.map(i => ({ id: i.productId, code: i.productCode, name: i.productName, qty: i.quantity }))
+                : [{ id: x.newProductId, code: x.newProductCode, name: x.newProductName, qty: x.newQty }];
+            outs.forEach(o => {
+                const p = productFor(o.id, o.code);
+                list.push({
+                    date: x.createdAt, ref: x.orderNo || x.id, type: "تبديل (خروج بديل)", effect: "out",
+                    name: o.name || p.name, code: o.code || p.code,
+                    size: p.size, color: p.color, quantity: -Math.abs(num(o.qty))
+                });
             });
         });
 
@@ -6522,7 +6650,96 @@ monthInput.value = month;
     });
   }
 
+  /* ---------- بحث العميل واسترجاع بياناته القديمة ---------- */
+  const LOOKUP = {
+    returnSaleSelect:   { input: "returnLookup",   info: "returnLookupInfo",   customer: "returnCustomer" },
+    exchangeSaleSelect: { input: "exchangeLookup", info: "exchangeLookupInfo", customer: "exchangeCustomer" }
+  };
+  const ARABIC_DIGITS_X = "٠١٢٣٤٥٦٧٨٩";
+  const digitsOf = v => String(v == null ? "" : v)
+    .replace(/[٠-٩]/g, d => String(ARABIC_DIGITS_X.indexOf(d))).replace(/\D/g, "");
+
+  function phoneOfName(name) {
+    if (!name) return "";
+    const key = normalize(name);
+    const fromSale = [...sales]
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .find(s => s && normalize(s.customerName) === key && s.customerPhone);
+    if (fromSale) return fromSale.customerPhone;
+    const contact = readList(CONTACTS_KEY_X).find(c => c && c.type === "customer" && normalize(c.name) === key && c.phone);
+    return contact ? contact.phone : "";
+  }
+
+  function saleMatches(s, term) {
+    if (!term) return true;
+    const t = normalize(term);
+    const td = digitsOf(term);
+    const phone = s.customerPhone || phoneOfName(s.customerName);
+    return normalize(s.customerName).includes(t) ||
+      normalize(s.invoiceId).includes(t) ||
+      normalize(s.productName).includes(t) ||
+      normalize(s.productCode).includes(t) ||
+      (td.length >= 3 && digitsOf(phone).includes(td));
+  }
+
+  function renderLookupList() {
+    const list = el("customerLookupList");
+    if (!list) return;
+    list.replaceChildren();
+    const seen = new Map();
+    sales.forEach(s => { if (s && s.customerName) seen.set(normalize(s.customerName), s.customerName); });
+    readList(CONTACTS_KEY_X).forEach(c => { if (c && c.type === "customer" && c.name) seen.set(normalize(c.name), c.name); });
+    seen.forEach(name => {
+      const o = document.createElement("option");
+      o.value = name;
+      const phone = phoneOfName(name);
+      if (phone) o.label = phone;
+      list.appendChild(o);
+    });
+  }
+
+  function updateLookupInfo(selectId) {
+    const cfg = LOOKUP[selectId];
+    const term = el(cfg.input).value.trim();
+    const box = el(cfg.info);
+
+    if (!term) { box.hidden = true; box.textContent = ""; return; }
+
+    const matched = sales.filter(s => s && saleMatches(s, term));
+    const names = new Map();
+    matched.forEach(s => { if (s.customerName) names.set(normalize(s.customerName), s.customerName); });
+    box.hidden = false;
+
+    if (!matched.length) {
+      box.textContent = "لا توجد أوردرات مطابقة لهذا البحث.";
+      return;
+    }
+    if (names.size > 1) {
+      box.textContent = "يوجد " + names.size.toLocaleString("ar-EG") + " عملاء مطابقين: " + [...names.values()].slice(0, 6).join("، ") +
+        " — اكتب الاسم كاملًا أو رقم التليفون لتحديد عميل واحد.";
+      return;
+    }
+
+    const name = names.size === 1 ? [...names.values()][0] : "";
+    const mine = name ? sales.filter(s => s && normalize(s.customerName) === normalize(name)) : matched;
+    const invoices = new Set(mine.map(s => s.invoiceId || ("SALE-" + s.id)));
+    const total = mine.reduce((t, s) => t + Number(s.total || 0), 0);
+    const last = [...mine].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
+
+    box.style.whiteSpace = "pre-line";
+    box.textContent =
+      (name ? "العميل: " + name + "\nالتليفون: " + (phoneOfName(name) || "غير مسجل") : "أوردرات بدون اسم عميل") +
+      "\nعدد الفواتير: " + invoices.size.toLocaleString("ar-EG") +
+      " | إجمالي مشترياته: " + formatMoney(total) +
+      "\nآخر شراء: " + dateText(last.createdAt) +
+      (last.invoiceId ? " (فاتورة " + last.invoiceId + ")" : "");
+
+    if (name) el(cfg.customer).value = name;
+  }
+
   function fillSaleSelect(select) {
+    const cfg = LOOKUP[select.id];
+    const term = cfg && el(cfg.input) ? el(cfg.input).value.trim() : "";
     const old = select.value;
     select.replaceChildren();
     const first = document.createElement("option");
@@ -6532,24 +6749,43 @@ monthInput.value = month;
 
     [...sales]
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-      .filter(s => remaining(s) > 0)
+      .filter(s => remaining(s) > 0 && saleMatches(s, term))
       .forEach(s => {
         const o = document.createElement("option");
         o.value = s.id;
-        o.textContent = dateText(s.createdAt) + " — " + (s.productName || "منتج") +
+        o.textContent = dateText(s.createdAt) +
+          (s.customerName ? " — " + s.customerName : "") +
+          (s.invoiceId ? " — " + s.invoiceId : "") +
+          " — " + (s.productName || "منتج") +
           " — " + (s.productCode || "—") + " — " + (s.paymentMethod || "غير محدد") +
           " — المتبقي للإرجاع: " + remaining(s);
         select.appendChild(o);
       });
 
     if (select.options.length === 1) {
-      first.textContent = sales.length
-        ? "كل عمليات البيع تم إرجاعها بالكامل"
-        : "لا توجد عمليات بيع مسجلة — سجّل عملية بيع أولًا";
+      first.textContent = term
+        ? "لا توجد عمليات بيع قابلة للإرجاع لهذا البحث"
+        : (sales.length
+          ? "كل عمليات البيع تم إرجاعها بالكامل"
+          : "لا توجد عمليات بيع مسجلة — سجّل عملية بيع أولًا");
     }
 
     if ([...select.options].some(o => o.value === old)) select.value = old;
   }
+
+  Object.keys(LOOKUP).forEach(selectId => {
+    const input = el(LOOKUP[selectId].input);
+    input.addEventListener("input", () => {
+      fillSaleSelect(el(selectId));
+      updateLookupInfo(selectId);
+    });
+    /* لو اختار عملية بيع ولسه اسم العميل فاضي، يجيبه منها */
+    el(selectId).addEventListener("change", () => {
+      const s = saleOf(el(selectId).value);
+      const field = el(LOOKUP[selectId].customer);
+      if (s && s.customerName && !field.value.trim()) field.value = s.customerName;
+    });
+  });
 
   /* ================= المرتجعات ================= */
   const saleOf = id => sales.find(s => s.id === id);
@@ -6725,6 +6961,252 @@ monthInput.value = month;
       "success");
   });
 
+  /* ================= مرتجع من فاتورة العميل ================= */
+  let invKey = null;
+  const invPicks = new Map();
+  let invRows = [];
+  const r2 = v => Math.round(v * 100) / 100;
+
+  function invoiceGroups() {
+    const map = new Map();
+    sales.forEach(sl => {
+      if (!sl || !sl.id) return;
+      const key = sl.invoiceId || ("SALE-" + sl.id);
+      let g = map.get(key);
+      if (!g) {
+        g = { key, invoiceId: sl.invoiceId || "", date: sl.createdAt, customer: "", payment: sl.paymentMethod || "", lines: [], total: 0 };
+        map.set(key, g);
+      }
+      g.lines.push(sl);
+      g.total += Number(sl.total || 0);
+      if (!g.customer && sl.customerName) g.customer = sl.customerName;
+      if (new Date(sl.createdAt).getTime() < new Date(g.date).getTime()) g.date = sl.createdAt;
+    });
+    return [...map.values()].map(g => {
+      g.phone = (g.lines.find(l => l.customerPhone) || {}).customerPhone || phoneOfName(g.customer);
+      g.left = g.lines.reduce((t, l) => t + Math.max(0, remaining(l)), 0);
+      return g;
+    }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }
+
+  const lineRefund = (l, q) => q === Number(l.quantity) ? r2(Number(l.total || 0)) : r2(q * Number(l.total || 0) / Number(l.quantity || 1));
+  const detailsOf = l => {
+    const p = findProduct(l.productId) || {};
+    const d = [p.size, p.color].filter(Boolean).join("، ");
+    return (l.productName || "منتج") + (d ? " (" + d + ")" : "");
+  };
+
+  function openInvoice(key) {
+    invKey = key;
+    invPicks.clear();
+    const g = invoiceGroups().find(x => x.key === key);
+    el("invReturnCustomer").value = g ? g.customer : "";
+    clearMessage("invReturnMessage");
+    renderInvReturn(false);
+    el("invReturnDetail").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function renderInvReturn(autoPick) {
+    const term = el("invReturnSearch").value.trim();
+    const all = invoiceGroups();
+    const found = term ? all.filter(g => g.lines.some(l => saleMatches(l, term))) : all.slice(0, 10);
+
+    if (autoPick && term && found.length === 1 && found[0].left > 0 && invKey !== found[0].key) {
+      invKey = found[0].key;
+      invPicks.clear();
+      el("invReturnCustomer").value = found[0].customer;
+    }
+    if (invKey && !all.some(g => g.key === invKey)) { invKey = null; invPicks.clear(); }
+
+    const body = el("invReturnResults");
+    body.replaceChildren();
+    found.slice(0, 30).forEach(g => {
+      const tr = document.createElement("tr");
+      if (g.key === invKey) tr.style.background = "rgba(217,183,110,.15)";
+      const action = document.createElement("td");
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = g.key === invKey ? "primary-btn" : "secondary-btn";
+      btn.textContent = g.key === invKey ? "مفتوحة" : "فتح الفاتورة";
+      btn.disabled = g.left <= 0;
+      btn.addEventListener("click", () => openInvoice(g.key));
+      action.appendChild(btn);
+      tr.append(
+        createCell(dateText(g.date)),
+        createCell(g.invoiceId || "بيع سابق", "code-text"),
+        createCell(g.customer || "—", "product-name"),
+        createCell(g.phone || "—"),
+        createCell(g.payment || "—"),
+        createCell(g.lines.length.toLocaleString("ar-EG")),
+        createCell(formatMoney(g.total)),
+        g.left > 0 ? createCell(g.left.toLocaleString("ar-EG") + " قطعة") : badgeCell("اترجعت بالكامل", "ok"),
+        action
+      );
+      body.appendChild(tr);
+    });
+    if (!found.length) emptyRow(body, 9, term ? "لا توجد فواتير مطابقة لهذا البحث." : "لا توجد فواتير مسجلة بعد.");
+    el("invReturnCount").textContent = (term ? "نتائج البحث: " : "آخر الفواتير: ") + Math.min(found.length, 30).toLocaleString("ar-EG") +
+      (found.length > 30 ? " (اكتب بحثًا أدق لتضييق النتائج)" : "");
+
+    renderInvDetail(all);
+    if (!el("invReturnOrderNo").value) el("invReturnOrderNo").value = nextNo("RET", returnOrders());
+  }
+
+  function renderInvDetail(all) {
+    const box = el("invReturnDetail");
+    const g = invKey ? all.find(x => x.key === invKey) : null;
+    if (!g) { box.hidden = true; invRows = []; return; }
+    box.hidden = false;
+
+    el("invReturnInfo").textContent =
+      "فاتورة: " + (g.invoiceId || "بيع سابق") + " — " + dateText(g.date) +
+      "\nالعميل: " + (g.customer || "غير مسجل") + " — التليفون: " + (g.phone || "غير مسجل") +
+      "\nطريقة الدفع: " + (g.payment || "—") + " — إجمالي الفاتورة: " + formatMoney(g.total);
+
+    const body = el("invReturnLinesBody");
+    body.replaceChildren();
+    invRows = [];
+
+    g.lines.forEach(l => {
+      const left = remaining(l);
+      const pick = invPicks.get(l.id) || { checked: false, qty: Math.max(1, left) };
+      const paid = Number(l.total || 0) / Math.max(1, Number(l.quantity || 1));
+
+      const cbCell = document.createElement("td");
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.style.width = "18px"; cb.style.height = "18px";
+      cb.checked = pick.checked && left > 0;
+      cb.disabled = left <= 0;
+      cb.setAttribute("aria-label", "إرجاع " + detailsOf(l));
+      cbCell.appendChild(cb);
+
+      const qtyCell = document.createElement("td");
+      const qty = document.createElement("input");
+      qty.type = "number"; qty.min = "1"; qty.max = String(left); qty.step = "1";
+      qty.className = "search-input";
+      qty.style.width = "90px";
+      qty.value = String(Math.min(pick.qty, Math.max(1, left)));
+      qty.disabled = !cb.checked;
+      qtyCell.appendChild(qty);
+
+      const refundCell = createCell("—");
+
+      const sync = () => {
+        invPicks.set(l.id, { checked: cb.checked, qty: Number(qty.value) || 1 });
+        qty.disabled = !cb.checked;
+        updateInvSummary();
+      };
+      cb.addEventListener("change", sync);
+      qty.addEventListener("input", sync);
+
+      const tr = document.createElement("tr");
+      if (left <= 0) tr.style.opacity = ".55";
+      tr.append(
+        cbCell,
+        createCell(detailsOf(l), "product-name"),
+        createCell(l.productCode || "—", "code-text"),
+        createCell(Number(l.quantity || 0).toLocaleString("ar-EG")),
+        createCell((Number(l.quantity || 0) - left).toLocaleString("ar-EG")),
+        createCell(left.toLocaleString("ar-EG")),
+        createCell(formatMoney(paid)),
+        qtyCell,
+        refundCell
+      );
+      body.appendChild(tr);
+      invRows.push({ l, left, cb, qty, refundCell });
+    });
+    updateInvSummary();
+  }
+
+  function updateInvSummary() {
+    let items = 0, units = 0, total = 0;
+    invRows.forEach(r => {
+      const q = Number(r.qty.value);
+      const ok = r.cb.checked && Number.isInteger(q) && q > 0 && q <= r.left;
+      r.refundCell.textContent = ok ? formatMoney(lineRefund(r.l, q)) : "—";
+      if (ok) { items++; units += q; total += lineRefund(r.l, q); }
+    });
+    el("invReturnSummary").textContent = items
+      ? "المنتجات المحددة: " + items.toLocaleString("ar-EG") + " | عدد القطع: " + units.toLocaleString("ar-EG") +
+        " | إجمالي المبلغ المسترد: " + formatMoney(r2(total))
+      : "لم تحدد أي منتج بعد.";
+  }
+
+  el("invReturnSearch").addEventListener("input", () => renderInvReturn(true));
+
+  el("invReturnSelectAll").addEventListener("click", () => {
+    invRows.forEach(r => { if (r.left > 0) invPicks.set(r.l.id, { checked: true, qty: r.left }); });
+    renderInvReturn(false);
+  });
+  el("invReturnUnselect").addEventListener("click", () => { invPicks.clear(); renderInvReturn(false); });
+  el("invReturnClose").addEventListener("click", () => { invKey = null; invPicks.clear(); renderInvReturn(false); });
+
+  el("invReturnConfirm").addEventListener("click", () => {
+    const msg = "invReturnMessage";
+    if (!invKey) return showMessage(msg, "افتح فاتورة أولًا.", "error");
+
+    const chosen = [];
+    for (const r of invRows) {
+      if (!r.cb.checked) continue;
+      const q = Number(r.qty.value);
+      if (!Number.isInteger(q) || q <= 0) return showMessage(msg, "اكتب كمية صحيحة للمنتج: " + detailsOf(r.l), "error");
+      if (q > r.left) return showMessage(msg, "الكمية أكبر من المتاح للإرجاع (" + r.left + ") للمنتج: " + detailsOf(r.l), "error");
+      chosen.push({ l: r.l, q });
+    }
+    if (!chosen.length) return showMessage(msg, "اختر منتجًا واحدًا على الأقل للإرجاع.", "error");
+
+    const orderNo = el("invReturnOrderNo").value.trim();
+    if (!orderNo) return showMessage(msg, "اكتب رقم أوردر المرتجع.", "error");
+    if (returnOrders().some(x => normalize(x.orderNo) === normalize(orderNo))) {
+      return showMessage(msg, "رقم الأوردر مستخدم بالفعل.", "error");
+    }
+    const customer = el("invReturnCustomer").value.trim();
+    if (!customer) return showMessage(msg, "اكتب اسم العميل.", "error");
+    const reason = el("invReturnReason").value;
+    if (!reason) return showMessage(msg, "اختر سبب الإرجاع.", "error");
+
+    const now = new Date().toISOString();
+    const notes = el("invReturnNotes").value.trim();
+    const records = chosen.map(({ l, q }) => ({
+      id: "RET-" + Date.now() + "-" + rand(),
+      orderNo, customer,
+      customerPhone: l.customerPhone || phoneOfName(customer),
+      saleId: l.id,
+      invoiceId: l.invoiceId || "",
+      productId: l.productId || "",
+      productName: l.productName || "",
+      productCode: l.productCode || "",
+      quantity: q, reason,
+      paymentMethod: l.paymentMethod || "",
+      refund: lineRefund(l, q),
+      notes,
+      source: "return",
+      stockStatus: "returns",
+      createdAt: now
+    }));
+
+    returns.push(...records);
+    if (!persist([[RETURNS_KEY, returns]])) {
+      returns.splice(returns.length - records.length, records.length);
+      return showMessage(msg, "تعذر حفظ المرتجع. حاول مرة أخرى.", "error");
+    }
+
+    const totalRefund = records.reduce((t, x) => t + x.refund, 0);
+    const units = records.reduce((t, x) => t + x.quantity, 0);
+    logActivity("مرتجع فاتورة", orderNo + " — " + customer + " — " + records.length + " صنف / " + units + " قطعة — مبلغ " + formatMoney(totalRefund));
+
+    invKey = null;
+    invPicks.clear();
+    el("invReturnSearch").value = "";
+    el("invReturnOrderNo").value = "";
+    el("invReturnReason").value = "";
+    el("invReturnNotes").value = "";
+    el("invReturnCustomer").value = "";
+    renderAll();
+    showMessage(msg, "تم تسجيل المرتجع رقم " + orderNo + " للعميل " + customer + ": " + records.length + " صنف، " + units + " قطعة، المبلغ المسترد " + formatMoney(totalRefund) + ". القطع دخلت مخزن المرتجعات.", "success");
+  });
+
   /* ================= التبديل ================= */
   function fillNewProducts() {
     const select = el("exchangeNewProduct");
@@ -6804,8 +7286,12 @@ monthInput.value = month;
         createCell(dateText(x.createdAt)),
         createCell(x.orderNo || "—", "code-text"),
         createCell(x.customer || "—"),
-        createCell((x.returnedProductName || "—") + " × " + Number(x.returnedQty || 0).toLocaleString("ar-EG"), "product-name"),
-        createCell((x.newProductName || "—") + " × " + Number(x.newQty || 0).toLocaleString("ar-EG"), "product-name"),
+        createCell(Array.isArray(x.returnedItems) && x.returnedItems.length
+          ? x.returnedItems.map(i => i.productName + " × " + Number(i.quantity).toLocaleString("ar-EG")).join("، ")
+          : (x.returnedProductName || "—") + " × " + Number(x.returnedQty || 0).toLocaleString("ar-EG"), "product-name"),
+        createCell(Array.isArray(x.newItems) && x.newItems.length
+          ? x.newItems.map(i => i.productName + " × " + Number(i.quantity).toLocaleString("ar-EG")).join("، ")
+          : (x.newProductName || "—") + " × " + Number(x.newQty || 0).toLocaleString("ar-EG"), "product-name"),
         createCell(d > 0 ? "دفع " + formatMoney(d) : d < 0 ? "رد " + formatMoney(Math.abs(d)) : "لا فرق"),
         createCell(x.method || "—"),
         createCell(x.reason || "—")
@@ -6927,11 +7413,378 @@ monthInput.value = month;
       "success");
   });
 
+  /* ================= تبديل من فاتورة العميل ================= */
+  let xKey = null;
+  const xPicks = new Map();
+  let xRows = [];
+  let xNew = [];
+
+  function openExInvoice(key) {
+    xKey = key;
+    xPicks.clear();
+    xNew = [];
+    const g = invoiceGroups().find(v => v.key === key);
+    el("invExCustomer").value = g ? g.customer : "";
+    clearMessage("invExMessage");
+    renderInvExchange(false);
+    el("invExDetail").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function renderInvExchange(autoPick) {
+    const term = el("invExSearch").value.trim();
+    const all = invoiceGroups();
+    const found = term ? all.filter(g => g.lines.some(l => saleMatches(l, term))) : all.slice(0, 10);
+
+    if (autoPick && term && found.length === 1 && found[0].left > 0 && xKey !== found[0].key) {
+      xKey = found[0].key;
+      xPicks.clear();
+      xNew = [];
+      el("invExCustomer").value = found[0].customer;
+    }
+    if (xKey && !all.some(g => g.key === xKey)) { xKey = null; xPicks.clear(); xNew = []; }
+
+    const body = el("invExResults");
+    body.replaceChildren();
+    found.slice(0, 30).forEach(g => {
+      const tr = document.createElement("tr");
+      if (g.key === xKey) tr.style.background = "rgba(217,183,110,.15)";
+      const action = document.createElement("td");
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = g.key === xKey ? "primary-btn" : "secondary-btn";
+      btn.textContent = g.key === xKey ? "مفتوحة" : "فتح الفاتورة";
+      btn.disabled = g.left <= 0;
+      btn.addEventListener("click", () => openExInvoice(g.key));
+      action.appendChild(btn);
+      tr.append(
+        createCell(dateText(g.date)),
+        createCell(g.invoiceId || "بيع سابق", "code-text"),
+        createCell(g.customer || "—", "product-name"),
+        createCell(g.phone || "—"),
+        createCell(g.payment || "—"),
+        createCell(g.lines.length.toLocaleString("ar-EG")),
+        createCell(formatMoney(g.total)),
+        g.left > 0 ? createCell(g.left.toLocaleString("ar-EG") + " قطعة") : badgeCell("اترجعت بالكامل", "ok"),
+        action
+      );
+      body.appendChild(tr);
+    });
+    if (!found.length) emptyRow(body, 9, term ? "لا توجد فواتير مطابقة لهذا البحث." : "لا توجد فواتير مسجلة بعد.");
+    el("invExCount").textContent = (term ? "نتائج البحث: " : "آخر الفواتير: ") + Math.min(found.length, 30).toLocaleString("ar-EG") +
+      (found.length > 30 ? " (اكتب بحثًا أدق لتضييق النتائج)" : "");
+
+    renderExDetail(all);
+    if (!el("invExOrderNo").value) el("invExOrderNo").value = nextNo("EXC", exchanges);
+  }
+
+  function renderExProducts() {
+    const select = el("invExProduct");
+    const old = select.value;
+    select.replaceChildren();
+    const first = document.createElement("option");
+    first.value = "";
+    first.textContent = "اختر القطعة البديلة";
+    select.appendChild(first);
+    products.filter(p => Number(p.quantity) > 0).forEach(p => {
+      const o = document.createElement("option");
+      o.value = p.id;
+      o.textContent = p.name + " — " + p.code + (p.size ? " — مقاس " + p.size : "") + (p.color ? " — " + p.color : "") + " — المتاح: " + p.quantity;
+      select.appendChild(o);
+    });
+    if ([...select.options].some(o => o.value === old)) select.value = old;
+  }
+
+  function renderExDetail(all) {
+    const box = el("invExDetail");
+    const g = xKey ? all.find(v => v.key === xKey) : null;
+    if (!g) { box.hidden = true; xRows = []; return; }
+    box.hidden = false;
+
+    el("invExInfo").textContent =
+      "فاتورة: " + (g.invoiceId || "بيع سابق") + " — " + dateText(g.date) +
+      "\nالعميل: " + (g.customer || "غير مسجل") + " — التليفون: " + (g.phone || "غير مسجل") +
+      "\nطريقة الدفع: " + (g.payment || "—") + " — إجمالي الفاتورة: " + formatMoney(g.total);
+
+    const body = el("invExLinesBody");
+    body.replaceChildren();
+    xRows = [];
+
+    g.lines.forEach(l => {
+      const left = remaining(l);
+      const pick = xPicks.get(l.id) || { checked: false, qty: Math.max(1, left) };
+      const paid = Number(l.total || 0) / Math.max(1, Number(l.quantity || 1));
+
+      const cbCell = document.createElement("td");
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.style.width = "18px"; cb.style.height = "18px";
+      cb.checked = pick.checked && left > 0;
+      cb.disabled = left <= 0;
+      cb.setAttribute("aria-label", "تبديل " + detailsOf(l));
+      cbCell.appendChild(cb);
+
+      const qtyCell = document.createElement("td");
+      const qty = document.createElement("input");
+      qty.type = "number"; qty.min = "1"; qty.max = String(left); qty.step = "1";
+      qty.className = "search-input";
+      qty.style.width = "90px";
+      qty.value = String(Math.min(pick.qty, Math.max(1, left)));
+      qty.disabled = !cb.checked;
+      qtyCell.appendChild(qty);
+
+      const valueCell = createCell("—");
+      const sync = () => {
+        xPicks.set(l.id, { checked: cb.checked, qty: Number(qty.value) || 1 });
+        qty.disabled = !cb.checked;
+        updateExSummary();
+      };
+      cb.addEventListener("change", sync);
+      qty.addEventListener("input", sync);
+
+      const tr = document.createElement("tr");
+      if (left <= 0) tr.style.opacity = ".55";
+      tr.append(
+        cbCell,
+        createCell(detailsOf(l), "product-name"),
+        createCell(l.productCode || "—", "code-text"),
+        createCell(Number(l.quantity || 0).toLocaleString("ar-EG")),
+        createCell((Number(l.quantity || 0) - left).toLocaleString("ar-EG")),
+        createCell(left.toLocaleString("ar-EG")),
+        createCell(formatMoney(paid)),
+        qtyCell,
+        valueCell
+      );
+      body.appendChild(tr);
+      xRows.push({ l, left, cb, qty, valueCell });
+    });
+
+    renderExProducts();
+
+    const nb = el("invExNewBody");
+    nb.replaceChildren();
+    xNew.forEach(item => {
+      const p = findProduct(item.productId);
+      if (!p) return;
+      const tr = document.createElement("tr");
+      const action = document.createElement("td");
+      const rm = document.createElement("button");
+      rm.type = "button";
+      rm.className = "danger-btn";
+      rm.textContent = "حذف";
+      rm.addEventListener("click", () => {
+        xNew = xNew.filter(v => v !== item);
+        renderInvExchange(false);
+      });
+      action.appendChild(rm);
+      tr.append(
+        createCell(p.name + (p.size || p.color ? " (" + [p.size, p.color].filter(Boolean).join("، ") + ")" : ""), "product-name"),
+        createCell(p.code, "code-text"),
+        createCell(item.qty.toLocaleString("ar-EG")),
+        createCell(formatMoney(item.price)),
+        createCell(formatMoney(r2(item.qty * item.price))),
+        action
+      );
+      nb.appendChild(tr);
+    });
+    if (!xNew.length) emptyRow(nb, 6, "لم تضف قطعة بديلة بعد.");
+
+    updateExSummary();
+  }
+
+  function exFigures() {
+    let returnedValue = 0, returnedUnits = 0, items = 0;
+    xRows.forEach(r => {
+      const q = Number(r.qty.value);
+      const ok = r.cb.checked && Number.isInteger(q) && q > 0 && q <= r.left;
+      r.valueCell.textContent = ok ? formatMoney(lineRefund(r.l, q)) : "—";
+      if (ok) { returnedValue += lineRefund(r.l, q); returnedUnits += q; items++; }
+    });
+    const newValue = xNew.reduce((t, i) => t + i.qty * i.price, 0);
+    const newUnits = xNew.reduce((t, i) => t + i.qty, 0);
+    return { returnedValue: r2(returnedValue), newValue: r2(newValue), returnedUnits, newUnits, items, difference: r2(newValue - returnedValue) };
+  }
+
+  function updateExSummary() {
+    const f = exFigures();
+    const box = el("invExSummary");
+    if (!f.items && !xNew.length) { box.textContent = "حدد القطع المرتجعة وأضف القطع البديلة لمعاينة الفرق."; return; }
+    const d = f.difference;
+    const diffText = !f.items || !xNew.length ? "—"
+      : d > 0 ? "العميل يدفع " + formatMoney(d)
+      : d < 0 ? "يتم رد " + formatMoney(Math.abs(d)) + " للعميل" : "لا يوجد فرق";
+    box.textContent = "قيمة المرتجع: " + formatMoney(f.returnedValue) + " (" + f.returnedUnits.toLocaleString("ar-EG") + " قطعة)" +
+      " | قيمة البديل: " + formatMoney(f.newValue) + " (" + f.newUnits.toLocaleString("ar-EG") + " قطعة)" +
+      " | " + diffText;
+  }
+
+  el("invExSearch").addEventListener("input", () => renderInvExchange(true));
+  el("invExProduct").addEventListener("change", () => {
+    const p = findProduct(el("invExProduct").value);
+    el("invExPrice").value = p ? p.salePrice : "";
+    if (p && !el("invExQty").value) el("invExQty").value = 1;
+  });
+
+  el("invExAdd").addEventListener("click", () => {
+    const msg = "invExMessage";
+    const p = findProduct(el("invExProduct").value);
+    if (!p) return showMessage(msg, "اختر القطعة البديلة أولًا.", "error");
+    const q = Number(el("invExQty").value);
+    if (!Number.isInteger(q) || q <= 0) return showMessage(msg, "اكتب كمية بديلة صحيحة.", "error");
+    const price = Number(el("invExPrice").value);
+    if (!Number.isFinite(price) || price <= 0) return showMessage(msg, "اكتب سعرًا صحيحًا للقطعة البديلة.", "error");
+
+    const existing = xNew.find(i => i.productId === p.id);
+    const total = (existing ? existing.qty : 0) + q;
+    if (total > Number(p.quantity)) return showMessage(msg, "الكمية أكبر من المتاح بالمخزن: " + p.quantity, "error");
+
+    if (existing) { existing.qty = total; existing.price = price; }
+    else xNew.push({ productId: p.id, qty: q, price });
+
+    clearMessage(msg);
+    el("invExProduct").value = "";
+    el("invExQty").value = "1";
+    el("invExPrice").value = "";
+    renderInvExchange(false);
+  });
+
+  el("invExSelectAll").addEventListener("click", () => {
+    xRows.forEach(r => { if (r.left > 0) xPicks.set(r.l.id, { checked: true, qty: r.left }); });
+    renderInvExchange(false);
+  });
+  el("invExUnselect").addEventListener("click", () => { xPicks.clear(); renderInvExchange(false); });
+  el("invExClose").addEventListener("click", () => { xKey = null; xPicks.clear(); xNew = []; renderInvExchange(false); });
+
+  el("invExConfirm").addEventListener("click", () => {
+    const msg = "invExMessage";
+    if (!xKey) return showMessage(msg, "افتح فاتورة أولًا.", "error");
+
+    const chosen = [];
+    for (const r of xRows) {
+      if (!r.cb.checked) continue;
+      const q = Number(r.qty.value);
+      if (!Number.isInteger(q) || q <= 0) return showMessage(msg, "اكتب كمية صحيحة للمنتج: " + detailsOf(r.l), "error");
+      if (q > r.left) return showMessage(msg, "الكمية أكبر من المتاح (" + r.left + ") للمنتج: " + detailsOf(r.l), "error");
+      chosen.push({ l: r.l, q });
+    }
+    if (!chosen.length) return showMessage(msg, "اختر قطعة واحدة على الأقل ليرجعها العميل.", "error");
+    if (!xNew.length) return showMessage(msg, "أضف قطعة بديلة واحدة على الأقل.", "error");
+
+    const orderNo = el("invExOrderNo").value.trim();
+    if (!orderNo) return showMessage(msg, "اكتب رقم أوردر التبديل.", "error");
+    if (exchanges.some(x => normalize(x.orderNo) === normalize(orderNo))) return showMessage(msg, "رقم الأوردر مستخدم بالفعل.", "error");
+
+    const customer = el("invExCustomer").value.trim();
+    if (!customer) return showMessage(msg, "اكتب اسم العميل.", "error");
+    const reason = el("invExReason").value;
+    if (!reason) return showMessage(msg, "اختر سبب التبديل.", "error");
+
+    const newLines = [];
+    for (const item of xNew) {
+      const np = findProduct(item.productId);
+      if (!np) return showMessage(msg, "إحدى القطع البديلة لم تعد موجودة.", "error");
+      if (item.qty > Number(np.quantity)) return showMessage(msg, "الكمية البديلة أكبر من المتاح للمنتج: " + np.name, "error");
+      if (reason !== "عيب في المنتج" && chosen.some(c => String(c.l.productId) === String(np.id))) {
+        return showMessage(msg, "القطعة البديلة (" + np.name + ") هي نفس القطعة المرتجعة. اختر مقاسًا أو منتجًا مختلفًا.", "error");
+      }
+      newLines.push({ np, item });
+    }
+
+    const returnedValue = r2(chosen.reduce((t, c) => t + lineRefund(c.l, c.q), 0));
+    const newValue = r2(newLines.reduce((t, n) => t + n.item.qty * n.item.price, 0));
+    const difference = r2(newValue - returnedValue);
+    const method = el("invExMethod").value;
+    if (difference !== 0 && !method) return showMessage(msg, "يوجد فرق سعر. اختر طريقة الدفع أو الرد: كاش أو فيزا.", "error");
+
+    const now = new Date().toISOString();
+    const exchangeId = "EX-" + Date.now() + "-" + rand();
+    const notes = el("invExNotes").value.trim();
+    const first = chosen[0].l;
+    const phone = first.customerPhone || phoneOfName(customer);
+
+    const returnRecords = chosen.map(({ l, q }) => ({
+      id: "RET-" + Date.now() + "-" + rand(),
+      orderNo, customer, customerPhone: phone,
+      saleId: l.id,
+      invoiceId: l.invoiceId || "",
+      productId: l.productId || "",
+      productName: l.productName || "",
+      productCode: l.productCode || "",
+      quantity: q,
+      reason: "تبديل: " + reason,
+      paymentMethod: l.paymentMethod || "",
+      refund: 0,
+      notes,
+      source: "exchange",
+      exchangeId,
+      stockStatus: "returns",
+      createdAt: now
+    }));
+
+    const returnedItems = chosen.map(({ l, q }) => ({
+      saleId: l.id, productId: l.productId || "", productName: l.productName || "", productCode: l.productCode || "",
+      quantity: q, value: lineRefund(l, q), unitCost: Number(l.unitCost) || 0
+    }));
+    const newItems = newLines.map(({ np, item }) => ({
+      productId: np.id, productName: np.name, productCode: np.code,
+      quantity: item.qty, unitPrice: item.price, unitCost: Number(np.purchasePrice) || 0
+    }));
+    const newUnits = newItems.reduce((t, i) => t + i.quantity, 0);
+    const newCost = newItems.reduce((t, i) => t + i.unitCost * i.quantity, 0);
+
+    const exchangeRecord = {
+      id: exchangeId, orderNo, customer, customerPhone: phone, createdAt: now, reason,
+      saleId: first.id,
+      invoiceId: first.invoiceId || "",
+      returnedProductName: returnedItems.map(i => i.productName).join("، "),
+      returnedProductCode: returnedItems.map(i => i.productCode).join("، "),
+      returnedQty: returnedItems.reduce((t, i) => t + i.quantity, 0),
+      returnedItems,
+      newProductId: newItems[0].productId,
+      newProductName: newItems.map(i => i.productName).join("، "),
+      newProductCode: newItems.map(i => i.productCode).join("، "),
+      newQty: newUnits,
+      newItems,
+      newUnitPrice: newUnits ? r2(newValue / newUnits) : 0,
+      newUnitCost: newUnits ? newCost / newUnits : 0,
+      returnedValue, newValue, difference,
+      method: difference === 0 ? "" : method,
+      notes
+    };
+
+    const oldQuantities = newLines.map(({ np }) => ({ np, quantity: np.quantity }));
+    newLines.forEach(({ np, item }) => { np.quantity = Number(np.quantity) - item.qty; });
+    returns.push(...returnRecords);
+    exchanges.push(exchangeRecord);
+
+    if (!persist([[PRODUCT_KEY, products], [RETURNS_KEY, returns], [EXCHANGES_KEY, exchanges]])) {
+      oldQuantities.forEach(({ np, quantity }) => { np.quantity = quantity; });
+      returns.splice(returns.length - returnRecords.length, returnRecords.length);
+      exchanges.pop();
+      return showMessage(msg, "تعذر حفظ التبديل. لم يتم تغيير المخزون.", "error");
+    }
+
+    logActivity("تبديل فاتورة", orderNo + " — " + customer + " — رجع " + returnedItems.length + " صنف وخرج " + newItems.length + " صنف — فرق " + formatMoney(difference));
+
+    xKey = null;
+    xPicks.clear();
+    xNew = [];
+    el("invExSearch").value = "";
+    ["invExOrderNo", "invExCustomer", "invExReason", "invExMethod", "invExNotes"].forEach(id => { el(id).value = ""; });
+    renderProducts();
+    renderAll();
+    showMessage(msg, "تم التبديل رقم " + orderNo + " للعميل " + customer + ": دخلت " + returnRecords.reduce((t, x) => t + x.quantity, 0) +
+      " قطعة مخزن المرتجعات وخرجت " + newUnits + " قطعة من المخزن الرئيسي. الفرق: " +
+      (difference === 0 ? "لا يوجد" : (difference > 0 ? "دفع " : "رد ") + formatMoney(Math.abs(difference))) + ".", "success");
+  });
+
   /* ================= تهيئة وتحديث ================= */
   function renderAll() {
     renderCustomerNames();
+    renderLookupList();
     fillSaleSelect(el("returnSaleSelect"));
     fillSaleSelect(el("exchangeSaleSelect"));
+    updateLookupInfo("returnSaleSelect");
+    updateLookupInfo("exchangeSaleSelect");
     fillNewProducts();
 
     if (!el("returnOrderNo").value) el("returnOrderNo").value = nextNo("RET", returnOrders());
@@ -6940,6 +7793,8 @@ monthInput.value = month;
     renderReturns();
     renderExchanges();
     updateExchangePreview();
+    renderInvReturn(false);
+    renderInvExchange(false);
   }
 
   const previousShowPage = showPage;
