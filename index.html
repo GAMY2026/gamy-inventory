@@ -10697,6 +10697,8 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
 <!-- ===== GAMY Chatbot ===== -->
 <style>
 #gbBtn{position:fixed;left:20px;bottom:20px;z-index:9000;width:70px;height:64px;padding:0;border:0;background:none;cursor:pointer;filter:drop-shadow(0 8px 14px #0008);transition:transform .2s ease;animation:gbFloat 3.2s ease-in-out infinite}
+#gbBadge{position:absolute;top:-4px;right:-2px;min-width:20px;height:20px;padding:0 5px;box-sizing:border-box;border-radius:10px;background:#e5484d;color:#fff;font:700 11px/20px sans-serif;text-align:center;border:2px solid #0d1b2b;line-height:16px}
+#gbBadge[hidden]{display:none}
 #gbBtn:hover{transform:scale(1.08)}
 #gbBtn svg{width:100%;height:100%;display:block}
 .gbEye{transform-box:fill-box;transform-origin:center;animation:gbBlink 4.6s infinite}
@@ -10707,10 +10709,18 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
 #gbBox.open{display:flex}
 #gbHead{padding:12px 14px;background:linear-gradient(110deg,#07111f,#122239);border-bottom:1px solid #9c7b42;color:#ffe0a0;font-weight:700;display:flex;justify-content:space-between;align-items:center}
 #gbHead button{background:none;border:0;color:#ffe0a0;font-size:18px;cursor:pointer}
+.gbHeadBtns{display:flex;gap:6px}
+#gbMic{width:42px;border:1px solid #34485d;border-radius:8px;background:#142237;color:#edf3fb;font-size:18px;cursor:pointer}
+#gbMic.on{background:#e5484d;border-color:#e5484d;animation:gbPulse 1s infinite}
+@keyframes gbPulse{50%{box-shadow:0 0 0 6px #e5484d55}}
 #gbMsgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
 .gbm{max-width:88%;padding:8px 12px;border-radius:12px;font-size:13px;line-height:1.7;white-space:pre-line}
 .gbm.bot{background:#132438;border:1px solid #24384d;align-self:flex-start}
 .gbm.me{background:#3a3020;border:1px solid #9c7b42;color:#ffe0a0;align-self:flex-end}
+.gbAct{display:flex;gap:6px;margin-top:8px}
+.gbAct button{flex:1;padding:6px 8px;border-radius:8px;border:1px solid #34485d;background:#142237;color:#edf3fb;font-weight:700;cursor:pointer}
+.gbAct button:first-child{background:linear-gradient(135deg,#e6bd68,#a98232);color:#1a1405;border-color:#c9a04a}
+.gbAct button:disabled{opacity:.4;cursor:default}
 #gbChips{display:flex;flex-wrap:wrap;gap:6px;padding:0 12px 8px}
 #gbChips button{background:#142237;border:1px solid #34485d;color:#c5d1df;border-radius:14px;padding:3px 10px;font-size:12px;cursor:pointer}
 #gbChips button:hover{border-color:#e6bd68;color:#ffe0a0}
@@ -10735,12 +10745,12 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
 <circle class="gbEye" cx="43" cy="47" r="10.5" fill="url(#gbEyeG)"/>
 <circle class="gbEye" cx="77" cy="47" r="10.5" fill="url(#gbEyeG)"/>
 </symbol></defs></svg>
-<button id="gbBtn" type="button" aria-label="المساعد"><svg viewBox="0 0 120 110"><use href="#gbIcon"/></svg></button>
+<button id="gbBtn" type="button" aria-label="المساعد"><svg viewBox="0 0 120 110"><use href="#gbIcon"/></svg><span id="gbBadge" hidden></span></button>
 <div id="gbBox" role="dialog" aria-label="مساعد GAMY">
-  <div id="gbHead"><span><svg class="gbHeadIcon" viewBox="0 0 120 110"><use href="#gbIcon"/></svg>مساعد GAMY</span><button type="button" id="gbClose">✕</button></div>
+  <div id="gbHead"><span><svg class="gbHeadIcon" viewBox="0 0 120 110"><use href="#gbIcon"/></svg>مساعد GAMY</span><span class="gbHeadBtns"><button type="button" id="gbSpeak" title="قراءة الردود بصوت" aria-label="قراءة الردود بصوت">🔇</button><button type="button" id="gbClose">✕</button></span></div>
   <div id="gbMsgs"></div>
   <div id="gbChips"></div>
-  <form id="gbForm" autocomplete="off"><input id="gbIn" placeholder="اسأل عن مخزون، مبيعات، سعر…"><button id="gbSend" type="submit">إرسال</button></form>
+  <form id="gbForm" autocomplete="off"><input id="gbIn" placeholder="اسأل عن مخزون، مبيعات، سعر…"><button id="gbMic" type="button" title="اتكلم بالعربي" aria-label="إدخال صوتي">🎤</button><button id="gbSend" type="submit">إرسال</button></form>
 </div>
 <script>
 (function () {
@@ -10776,15 +10786,197 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
     return scored.filter(function (x) { return x.sc === max; }).map(function (x) { return x.p; });
   }
 
-  function salesIn(filter) {
-    return S().filter(function (s) { return filter(new Date(s.createdAt)); });
-  }
+  var K = { ret: "gamy_inventory_returns_v1", exc: "gamy_inventory_exchanges_v1", pay: "gamy_inventory_customer_payments_v1", exp: "gamy_inventory_expenses_v1" };
+  function readKey(k) { try { var v = JSON.parse(localStorage.getItem(k) || "[]"); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
   function sameDay(a, b) { return a.toDateString() === b.toDateString(); }
-  function summarize(list, title) {
-    var inv = {}, total = 0, profit = 0, pcs = 0;
+  function ymd(d) { return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+  function adj(kind, pred) { try { return Number(adjustmentsTotal(kind, function (v) { return pred(new Date(v)); })) || 0; } catch (e) { return 0; } }
+  function salesIn(pred) { return S().filter(function (s) { return pred(new Date(s.createdAt)); }); }
+
+  function summarize(pred, title) {
+    var list = salesIn(pred), inv = {}, total = 0, profit = 0, pcs = 0;
     list.forEach(function (s) { inv[s.invoiceId || s.id] = 1; total += +s.total || 0; profit += +s.profit || 0; pcs += +s.quantity || 0; });
-    if (!list.length) return title + ": مفيش مبيعات مسجلة.";
-    return title + ":\nعدد الفواتير: " + num(Object.keys(inv).length) + "\nعدد القطع: " + num(pcs) + "\nالإجمالي: " + money(total) + "\nالربح: " + money(profit) + "\n(قبل خصم المرتجعات)";
+    total += adj("revenue", pred); profit += adj("profit", pred);
+    if (!list.length && !total) return title + ": مفيش مبيعات مسجلة.";
+    return title + ":\nعدد الفواتير: " + num(Object.keys(inv).length) + "\nعدد القطع: " + num(pcs) + "\nالإجمالي (الصافي): " + money(total) + "\nالربح: " + money(profit);
+  }
+
+  function alertLists() {
+    var lim = lowLimit(), l = P();
+    return { lim: lim, out: l.filter(function (p) { return p.quantity <= 0; }), low: l.filter(function (p) { return p.quantity > 0 && p.quantity <= lim; }) };
+  }
+  function alertsText() {
+    var a = alertLists();
+    if (!a.out.length && !a.low.length) return "مفيش تنبيهات مخزون، كل المنتجات كميتها تمام.";
+    var t = "";
+    if (a.out.length) t += "🔴 خلصت (" + num(a.out.length) + "):\n" + a.out.slice(0, 8).map(label).join("\n") + (a.out.length > 8 ? "\n…والباقي في صفحة تنبيهات المخزون" : "") + "\n";
+    if (a.low.length) t += (t ? "\n" : "") + "🟠 منخفضة (" + a.lim + " قطع أو أقل) (" + num(a.low.length) + "):\n" + a.low.slice(0, 8).map(function (p) { return label(p) + " ← " + num(p.quantity); }).join("\n") + (a.low.length > 8 ? "\n…والباقي في صفحة تنبيهات المخزون" : "");
+    return t;
+  }
+
+  /* ---- حسابات الآجل (نفس منطق صفحة حسابات العملاء) ---- */
+  function accounts() {
+    var map = {}, sl = S(), byId = {};
+    sl.forEach(function (x) { byId[x.id] = x; });
+    function acc(n) {
+      var name = String(n || "").trim(), k = norm(name);
+      return map[k] || (map[k] = { name: name || "عميل بدون اسم", bal: 0, last: null });
+    }
+    function touch(a, d) { if (d && (!a.last || new Date(d) > new Date(a.last))) a.last = d; }
+    var groups = {};
+    sl.forEach(function (x) {
+      if (!x || x.paymentMethod !== "آجل") return;
+      var gk = x.invoiceId || ("SALE-" + x.id), g = groups[gk] || (groups[gk] = { date: x.createdAt, c: "", amt: 0 });
+      g.amt += +x.total || 0; if (!g.c && x.customerName) g.c = x.customerName;
+    });
+    Object.keys(groups).forEach(function (k) { var g = groups[k], a = acc(g.c); a.bal += g.amt; touch(a, g.date); });
+    readKey(K.ret).forEach(function (r) {
+      if (!r || r.source === "exchange" || r.paymentMethod !== "آجل") return;
+      var sale = byId[r.saleId] || {}, a = acc(sale.customerName || r.customer || "");
+      a.bal -= +r.refund || 0; touch(a, r.createdAt);
+    });
+    readKey(K.pay).forEach(function (x) { if (!x) return; var a = acc(x.customerName || ""); a.bal -= +x.amount || 0; touch(a, x.createdAt); });
+    return Object.keys(map).map(function (k) { var a = map[k]; a.bal = Math.round(a.bal * 100) / 100; return a; });
+  }
+  function matchAccount(q, list) {
+    var nq = norm(q), qt = nq.split(" "), best = null;
+    list.forEach(function (a) {
+      if (a.name === "عميل بدون اسم") return;
+      var nn = norm(a.name), toks = nn.split(" ").filter(Boolean);
+      var ok = nq.indexOf(nn) >= 0 || (toks.length && toks.every(function (t) { return qt.indexOf(t) >= 0; }));
+      if (ok && (!best || nn.length > norm(best.name).length)) best = a;
+    });
+    return best;
+  }
+  function when(d) { return d ? new Date(d).toLocaleDateString("ar-EG", { day: "numeric", month: "long" }) : "—"; }
+  function accountsText(q) {
+    var list = accounts(), one = matchAccount(q, list);
+    if (one) {
+      if (one.bal > 0.009) return "حساب " + one.name + ":\nعليه: " + money(one.bal) + "\nآخر حركة: " + when(one.last);
+      if (one.bal < -0.009) return "حساب " + one.name + ":\nله رصيد دائن: " + money(-one.bal) + "\nآخر حركة: " + when(one.last);
+      return one.name + " حسابه متصفّي، مفيش عليه حاجة.";
+    }
+    var owing = list.filter(function (a) { return a.bal > 0.009; }).sort(function (a, b) { return b.bal - a.bal; });
+    if (!owing.length) return "مفيش مديونيات آجل على أي عميل.";
+    var total = owing.reduce(function (t, a) { return t + a.bal; }, 0);
+    return "إجمالي الآجل: " + money(total) + " على " + num(owing.length) + " عميل\nأكتر العملاء عليهم:\n" +
+      owing.slice(0, 5).map(function (a, i) { return (i + 1) + ". " + a.name + " — " + money(a.bal); }).join("\n");
+  }
+
+  /* ---- مصاريف + ملخص اليوم ---- */
+  function expensesOn(pred) { return readKey(K.exp).filter(function (e) { return e && pred(new Date((e.date || String(e.createdAt).slice(0, 10)) + "T12:00:00")); }); }
+  function expensesText(q) {
+    var now = new Date(), isM = norm(q).indexOf("شهر") >= 0;
+    var list = expensesOn(function (d) { return isM ? (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) : sameDay(d, now); });
+    var title = isM ? "مصاريف الشهر" : "مصاريف النهارده";
+    if (!list.length) return title + ": مفيش مصاريف مسجلة.";
+    var by = {}, tot = 0;
+    list.forEach(function (e) { tot += +e.amount || 0; by[e.category || "أخرى"] = (by[e.category || "أخرى"] || 0) + (+e.amount || 0); });
+    return title + ": " + money(tot) + "\n" + Object.keys(by).sort(function (a, b) { return by[b] - by[a]; }).map(function (k) { return "• " + k + ": " + money(by[k]); }).join("\n");
+  }
+  function closingText() {
+    var now = new Date(), pr = function (d) { return sameDay(d, now); };
+    var list = salesIn(pr), inv = {}, pcs = 0, rev = 0, prof = 0, by = {}, items = {};
+    list.forEach(function (x) {
+      inv[x.invoiceId || x.id] = 1; pcs += +x.quantity || 0; rev += +x.total || 0; prof += +x.profit || 0;
+      var m = x.paymentMethod || "غير محدد"; by[m] = (by[m] || 0) + (+x.total || 0);
+      items[x.productName] = (items[x.productName] || 0) + (+x.quantity || 0);
+    });
+    rev += adj("revenue", pr); prof += adj("profit", pr);
+    var ex = expensesOn(pr).reduce(function (t, e) { return t + (+e.amount || 0); }, 0);
+    var rets = readKey(K.ret).filter(function (r) { return r && r.source !== "exchange" && pr(new Date(r.createdAt)); });
+    var refund = rets.reduce(function (t, r) { return t + (+r.refund || 0); }, 0);
+    var excs = readKey(K.exc).filter(function (x) { return x && pr(new Date(x.createdAt)); }).length;
+    var t = "📋 ملخص يوم " + now.toLocaleDateString("ar-EG", { weekday: "long", day: "numeric", month: "long" }) + "\n\n" +
+      "الفواتير: " + num(Object.keys(inv).length) + " | القطع: " + num(pcs) + "\n" +
+      "المبيعات (الصافي): " + money(rev) + "\n" +
+      "الربح: " + money(prof) + "\n" +
+      "المصاريف: " + money(ex) + "\n" +
+      "صافي الربح بعد المصاريف: " + money(prof - ex);
+    var ms = Object.keys(by);
+    if (ms.length) t += "\n\nطرق الدفع:\n" + ms.map(function (m) { return "• " + m + ": " + money(by[m]); }).join("\n");
+    t += "\n\nالمرتجعات: " + (rets.length ? num(rets.length) + " بقيمة " + money(refund) : "مفيش") + " | التبديل: " + (excs ? num(excs) : "مفيش");
+    var top = Object.keys(items).sort(function (a, b) { return items[b] - items[a]; }).slice(0, 3);
+    if (top.length) t += "\n\nالأكثر مبيعًا النهارده: " + top.map(function (k) { return k + " (" + num(items[k]) + ")"; }).join("، ");
+    var a = alertLists();
+    if (a.out.length || a.low.length) t += "\n\n⚠️ تنبيهات المخزون: " + num(a.out.length) + " خلصت، " + num(a.low.length) + " منخفضة";
+    return t;
+  }
+
+  /* ---- أوامر تنفيذية (بتتنفذ بعد تأكيدك، من خلال شاشات النظام نفسها) ---- */
+  var pending = null;
+  /* نفس أسلوب التطبيق: بيشتغل حتى لو المتصفح بيمنع إرسال النماذج (المعاينة داخل صفحة) */
+  function submitForm(f) { f.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })); }
+  function lockRow(o) { if (o && o.row) [].forEach.call(o.row.querySelectorAll("button"), function (x) { x.disabled = true; }); }
+  function setPending(summary, run) {
+    lockRow(pending);
+    var me = { run: run, t: Date.now() };
+    pending = me;
+    me.row = add(summary + "\n\nأنفذ الأمر؟", "bot", [
+      { label: "✅ تأكيد", fn: function () { confirmPending(me); } },
+      { label: "✖ إلغاء", fn: function () { cancelPending(me); } }
+    ]).lastChild;
+  }
+  function confirmPending(me) {
+    if (!pending || (me && pending !== me)) { add("الأمر ده اتلغى أو اتبدل بأمر تاني.", "bot"); return; }
+    var cur = pending; pending = null; lockRow(cur);
+    if (Date.now() - cur.t > 120000) { add("انتهت مهلة التأكيد، اكتب الأمر تاني.", "bot"); return; }
+    var res; try { res = cur.run(); } catch (e) { res = "❌ حصلت مشكلة وماتنفذش الأمر."; }
+    add(res, "bot"); try { refreshBadge(); } catch (e) {}
+  }
+  function cancelPending(me) {
+    if (me && pending !== me) return;
+    lockRow(pending); pending = null; add("تمام، لغيت الأمر.", "bot");
+  }
+  function firstNum(q) { var m = norm(q).match(/\d+(?:\.\d+)?/); return m ? parseFloat(m[0]) : NaN; }
+  var CAT = [["ايجار", "إيجار"], ["مرتب", "مرتبات"], ["راتب", "مرتبات"], ["رواتب", "مرتبات"], ["اجور", "مرتبات"], ["يوميه", "مرتبات"],
+    ["كهرب", "كهرباء ومياه"], ["مياه", "كهرباء ومياه"], ["ميه", "كهرباء ومياه"], ["نور", "كهرباء ومياه"], ["مواصلات", "مواصلات"],
+    ["بنزين", "مواصلات"], ["توصيل", "مواصلات"], ["شحن", "مواصلات"], ["صيانه", "صيانة"], ["تصليح", "صيانة"],
+    ["مشتريات", "مشتريات تشغيل"], ["تشغيل", "مشتريات تشغيل"], ["اعلان", "تسويق وإعلانات"], ["تسويق", "تسويق وإعلانات"],
+    ["ضريب", "ضرائب ورسوم"], ["ضرايب", "ضرائب ورسوم"], ["رسوم", "ضرائب ورسوم"]];
+
+  function expenseCommand(raw) {
+    var q = norm(raw), amount = firstNum(raw);
+    if (!(amount > 0) || amount > 10000000) return "قولي المبلغ بالأرقام، مثلًا: سجل مصروف 200 إيجار";
+    var cat = "أخرى";
+    for (var i = 0; i < CAT.length; i++) if (q.indexOf(CAT[i][0]) >= 0) { cat = CAT[i][1]; break; }
+    var method = q.indexOf("فيزا") >= 0 ? "فيزا" : q.indexOf("تحويل") >= 0 ? "تحويل بنكي" : q.indexOf("محفظ") >= 0 ? "محفظة إلكترونية" : "كاش";
+    amount = Math.round(amount * 100) / 100;
+    setPending("📝 تسجيل مصروف:\nالمبلغ: " + money(amount) + "\nالنوع: " + cat + "\nالدفع: " + method + "\nالتاريخ: النهارده", function () {
+      var before = readKey(K.exp).length, sel = $("expenseCategory");
+      var ok = [].some.call(sel.options, function (o) { return o.value === cat; });
+      var shown = ok ? cat : "أخرى"; sel.value = shown;
+      $("expenseDate").value = ymd(new Date());
+      $("expenseAmount").value = amount;
+      $("expenseMethod").value = method;
+      $("expenseNotes").value = "مسجل من المساعد";
+      submitForm($("expenseForm"));
+      if (readKey(K.exp).length > before) return "✅ اتسجل مصروف " + money(amount) + " (" + shown + ").";
+      var m = $("expenseMessage"), why = m && m.textContent.trim();
+      return "❌ المصروف ماتسجلش" + (why ? ":\n" + why : ". جرّب تسجله من صفحة المصاريف.");
+    });
+    return null;
+  }
+
+  var CMD_WORDS = ["زود", "زوّد", "ضيف", "اضف", "استلمت", "وصل", "وصلني", "قطعه", "قطع", "كميه", "حبه", "حبات", "من", "علي", "على", "ل", "في"].map(norm);
+  function stockCommand(raw) {
+    var qty = firstNum(raw);
+    if (!(qty > 0) || qty !== Math.floor(qty) || qty > 100000) return "قولي الكمية كرقم صحيح، مثلًا: زود 5 قطع من TS001";
+    var cleaned = norm(raw).replace(/\d+(?:\.\d+)?/, " ").split(" ").filter(function (t) { return t && CMD_WORDS.indexOf(t) < 0; }).join(" ");
+    var found = findProducts(cleaned);
+    if (!found.length) return "مش لاقي المنتج ده. اكتب اسمه أو كوده بالظبط.";
+    if (found.length > 1) return "في أكتر من منتج بالاسم ده، حدد بالكود:\n" + found.slice(0, 6).map(function (x) { return label(x) + " ← " + num(x.quantity); }).join("\n");
+    var pr = found[0], id = pr.id, from = pr.quantity;
+    setPending("📦 إضافة كمية:\nالمنتج: " + label(pr) + "\nالكمية الحالية: " + num(from) + "\nهتزيد: " + num(qty) + " ← هتبقى " + num(from + qty), function () {
+      var cur = P().filter(function (x) { return String(x.id) === String(id); })[0];
+      if (!cur) return "❌ المنتج مش موجود.";
+      var b = cur.quantity;
+      openStockModal(cur.id); $("stockAddQuantity").value = qty; submitForm($("stockForm"));
+      if (cur.quantity === b + qty) return "✅ ضفت " + num(qty) + " قطعة لـ " + label(cur) + ".\nالرصيد دلوقتي: " + num(cur.quantity);
+      try { closeStockModal(); } catch (e) {}
+      return "❌ الكمية ماتضافتش.";
+    });
+    return null;
   }
 
   var PAGES = [
@@ -10810,6 +11002,12 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
       return "قولي اسم الصفحة بالظبط (مثلًا: افتح المبيعات).";
     }
     if (has("مساعده", "تعمل ايه", "تقدر", "help")) return HELP;
+    if (has("سجل", "ضيف", "اضف", "اكتب", "دخل") && has("مصروف", "مصاريف", "مصروفات")) return expenseCommand(raw);
+    if (has("زود", "زوّد", "ضيف", "اضف", "استلمت", "وصلني") && !has("مصروف", "مصاريف", "مصروفات")) return stockCommand(raw);
+    if (has("قفل اليوم", "اقفال", "تقفيل", "ملخص", "تقرير اليوم", "حصاد اليوم")) return closingText();
+    if (has("مصاريف", "مصروفات")) return expensesText(raw);
+    if (has("اجل", "ديون", "دين", "مديون", "عليهم", "عليه كام", "عليها كام", "فلوس عند") || (has("رصيد", "حساب", "عليه", "عليها") && matchAccount(raw, accounts()))) return accountsText(raw);
+    if (has("تنبيه")) return alertsText();
     if (has("نفذ", "خلص", "خالص", "صفر", "ناقص", "خلصت") && has("منتج", "صنف", "مخزون", "قطع", "ايه", "اي")) {
       var out = list.filter(function (p) { return p.quantity <= 0; });
       return out.length ? "المنتجات اللي خلصت (" + num(out.length) + "):\n" + out.slice(0, 15).map(label).join("\n") + (out.length > 15 ? "\n…والباقي في صفحة تنبيهات المخزون" : "") : "مفيش منتج خلص، كله موجود.";
@@ -10832,11 +11030,12 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
       return top.length ? "الأكثر مبيعًا:\n" + top.map(function (k, i) { return (i + 1) + ". " + k + " — " + num(m[k]) + " قطعة"; }).join("\n") : "مفيش مبيعات لسه.";
     }
     if (has("مبيعات", "بعت", "ايراد", "ربح", "فواتير")) {
-      if (has("امس", "امبارح")) { var y = new Date(now.getTime() - 864e5); return summarize(salesIn(function (d) { return sameDay(d, y); }), "مبيعات أمس"); }
-      if (has("شهر")) return summarize(salesIn(function (d) { return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear(); }), "مبيعات الشهر");
-      if (has("اسبوع")) return summarize(salesIn(function (d) { return now - d < 7 * 864e5; }), "مبيعات آخر 7 أيام");
-      if (has("كل", "اجمالي", "الاجمالي")) return summarize(S(), "إجمالي كل المبيعات");
-      return summarize(salesIn(function (d) { return sameDay(d, now); }), "مبيعات النهارده");
+      var pr = function (d) { return sameDay(d, now); }, tt = "مبيعات النهارده";
+      if (has("امس", "امبارح")) { var y = new Date(now.getTime() - 864e5); pr = function (d) { return sameDay(d, y); }; tt = "مبيعات أمس"; }
+      else if (has("شهر")) { pr = function (d) { return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear(); }; tt = "مبيعات الشهر"; }
+      else if (has("اسبوع")) { pr = function (d) { return now - d < 7 * 864e5; }; tt = "مبيعات آخر 7 أيام"; }
+      else if (has("كل", "اجمالي", "الاجمالي")) { pr = function () { return true; }; tt = "إجمالي كل المبيعات"; }
+      return summarize(pr, tt);
     }
     var found = findProducts(raw);
     if (found.length) {
@@ -10850,32 +11049,163 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
     return "مفهمتش قصدك. جرّب تكتب اسم منتج أو كوده، أو اسأل عن المبيعات والمخزون. اكتب \"مساعدة\" تشوف الأمثلة.";
   }
 
-  var HELP = "أقدر أجاوبك على:\n• كمية وسعر أي منتج (اكتب اسمه أو كوده)\n• المنتجات الخالصة / المخزون المنخفض\n• قيمة المخزون وإجمالي القطع\n• مبيعات النهارده / أمس / الأسبوع / الشهر\n• الأكثر مبيعًا\n• افتح أي صفحة (مثلًا: افتح الجرد)";
+  var HELP = "أقدر أجاوبك على:\n• كمية وسعر أي منتج (اكتب اسمه أو كوده)\n• تنبيهات المخزون والمنتجات الخالصة\n• ملخص اليوم: اكتب \"قفل اليوم\"\n• الآجل: \"إجمالي الآجل\" أو \"أحمد عليه كام؟\"\n• مبيعات النهارده / أمس / الأسبوع / الشهر\n• المصاريف، قيمة المخزون، الأكثر مبيعًا\n• افتح أي صفحة (مثلًا: افتح الجرد)\n• اضغط 🎤 واتكلم بالعربي، وهرد عليك بصوت كمان\n\nأوامر (بتتنفذ بعد ما تأكد):\n• سجل مصروف 200 إيجار\n• زود 5 قطع من TS001";
 
-  function add(text, who) {
+  function add(text, who, actions) {
     var d = document.createElement("div");
     d.className = "gbm " + who; d.textContent = text;
+    if (actions && actions.length) {
+      var row = document.createElement("div"); row.className = "gbAct";
+      actions.forEach(function (a) {
+        var b = document.createElement("button"); b.type = "button"; b.textContent = a.label;
+        b.onclick = function () { [].forEach.call(row.children, function (x) { x.disabled = true; }); a.fn(); };
+        row.appendChild(b);
+      });
+      d.appendChild(row);
+    }
     msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight;
+    if (who === "bot") speak(text);
+    return d;
   }
   function ask(text) {
     text = String(text).trim(); if (!text) return;
     add(text, "me");
+    var nt = norm(text);
+    if (pending) {
+      if (["تاكيد", "اكد", "اه", "ايوه", "ايوا", "تمام", "نفذ", "اوك", "اوكي", "ok", "yes", "نعم", "موافق"].indexOf(nt) >= 0) { confirmPending(pending); return; }
+      if (["الغاء", "لا", "كنسل", "الغي", "no", "cancel", "ماتنفذش"].indexOf(nt) >= 0) { cancelPending(pending); return; }
+    }
     var r; try { r = answer(text); } catch (e) { r = "حصلت مشكلة وأنا بدور على الإجابة، جرّب تاني."; }
-    setTimeout(function () { add(r, "bot"); }, 150);
+    if (r) setTimeout(function () { add(r, "bot"); }, 150);
   }
 
-  ["مبيعات النهارده", "مخزون منخفض", "المنتجات الخالصة", "قيمة المخزون", "الأكثر مبيعًا", "مساعدة"].forEach(function (c) {
+  ["قفل اليوم", "مبيعات النهارده", "تنبيهات المخزون", "الآجل", "مصاريف النهارده", "مساعدة"].forEach(function (c) {
     var b = document.createElement("button"); b.type = "button"; b.textContent = c;
     b.onclick = function () { ask(c); }; $("gbChips").appendChild(b);
   });
   $("gbForm").addEventListener("submit", function (e) { e.preventDefault(); var v = input.value; input.value = ""; ask(v); });
   function toggle(open) {
     box.classList.toggle("open", open);
-    if (open && !msgs.children.length) add("أهلًا! أنا مساعد GAMY. اسألني عن المخزون أو المبيعات أو اكتب اسم منتج. اكتب \"مساعدة\" لو محتاج أمثلة.", "bot");
+    if (open && !msgs.children.length) { add("أهلًا! أنا مساعد GAMY. اسألني عن المخزون أو المبيعات أو الآجل، أو اكتب \"قفل اليوم\" لملخص اليوم.", "bot"); var al = alertLists(); if (al.out.length || al.low.length) add("⚠️ عندك " + num(al.out.length) + " منتج خلص و" + num(al.low.length) + " منخفض. اضغط \"تنبيهات المخزون\" للتفاصيل.", "bot"); }
     if (open) input.focus();
   }
   $("gbBtn").onclick = function () { toggle(!box.classList.contains("open")); };
-  $("gbClose").onclick = function () { toggle(false); };
+  $("gbClose").onclick = function () { toggle(false); try { stopSpeaking(); if (listening) rec.abort(); } catch (e) {} };
+
+
+  /* ---- الإدخال الصوتي (عربي مصري) + قراءة الردود ---- */
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  var synth = window.speechSynthesis, rec = null, listening = false, spokenMode = false;
+  var micBtn = $("gbMic"), speakBtn = $("gbSpeak"), basePlaceholder = input.placeholder;
+
+  var NUMW = (function () {
+    var m = {};
+    function a(v, list) { list.split(" ").forEach(function (w) { m[norm(w)] = v; }); }
+    a(1, "واحد واحده"); a(2, "اتنين اثنين اتنيين"); a(3, "تلاته ثلاثه تلات ثلاث"); a(4, "اربعه اربع"); a(5, "خمسه خمس");
+    a(6, "سته ست"); a(7, "سبعه سبع"); a(8, "تمانيه ثمانيه تمن ثمان تماني"); a(9, "تسعه تسع"); a(10, "عشره عشر");
+    a(11, "حداشر احدعشر"); a(12, "اتناشر اثناعشر"); a(13, "تلتاشر تلاتاشر ثلاثتاشر"); a(14, "اربعتاشر ارباعتاشر"); a(15, "خمستاشر");
+    a(16, "ستاشر"); a(17, "سبعتاشر"); a(18, "تمنتاشر"); a(19, "تسعتاشر");
+    a(20, "عشرين"); a(30, "تلاتين ثلاثين"); a(40, "اربعين"); a(50, "خمسين"); a(60, "ستين"); a(70, "سبعين"); a(80, "تمانين ثمانين"); a(90, "تسعين");
+    a(100, "ميه مايه مائه"); a(200, "ميتين مئتين مائتين"); a(300, "تلتميه تلاتميه ثلاثميه ثلاثمائه"); a(400, "ربعميه اربعميه اربعمائه");
+    a(500, "خمسميه خمسمائه"); a(600, "ستميه ستمائه"); a(700, "سبعميه سبعمائه"); a(800, "تمنميه ثمانميه ثمانمائه"); a(900, "تسعميه تسعمائه");
+    return m;
+  })();
+  var THOU = ["الف", "الاف", "تلاف"].map(norm);
+  function numTok(t) {
+    var n = norm(t).replace(/\s+/g, "");
+    if (NUMW[n] !== undefined || THOU.indexOf(n) >= 0 || n === "الفين") return n;
+    if (n.length > 3 && n.charAt(0) === "و") { var r = n.slice(1); if (NUMW[r] !== undefined || THOU.indexOf(r) >= 0 || r === "الفين") return r; }
+    return null;
+  }
+  /* "ميتين وخمسين" ← 250 ، "تلات تلاف وخمسميه" ← 3500 */
+  function words2digits(text) {
+    var out = [], run = null;
+    function flush() {
+      if (!run) return;
+      var total = 0, cur = 0;
+      run.forEach(function (n) {
+        if (n === "الفين") total += 2000;
+        else if (THOU.indexOf(n) >= 0) { total += (cur || 1) * 1000; cur = 0; }
+        else cur += NUMW[n];
+      });
+      out.push(String(total + cur)); run = null;
+    }
+    String(text).split(/\s+/).forEach(function (t) {
+      var n = numTok(t);
+      if (n) { (run = run || []).push(n); } else { flush(); out.push(t); }
+    });
+    flush();
+    return out.join(" ");
+  }
+
+  function speakable(t) {
+    return String(t).replace(/[\u{1F000}-\u{1FFFF}\u2600-\u27BF\uFE0F•←→]/gu, " ").replace(/ج\.م/g, " جنيه ").replace(/\n+/g, ". ").replace(/\s+/g, " ").trim();
+  }
+  function stopSpeaking() { try { if (synth) synth.cancel(); } catch (e) {} }
+  function speak(t) {
+    if (!spokenMode || !synth || typeof SpeechSynthesisUtterance === "undefined") return;
+    try {
+      synth.cancel();
+      var u = new SpeechSynthesisUtterance(speakable(t)), vs = synth.getVoices().filter(function (v) { return /^ar/i.test(v.lang); });
+      var pick = vs.filter(function (v) { return /EG/i.test(v.lang); })[0] || vs[0];
+      u.lang = "ar-EG"; if (pick) { u.voice = pick; u.lang = pick.lang; }
+      u.onend = function () { if (pending && spokenMode && !listening) startListening(); };
+      synth.speak(u);
+    } catch (e) {}
+  }
+  function setSpoken(on) { spokenMode = on; speakBtn.textContent = on ? "🔊" : "🔇"; if (!on) stopSpeaking(); }
+  speakBtn.onclick = function () {
+    setSpoken(!spokenMode);
+    if (spokenMode) {
+      var noAr = synth && synth.getVoices().length && !synth.getVoices().some(function (v) { return /^ar/i.test(v.lang); });
+      add(noAr ? "جهازك مفيهوش صوت عربي، فالردود هتفضل مكتوبة بس. (ممكن تنزّل صوت عربي من إعدادات النظام)" : "تمام، هقرأ الردود بصوت.", "bot");
+    }
+  };
+
+  function startListening() {
+    if (!SR) { add("المتصفح ده مبيدعمش الإدخال الصوتي. جرّب Chrome أو Edge.", "bot"); return; }
+    if (listening) { try { rec.stop(); } catch (e) {} return; }
+    stopSpeaking();
+    var finalText = "", failed = false;
+    rec = new SR(); rec.lang = "ar-EG"; rec.interimResults = true; rec.continuous = false; rec.maxAlternatives = 1;
+    rec.onstart = function () { listening = true; micBtn.classList.add("on"); input.placeholder = "بسمعك… اتكلم"; };
+    rec.onresult = function (e) {
+      var all = "";
+      for (var i = 0; i < e.results.length; i++) { all += e.results[i][0].transcript + " "; if (e.results[i].isFinal) finalText = all; }
+      input.value = all.trim();
+    };
+    rec.onerror = function (e) {
+      failed = true;
+      var m = {
+        "not-allowed": "المايك متقفل. اسمح بالمايك من أيقونة القفل جنب عنوان الصفحة. (لو الملف مفتوح جوه معاينة، الصوت مش هيشتغل هناك، افتحه كصفحة عادية في Chrome)",
+        "service-not-allowed": "المتصفح مانع الإدخال الصوتي هنا. افتح الملف كصفحة عادية في Chrome أو Edge.",
+        "no-speech": "ماسمعتش حاجة، اضغط على المايك وجرّب تاني.",
+        "audio-capture": "مش لاقي ميكروفون متوصل بالجهاز.",
+        "network": "الإدخال الصوتي محتاج إنترنت."
+      }[e.error];
+      if (e.error !== "aborted") add(m || "حصلت مشكلة في الإدخال الصوتي (" + e.error + ").", "bot");
+    };
+    rec.onend = function () {
+      listening = false; micBtn.classList.remove("on"); input.placeholder = basePlaceholder;
+      var t = (finalText || input.value).trim(); input.value = "";
+      if (t && !failed) { setSpoken(true); ask(words2digits(t)); }
+    };
+    try { rec.start(); } catch (e) { listening = false; }
+  }
+  micBtn.onclick = startListening;
+  if (!SR) micBtn.title = "المتصفح ده مبيدعمش الإدخال الصوتي";
+
+  var badge = $("gbBadge"), btn = $("gbBtn");
+  function refreshBadge() {
+    try {
+      var ov = $("authOverlay");
+      btn.style.display = (ov && getComputedStyle(ov).display !== "none") ? "none" : "";
+      var a = alertLists(), n = a.out.length + a.low.length;
+      badge.hidden = !n; badge.textContent = n > 99 ? "99+" : String(n);
+      btn.title = n ? (a.out.length + " منتج خلص و" + a.low.length + " منخفض") : "مساعد GAMY";
+    } catch (e) {}
+  }
+  refreshBadge(); setInterval(refreshBadge, 2500);
 })();
 </script>
 
