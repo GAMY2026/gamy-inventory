@@ -10694,5 +10694,190 @@ document.getElementById("refreshReportsButton").addEventListener("click", () => 
 })();
 </script>
 
+<!-- ===== GAMY Chatbot ===== -->
+<style>
+#gbBtn{position:fixed;left:20px;bottom:20px;z-index:9000;width:70px;height:64px;padding:0;border:0;background:none;cursor:pointer;filter:drop-shadow(0 8px 14px #0008);transition:transform .2s ease;animation:gbFloat 3.2s ease-in-out infinite}
+#gbBtn:hover{transform:scale(1.08)}
+#gbBtn svg{width:100%;height:100%;display:block}
+.gbEye{transform-box:fill-box;transform-origin:center;animation:gbBlink 4.6s infinite}
+@keyframes gbBlink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.08)}}
+@keyframes gbFloat{0%,100%{translate:0 0}50%{translate:0 -4px}}
+#gbHead .gbHeadIcon{width:34px;height:31px;vertical-align:middle;margin-left:8px}
+#gbBox{position:fixed;left:20px;bottom:96px;z-index:9000;width:360px;max-width:calc(100vw - 30px);height:480px;max-height:calc(100vh - 110px);display:none;flex-direction:column;background:#0d1b2b;color:#edf3fb;border:1px solid #9c7b42;border-radius:14px;box-shadow:0 14px 40px #0008;overflow:hidden;direction:rtl}
+#gbBox.open{display:flex}
+#gbHead{padding:12px 14px;background:linear-gradient(110deg,#07111f,#122239);border-bottom:1px solid #9c7b42;color:#ffe0a0;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+#gbHead button{background:none;border:0;color:#ffe0a0;font-size:18px;cursor:pointer}
+#gbMsgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.gbm{max-width:88%;padding:8px 12px;border-radius:12px;font-size:13px;line-height:1.7;white-space:pre-line}
+.gbm.bot{background:#132438;border:1px solid #24384d;align-self:flex-start}
+.gbm.me{background:#3a3020;border:1px solid #9c7b42;color:#ffe0a0;align-self:flex-end}
+#gbChips{display:flex;flex-wrap:wrap;gap:6px;padding:0 12px 8px}
+#gbChips button{background:#142237;border:1px solid #34485d;color:#c5d1df;border-radius:14px;padding:3px 10px;font-size:12px;cursor:pointer}
+#gbChips button:hover{border-color:#e6bd68;color:#ffe0a0}
+#gbForm{display:flex;gap:6px;padding:10px;border-top:1px solid #24384d;background:#091625}
+#gbIn{flex:1;min-width:0;padding:8px 10px;border-radius:8px;border:1px solid #24384d;background:#0d1b2b;color:#edf3fb}
+#gbSend{padding:0 14px;border:0;border-radius:8px;background:linear-gradient(135deg,#e6bd68,#a98232);color:#1a1405;font-weight:700;cursor:pointer}
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<linearGradient id="gbShell" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#eef2f8"/><stop offset="1" stop-color="#b9c4d6"/></linearGradient>
+<linearGradient id="gbRim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9edf4"/><stop offset=".5" stop-color="#9aa6b8"/><stop offset="1" stop-color="#f4f7fb"/></linearGradient>
+<linearGradient id="gbScreen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a3342"/><stop offset=".45" stop-color="#0a0f18"/><stop offset="1" stop-color="#1c2533"/></linearGradient>
+<radialGradient id="gbEyeG" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#8fe9ff"/><stop offset=".6" stop-color="#27b5ff"/><stop offset="1" stop-color="#1676e8"/></radialGradient>
+<filter id="gbGlow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="2.6"/></filter>
+<symbol id="gbIcon" viewBox="0 0 120 110">
+<path d="M42 5H78Q113 5 113 40V55Q113 90 78 90H55L25 106L33 86Q7 83 7 55V40Q7 5 42 5Z" fill="url(#gbShell)"/>
+<path d="M42 7H78Q111 7 111 40" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".9"/>
+<rect x="17" y="16" width="86" height="62" rx="26" fill="url(#gbRim)"/>
+<rect x="21" y="20" width="78" height="54" rx="23" fill="url(#gbScreen)"/>
+<path d="M30 28Q60 18 92 28" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" opacity=".18"/>
+<circle class="gbEye" cx="43" cy="47" r="12" fill="#27b5ff" filter="url(#gbGlow)" opacity=".85"/>
+<circle class="gbEye" cx="77" cy="47" r="12" fill="#27b5ff" filter="url(#gbGlow)" opacity=".85"/>
+<circle class="gbEye" cx="43" cy="47" r="10.5" fill="url(#gbEyeG)"/>
+<circle class="gbEye" cx="77" cy="47" r="10.5" fill="url(#gbEyeG)"/>
+</symbol></defs></svg>
+<button id="gbBtn" type="button" aria-label="المساعد"><svg viewBox="0 0 120 110"><use href="#gbIcon"/></svg></button>
+<div id="gbBox" role="dialog" aria-label="مساعد GAMY">
+  <div id="gbHead"><span><svg class="gbHeadIcon" viewBox="0 0 120 110"><use href="#gbIcon"/></svg>مساعد GAMY</span><button type="button" id="gbClose">✕</button></div>
+  <div id="gbMsgs"></div>
+  <div id="gbChips"></div>
+  <form id="gbForm" autocomplete="off"><input id="gbIn" placeholder="اسأل عن مخزون، مبيعات، سعر…"><button id="gbSend" type="submit">إرسال</button></form>
+</div>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var box = $("gbBox"), msgs = $("gbMsgs"), input = $("gbIn");
+
+  function norm(s) {
+    return String(s || "").toLowerCase()
+      .replace(/[\u064B-\u0652\u0640]/g, "")
+      .replace(/[أإآ]/g, "ا").replace(/ة/g, "ه").replace(/ى/g, "ي")
+      .replace(/[٠-٩]/g, function (d) { return "٠١٢٣٤٥٦٧٨٩".indexOf(d); })
+      .replace(/[؟?!،,.]/g, " ").replace(/\s+/g, " ").trim();
+  }
+  var STOP = "كام كم قطعه قطع باقي باقيه متاح موجود عندي عندنا سعر سعره بكام ايه هو هي في من علي على ده دي المنتج منتج الصنف صنف اعرف عايز عاوز ازاي مقاس لون كود".split(" ").map(norm);
+  function money(n) { return new Intl.NumberFormat("ar-EG", { maximumFractionDigits: 2 }).format(Number(n) || 0) + " ج.م"; }
+  function num(n) { return new Intl.NumberFormat("ar-EG").format(Number(n) || 0); }
+  function P() { try { return typeof products !== "undefined" ? products : []; } catch (e) { return []; } }
+  function S() { try { return typeof sales !== "undefined" ? sales : []; } catch (e) { return []; } }
+  function lowLimit() { try { return getLowStockThreshold(); } catch (e) { return 5; } }
+  function label(p) { return p.name + (p.color ? " - " + p.color : "") + (p.size ? " - " + p.size : "") + " (" + p.code + ")"; }
+
+  function findProducts(q) {
+    var toks = norm(q).split(" ").filter(function (t) { return t && STOP.indexOf(t) < 0; });
+    if (!toks.length) return [];
+    var scored = P().map(function (p) {
+      var hay = norm([p.name, p.code, p.color, p.size].join(" "));
+      var sc = 0;
+      toks.forEach(function (t) { if (hay.indexOf(t) >= 0) sc += (norm(p.code) === t ? 3 : 1); });
+      return { p: p, sc: sc };
+    }).filter(function (x) { return x.sc > 0; });
+    var max = scored.reduce(function (m, x) { return Math.max(m, x.sc); }, 0);
+    return scored.filter(function (x) { return x.sc === max; }).map(function (x) { return x.p; });
+  }
+
+  function salesIn(filter) {
+    return S().filter(function (s) { return filter(new Date(s.createdAt)); });
+  }
+  function sameDay(a, b) { return a.toDateString() === b.toDateString(); }
+  function summarize(list, title) {
+    var inv = {}, total = 0, profit = 0, pcs = 0;
+    list.forEach(function (s) { inv[s.invoiceId || s.id] = 1; total += +s.total || 0; profit += +s.profit || 0; pcs += +s.quantity || 0; });
+    if (!list.length) return title + ": مفيش مبيعات مسجلة.";
+    return title + ":\nعدد الفواتير: " + num(Object.keys(inv).length) + "\nعدد القطع: " + num(pcs) + "\nالإجمالي: " + money(total) + "\nالربح: " + money(profit) + "\n(قبل خصم المرتجعات)";
+  }
+
+  var PAGES = [
+    ["الرئيسيه", "home"], ["لوحه التحكم", "dashboard"], ["ديسكس", "discuss"], ["discuss", "discuss"], ["المنتجات", "products"],
+    ["الاستلام", "receipts"], ["نقطه البيع", "pos"], ["بيع المنتجات", "pos"], ["تسجيل المبيعات", "sales"], ["المبيعات", "sales"],
+    ["المرتجعات", "salesReturns"], ["مرتجع", "salesReturns"], ["التبديل", "exchanges"], ["الاكستشنج", "exchanges"],
+    ["الفواتير", "history"], ["حسابات العملاء", "accounts"], ["الاجل", "accounts"], ["اقفال", "closing"], ["الورديه", "closing"],
+    ["المصاريف", "expenses"], ["سجل النشاط", "activity"], ["النشاط", "activity"], ["النسخ الاحتياطي", "backup"], ["باك اب", "backup"],
+    ["الموظفين", "employees"], ["الجرد", "inventoryAudit"], ["حركه المخزون", "stockMovements"], ["التقارير", "reports"],
+    ["الموردون", "customersSuppliers"], ["الموردين", "customersSuppliers"], ["العملاء", "customersSuppliers"], ["التنبيهات", "stockAlerts"]
+  ];
+
+  function answer(raw) {
+    var q = norm(raw), has = function () { return [].some.call(arguments, function (w) { return q.indexOf(norm(w)) >= 0; }); };
+    var list = P(), now = new Date();
+
+    if (!q) return "اكتب سؤالك.";
+    if (has("افتح", "روح", "وديني", "خدني")) {
+      for (var i = 0; i < PAGES.length; i++) if (q.indexOf(PAGES[i][0]) >= 0) {
+        var btn = document.querySelector('.nav-item[data-page="' + PAGES[i][1] + '"]');
+        if (btn) { btn.click(); return "تمام، فتحتلك الصفحة."; }
+      }
+      return "قولي اسم الصفحة بالظبط (مثلًا: افتح المبيعات).";
+    }
+    if (has("مساعده", "تعمل ايه", "تقدر", "help")) return HELP;
+    if (has("نفذ", "خلص", "خالص", "صفر", "ناقص", "خلصت") && has("منتج", "صنف", "مخزون", "قطع", "ايه", "اي")) {
+      var out = list.filter(function (p) { return p.quantity <= 0; });
+      return out.length ? "المنتجات اللي خلصت (" + num(out.length) + "):\n" + out.slice(0, 15).map(label).join("\n") + (out.length > 15 ? "\n…والباقي في صفحة تنبيهات المخزون" : "") : "مفيش منتج خلص، كله موجود.";
+    }
+    if (has("منخفض", "قليل", "تنبيه", "هيخلص", "على وشك")) {
+      var lim = lowLimit(), low = list.filter(function (p) { return p.quantity > 0 && p.quantity <= lim; });
+      return low.length ? "مخزون منخفض (" + lim + " قطع أو أقل):\n" + low.slice(0, 15).map(function (p) { return label(p) + " ← " + num(p.quantity); }).join("\n") : "مفيش منتجات مخزونها منخفض.";
+    }
+    if (has("قيمه المخزون", "راس المال", "رأس المال")) {
+      return "قيمة المخزون بسعر الشراء: " + money(list.reduce(function (s, p) { return s + p.quantity * p.purchasePrice; }, 0)) +
+        "\nبسعر البيع: " + money(list.reduce(function (s, p) { return s + p.quantity * p.salePrice; }, 0));
+    }
+    if (has("اجمالي القطع", "كل القطع", "عدد القطع", "عدد المنتجات", "اجمالي المخزون")) {
+      return "عدد أنواع المنتجات: " + num(list.length) + "\nإجمالي القطع في المخزن: " + num(list.reduce(function (s, p) { return s + p.quantity; }, 0));
+    }
+    if (has("الاكثر مبيعا", "اكتر", "الاكتر", "اكثر", "الاعلي مبيعا", "افضل")) {
+      var m = {};
+      S().forEach(function (s) { var k = s.productName + " (" + s.productCode + ")"; m[k] = (m[k] || 0) + (+s.quantity || 0); });
+      var top = Object.keys(m).sort(function (a, b) { return m[b] - m[a]; }).slice(0, 5);
+      return top.length ? "الأكثر مبيعًا:\n" + top.map(function (k, i) { return (i + 1) + ". " + k + " — " + num(m[k]) + " قطعة"; }).join("\n") : "مفيش مبيعات لسه.";
+    }
+    if (has("مبيعات", "بعت", "ايراد", "ربح", "فواتير")) {
+      if (has("امس", "امبارح")) { var y = new Date(now.getTime() - 864e5); return summarize(salesIn(function (d) { return sameDay(d, y); }), "مبيعات أمس"); }
+      if (has("شهر")) return summarize(salesIn(function (d) { return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear(); }), "مبيعات الشهر");
+      if (has("اسبوع")) return summarize(salesIn(function (d) { return now - d < 7 * 864e5; }), "مبيعات آخر 7 أيام");
+      if (has("كل", "اجمالي", "الاجمالي")) return summarize(S(), "إجمالي كل المبيعات");
+      return summarize(salesIn(function (d) { return sameDay(d, now); }), "مبيعات النهارده");
+    }
+    var found = findProducts(raw);
+    if (found.length) {
+      if (found.length === 1) {
+        var p = found[0];
+        return label(p) + "\nالكمية: " + num(p.quantity) + (p.quantity <= 0 ? " (خلص)" : p.quantity <= lowLimit() ? " (منخفض)" : "") +
+          "\nسعر البيع: " + money(p.salePrice) + "\nسعر الشراء: " + money(p.purchasePrice);
+      }
+      return "لقيت " + num(found.length) + " نتائج:\n" + found.slice(0, 10).map(function (p) { return label(p) + " ← " + num(p.quantity) + " قطعة، " + money(p.salePrice); }).join("\n") + (found.length > 10 ? "\n…اكتب كود المنتج لتحديد أدق." : "");
+    }
+    return "مفهمتش قصدك. جرّب تكتب اسم منتج أو كوده، أو اسأل عن المبيعات والمخزون. اكتب \"مساعدة\" تشوف الأمثلة.";
+  }
+
+  var HELP = "أقدر أجاوبك على:\n• كمية وسعر أي منتج (اكتب اسمه أو كوده)\n• المنتجات الخالصة / المخزون المنخفض\n• قيمة المخزون وإجمالي القطع\n• مبيعات النهارده / أمس / الأسبوع / الشهر\n• الأكثر مبيعًا\n• افتح أي صفحة (مثلًا: افتح الجرد)";
+
+  function add(text, who) {
+    var d = document.createElement("div");
+    d.className = "gbm " + who; d.textContent = text;
+    msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight;
+  }
+  function ask(text) {
+    text = String(text).trim(); if (!text) return;
+    add(text, "me");
+    var r; try { r = answer(text); } catch (e) { r = "حصلت مشكلة وأنا بدور على الإجابة، جرّب تاني."; }
+    setTimeout(function () { add(r, "bot"); }, 150);
+  }
+
+  ["مبيعات النهارده", "مخزون منخفض", "المنتجات الخالصة", "قيمة المخزون", "الأكثر مبيعًا", "مساعدة"].forEach(function (c) {
+    var b = document.createElement("button"); b.type = "button"; b.textContent = c;
+    b.onclick = function () { ask(c); }; $("gbChips").appendChild(b);
+  });
+  $("gbForm").addEventListener("submit", function (e) { e.preventDefault(); var v = input.value; input.value = ""; ask(v); });
+  function toggle(open) {
+    box.classList.toggle("open", open);
+    if (open && !msgs.children.length) add("أهلًا! أنا مساعد GAMY. اسألني عن المخزون أو المبيعات أو اكتب اسم منتج. اكتب \"مساعدة\" لو محتاج أمثلة.", "bot");
+    if (open) input.focus();
+  }
+  $("gbBtn").onclick = function () { toggle(!box.classList.contains("open")); };
+  $("gbClose").onclick = function () { toggle(false); };
+})();
+</script>
+
 </body>
 </html>
